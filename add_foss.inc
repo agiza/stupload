@@ -1,7 +1,9 @@
 <?php
 
 	function add_foss_form($form_state) {
-		$form['#attributes'] = array('enctype' => "multipart/form-data");
+		$form['#prefix'] = '<div class="stupload-form">';
+		$form['#suffix'] = '</div>';
+		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addfoss');
 
 		$form['name'] = array(
 			'#type' => 'textfield',

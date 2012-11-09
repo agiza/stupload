@@ -7,3 +7,5 @@ version = "6.x-1.0.1"
 package = Custom
 
 scripts[] = stupload.js
+stylesheets[all][] = stupload.css
+stylesheets[print][] = stupload.css

@@ -111,7 +111,7 @@
 	}
 	
 	function upload_english_prerequest_form_submit($form, &$form_state){
-		
+		$query = "INSERT INTO `foss_categories` (`id`, `name`) VALUES (NULL, '".$form_state['values']['name']."')";
 		if(db_query($query)){
 			drupal_set_message('New FOSS Category Added Successfully');
 		}else {

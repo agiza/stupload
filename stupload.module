@@ -34,16 +34,26 @@ function stupload_menu(){
 		'title' => 'Upload English',
 		'description' => 'Upload English',
 		'page callback' => 'drupal_get_form',
-		'page arguments' => array('upload_english_form'),
+		'page arguments' => array('upload_english_prerequest_form'),
 		'access arguments' => array('Workshop Add New College'),
 		'type' => MENU_LOCAL_TASK,
-		'file' => 'upload_english.inc',
+		'file' => 'upload_english_prerequest.inc',
+	);
+	$items['stupload/get_category_levels'] = array(
+		'page callback' => 'get_category_levels',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['stupload/get_category_names'] = array(
+		'page callback' => 'get_category_names',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_NORMAL_ITEM,
 	);
 	
 
   return $items;
 }
-
+// for add availabel tutorial levels for add tutorial names
 function get_tutorial_levels(){
 	if(isset($_POST['foss']) && !empty($_POST['level'])){
 		$query = "select order_code from tutorial_details where foss_category_id='".$_POST['foss']."' and tutorial_level = '".$_POST['level']."'";
@@ -67,6 +77,33 @@ function get_tutorial_levels(){
 	}
 	echo json_encode($send_data);
 	exit;
+}
+// getting tutorial level
+function get_category_levels(){
+	if(isset($_POST['foss'])){
+		$query = "select distinct tutorial_level from tutorial_details where foss_category_id='".$_POST['foss']."'";
+		$result = db_query($query);
+		$output = array();
+		while($row = db_fetch_object($result)){
+			$output[] = $row;
+		}
+		echo json_encode($output);
+		exit;
+	}
+}
+
+// getting tutorial names
+function get_category_names(){
+	if(isset($_POST['level'])){
+		$query = "select distinct tutorial_name from tutorial_details where tutorial_level='".$_POST['level']."'";
+		$result = db_query($query);
+		$output = array();
+		while($row = db_fetch_object($result)){
+			$output[] = $row;
+		}
+		echo json_encode($output);
+		exit;
+	}
 }
 
 ?>

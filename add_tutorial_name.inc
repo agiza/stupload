@@ -18,8 +18,10 @@
 		// add js file 
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
-		
-		$form['#attributes'] = array('enctype' => "multipart/form-data");
+		drupal_add_css($path . '/stupload.css');
+		$form['#prefix'] = '<div class="stupload-form">';
+		$form['#suffix'] = '</div>';
+		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addtutorial-name');
 
 		$form['foss_category'] = array(
 			'#type' => 'select',
