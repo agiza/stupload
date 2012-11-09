@@ -1,0 +1,72 @@
+<?php
+
+function stupload_perm() {
+	return array('Workshop Add New College');
+}
+
+function stupload_menu(){
+	$items = array();
+	
+	$items['stupload/addfoss'] = array(
+		'title' => 'Add New Foss Category',
+		'description' => 'Add New Foss Category for ST Videos',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('add_foss_form'),
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'add_foss.inc',
+	);
+	$items['stupload/tutorial'] = array(
+		'title' => 'Add New Tutorial Name',
+		'description' => 'Add New Tutorial for Foss Category',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('add_tutorial_name_form'),
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'add_tutorial_name.inc',
+	);
+	$items['stupload/get_tutorial_levels'] = array(
+		'page callback' => 'get_tutorial_levels',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['stupload/upload_english'] = array(
+		'title' => 'Upload English',
+		'description' => 'Upload English',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('upload_english_form'),
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_english.inc',
+	);
+	
+
+  return $items;
+}
+
+function get_tutorial_levels(){
+	if(isset($_POST['foss']) && !empty($_POST['level'])){
+		$query = "select order_code from tutorial_details where foss_category_id='".$_POST['foss']."' and tutorial_level = '".$_POST['level']."'";
+		//$query = "select order_code from tutorial_details where foss_category_id='6' and tutorial_level = 'D0'";
+		$result = db_query($query);
+		$exists_order = array();
+		while($row = db_fetch_object($result)){
+			$exists_order[] = $row->order_code;
+		}
+		
+	}
+	$i = 1;
+	while($i < 100){
+		$tutorial_order_no[] = $i;
+		$i++;
+	}
+	$available = array_diff($tutorial_order_no, $exists_order);
+	$send_data = array();
+	foreach($available as $a){
+		$send_data[] = $a;
+	}
+	echo json_encode($send_data);
+	exit;
+}
+
+?>

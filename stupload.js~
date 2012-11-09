@@ -1,0 +1,27 @@
+$(document).ready(function(){
+	webroot = "http://localhost/spoken_tutorial_org/stupload/";
+	$('.uptn_foss_category_name').change(function(){
+		foss = $(this).val();
+		level = $('.uptn_tutorial_level').val();
+		$.ajax({
+			type : 'POST',
+			url : webroot + "get_tutorial_levels",
+			data : {
+				'foss' : foss, 'level' : level
+			},
+			success : function(data){
+				output = JSON.parse(data);
+				var html_data = '';
+				if(output){
+					for (var i=0; i < output.length; i++)
+					{
+						html_data += "<option value='"+ i +"'>" + i + "</option>";	
+					}
+					alert(html_data);
+				}else{
+					
+				}
+			}
+		});
+	});
+});
