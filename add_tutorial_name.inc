@@ -47,7 +47,9 @@
 			'#title' => t('Tutorial Order Number'),
 			'#required' => TRUE,
 			'#options' => $tutorial_order_no,
-			'#attributes' => array('class' => 'uptn_tutorial_order_no')
+			'#attributes' => array('class' => 'uptn_tutorial_order_no'),
+			'#prefix' => '<div class="poll-form">',
+			'#suffix' => '</div>', 
 		);
 		$form['submit'] = array(
 			'#type' => 'submit',
