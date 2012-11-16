@@ -30,7 +30,7 @@
 		// die;
 
 
-		$output = "<iframe width='100%' height='100%' src='http://www.spoken-tutorial.org/".$wiki_url."'></iframe>";
+		$output = "<div class='wiki-script-file'></div>";
 		$output .= drupal_get_form('upload_english_script_form', $tutorial_resourse_id, $wiki_url, $tutorial_detail_id);
 
 		return $output;
@@ -40,6 +40,10 @@
 
 
 	function upload_english_script_form($form_state, $tutorial_resourse_id, $wiki_url, $tutorial_detail_id) {
+		$path = drupal_get_path('module', 'stupload');
+		drupal_add_js($path . '/stupload.js');
+		drupal_add_css($path . '/stupload.css');
+		
 		$form['#prefix'] = '<div class="stupload-form">';
 		$form['#suffix'] = '</div>';
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addfoss');
@@ -47,6 +51,7 @@
 		$form['wiki_url'] = array(
 			'#type' => 'hidden',
 			'#value' => $wiki_url,
+			'#attributes' => array('class' => 'upeng_script_wiki'),
 		);
 
 		$form['tutorial_resourse_id'] = array(
@@ -63,7 +68,7 @@
 			'#title' => t('Script'),
 			'#required' => TRUE,
 			'#options' => array('' => 'Script', 0 => 'Required' , 1 => 'Will upload later'),
-			'#attributes' => array('class' => 'upeng_script'),
+			'#attributes' => array('class' => 'upeng_script_status'),
 		);
 		$form['submit'] = array(
 			'#type' => 'submit',
@@ -94,14 +99,6 @@
 
 		db_query($query);
 		
-		//$query = "SELECT id FROM tutorial_common_contents WHERE tutorial_detail_id='".$form_state['values']['tutorial_detail_id']."'";
-
-		//$result = db_query($query);
-		//$row = db_fetch_object($result);
-
-		//$query = "UPDATE tutorial_resources SET tutorial_content_id='".$row->id."' WHERE id='".$form_state['values']['tutorial_resource_id']."'";
-
-		//db_query($query);
 
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resourse_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'script')";
 

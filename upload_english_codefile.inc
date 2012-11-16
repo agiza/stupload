@@ -22,6 +22,9 @@
 
 
 	function upload_english_codefile_form($form_state, $tutorial_content_id, $tutorial_resourse_id, $tutorial_detail_id) {
+		$path = drupal_get_path('module', 'stupload');
+		drupal_add_js($path . '/stupload.js');
+		drupal_add_css($path . '/stupload.css');
 		$form['#prefix'] = '<div class="stupload-form">';
 		$form['#suffix'] = '</div>';
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addfoss');
@@ -45,12 +48,14 @@
 			'#title' => t('Codefile Status'),
 			'#required' => TRUE,
 			'#options' => array('' => 'Codefile', 0 => 'Required' , 1 => 'Will upload later', 2 => 'Not Required'),
-			'#attributes' => array('class' => 'upeng_script'),
+			'#attributes' => array('class' => 'upeng_codefile_status'),
 		);
 		$form['codefile'] = array(
 			'#type' => 'file',
 			'#title' => t('Codefile'),
-			'#attributes' => array('class' => 'upeng_slide'),
+			'#attributes' => array('class' => 'upeng_codefile'),
+			'#prefix' => '<div class="stupload-form-codefile">',
+			'#suffix' => '</div>'
 		);
 		$form['submit'] = array(
 			'#type' => 'submit',
@@ -89,12 +94,7 @@
 
 		$tutorial_details = db_fetch_object($result);
 
-		$query = "SELECT name FROM foss_categories WHERE id='".$tutorial_details->foss_category_id."'";
-
-		$result = db_query($query);
-
-		$foss_category = db_fetch_object($result);
-		$codefile_path = 'st_videos/'.$foss_category->name.'/'.$tutorial_details->tutorial_level.'/'.$tutorial_details->tutorial_name.'/Resource/';
+		$codefile_path = 'st_videos/'.$tutorial_details->foss_category.'/'.$tutorial_details->tutorial_level.'/'.$tutorial_details->tutorial_name.'/Resource/';
 		$path = '/var/www/spoken_tutorial_org/sites/default/files/'.$codefile_path;
 		$file_ext = substr($_FILES['files']['name']['codefile'], strripos($_FILES['files']['name']['codefile'], '.'));
 		$file_name = $tutorial_details->tutorial_name.'-Codefile-English'.$file_ext;

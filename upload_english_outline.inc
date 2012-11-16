@@ -22,26 +22,28 @@
 			'#title' => t('id'),
 			'#required' => TRUE,
 			'#value' => $trid,
-			'#attributes' => array('class' => 'uptn_outline', '')
+			//'#attributes' => array('class' => 'uptn_outline', '')
 		);
 		$form['tutorial_detail_id'] = array(
 			'#type' => 'hidden',
 			'#title' => t('id'),
 			'#required' => TRUE,
 			'#value' => $tdid,
-			'#attributes' => array('class' => 'uptn_outline', '')
+			//'#attributes' => array('class' => 'uptn_outline', '')
 		);
 		$form['outline_status'] = array(
 			'#type' => 'select',
 			'#title' => t('Outline Status'),
 			'#required' => TRUE,
 			'#options' => array('' => 'Status', 0 => 'Required', 1 => 'Will upload later'),
-			'#attributes' => array('class' => 'uptn_outline', '')
+			'#attributes' => array('class' => 'uptn_outline_status', '')
 		);
 		$form['outline'] = array(
 			'#type' => 'textarea',
 			'#title' => t('Outline'),
-			'#attributes' => array('class' => 'uptn_outline')
+			'#attributes' => array('class' => 'uptn_outline'),
+			'#prefix' => '<div class="stupload-outline">',
+			'#suffix' => '</div>'
 		);
 		
 		$form['submit'] = array(

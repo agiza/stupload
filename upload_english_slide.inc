@@ -20,6 +20,9 @@
 
 
 	function upload_english_slide_form($form_state, $tutorial_resourse_id, $tutorial_detail_id) {
+		$path = drupal_get_path('module', 'stupload');
+		drupal_add_js($path . '/stupload.js');
+		drupal_add_css($path . '/stupload.css');
 		$form['#prefix'] = '<div class="stupload-form">';
 		$form['#suffix'] = '</div>';
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addfoss');
@@ -38,12 +41,14 @@
 			'#title' => t('Slide Status'),
 			'#required' => TRUE,
 			'#options' => array('' => 'Slide', 0 => 'Required' , 1 => 'Will upload later'),
-			'#attributes' => array('class' => 'upeng_script'),
+			'#attributes' => array('class' => 'upeng_slide_status'),
 		);
 		$form['slide'] = array(
 			'#type' => 'file',
 			'#title' => t('Slide'),
 			'#attributes' => array('class' => 'upeng_slide'),
+			'#prefix' => '<div class="stupload-form-slide">',
+			'#suffix' => '</div>'
 		);
 		$form['submit'] = array(
 			'#type' => 'submit',
@@ -80,12 +85,7 @@
 
 		$tutorial_details = db_fetch_object($result);
 
-		$query = "SELECT name FROM foss_categories WHERE id='".$tutorial_details->foss_category_id."'";
-
-		$result = db_query($query);
-
-		$foss_category = db_fetch_object($result);
-		$video_path = 'st_videos/'.$foss_category->name.'/'.$tutorial_details->tutorial_level.'/'.$tutorial_details->tutorial_name.'/Resource/';
+		$video_path = 'st_videos/'.$tutorial_details->foss_category.'/'.$tutorial_details->tutorial_level.'/'.$tutorial_details->tutorial_name.'/Resource/';
 		$path = '/var/www/spoken_tutorial_org/sites/default/files/'.$video_path;
 		$file_ext = substr($_FILES['files']['name']['slide'], strripos($_FILES['files']['name']['slide'], '.'));
 		$file_name = $tutorial_details->tutorial_name.'-Slides-English'.$file_ext;

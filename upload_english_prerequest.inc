@@ -24,7 +24,7 @@
 		$result = db_query($query);
 		$foss_category = array('' => 'FOSS category');
 		while($row = db_fetch_object($result)){
-			$foss_category[$row->id] =  $row->name;
+			$foss_category[$row->name] =  $row->name;
 		}
 		$form['#prefix'] = '<div class="stupload-form">';
 		$form['#suffix'] = '</div>';

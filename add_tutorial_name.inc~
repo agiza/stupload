@@ -82,10 +82,12 @@
 	}
 	
 	function add_tutorial_name_form_submit($form, &$form_state){
-	
+		$query = "select name from foss_categories where id='".$form_state['values']['foss_category']."'";
+		$result = db_query($query);
+		$row = db_fetch_object($result);
 		// create Directory
 		if (isset($form_state['values']['foss_category']) && isset($form_state['values']['tutorial_level']) && isset($form_state['values']['tutorial_name'])){
-			$name = $form_state['values']['foss_category'].'/'.$form_state['values']['tutorial_level'].'/'.$form_state['values']['tutorial_name'].'/'.Resource;
+			$name = $row->name.'/'.$form_state['values']['tutorial_level'].'/'.$form_state['values']['tutorial_name'].'/'.Resource;
 		    mkdir ('/var/www/spoken_tutorial_org/sites/default/files/st_videos/'.$name, 0777,true);
 		    drupal_set_message('Directories created Successfully');
 		}
