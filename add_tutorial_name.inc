@@ -91,13 +91,16 @@
 		    mkdir ('/var/www/spoken_tutorial_org/sites/default/files/st_videos/'.$name, 0777,true);
 		    drupal_set_message('Directories created Successfully');
 		}
+			//mkdir ('/var/www/spoken_tutorial_org/sites/default/files/st_videos/'.$name, 0777,true);
+			//echo $name;
+
         $query = "INSERT INTO `tutorial_details` (`id`, `foss_category_id`, `tutorial_name`, `tutorial_level`, `order_code`) VALUES (NULL, '".$form_state['values']['foss_category']."', '".$form_state['values']['tutorial_name']."', '".$form_state['values']['tutorial_level']."', '".$form_state['values']['tutorial_order_no']."')";
 		if(db_query($query)){
 			drupal_set_message('New FOSS Category Added Successfully');
 		}else {
 			drupal_set_message('Error while Adding Foss Category, Please try again.');
 		}
-		drupal_goto($path = 'stupload/addfoss', $query = NULL, $fragment = NULL, $http_response_code = 302);
+		drupal_goto($path = 'stupload/list', $query = NULL, $fragment = NULL, $http_response_code = 302);
 
 }
 

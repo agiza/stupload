@@ -7,6 +7,11 @@ function stupload_perm() {
 function stupload_menu(){
 	$items = array();
 	
+	$items['stupload/list'] = array(
+		'page callback' => 'index',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_NORMAL_ITEM,
+	);
 	$items['stupload/addfoss'] = array(
 		'title' => 'Add New Foss Category',
 		'description' => 'Add New Foss Category for ST Videos',
@@ -49,9 +54,74 @@ function stupload_menu(){
 		'access arguments' => array('Workshop Add New College'),
 		'type' => MENU_NORMAL_ITEM,
 	);
-	
+	$items['stupload/upload_english/outline'] = array(
+		'title' => 'Upload English Outline',
+		'description' => 'Upload English Outline',
+		'page callback' => 'upload_english_outline',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_english_outline.inc',
+	);
+	$items['stupload/upload_english/script'] = array(
+		'title' => 'Upload English Script',
+		'description' => 'Upload English Script',
+		'page callback' => 'upload_english_script',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_english_script.inc',
+	);
+	$items['stupload/upload_english/slide'] = array(
+		'title' => 'Upload English Slide',
+		'description' => 'Upload English Slide',
+		'page callback' => 'upload_english_slide',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_english_slide.inc',
+	);
+	$items['stupload/upload_english/video'] = array(
+		'title' => 'Upload English Video',
+		'description' => 'Upload English Video',
+		'page callback' => 'upload_english_video',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_english_video.inc',
+	);
+	$items['stupload/upload_english/codefile'] = array(
+		'title' => 'Upload English Code',
+		'description' => 'Upload English Code ',
+		'page callback' => 'upload_english_codefile',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_english_codefile.inc',
+	);
+	$items['stupload/upload_english/assignment'] = array(
+		'title' => 'Upload English Assignment',
+		'description' => 'Upload English Assignment ',
+		'page callback' => 'upload_english_assignment',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_english_assignment.inc',
+	);
 
   return $items;
+}
+
+// index page
+
+function index(){
+
+	$output = '<h2>Upload Options</h2>';
+	$output .= "<div class='upload-index-page list-link'>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a><br>";
+	$output .= "<a class='tutorial' href='".$GLOBALS['base_path']."stupload/tutorial'> Add Tutorial Name</a><br>";
+	$output .= "<a class='upload-english' href='".$GLOBALS['base_path']."stupload/upload_english'> Upload English</a><br>";
+	//$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a>";
+	//$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a>";
+	//$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a>";
+	//$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a>";
+	//$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a>";
+	$output .= "</div>";
+	return $output;
 }
 // for add availabel tutorial levels for add tutorial names
 function get_tutorial_levels(){
@@ -86,6 +156,7 @@ function get_category_levels(){
 		$output = array();
 		while($row = db_fetch_object($result)){
 			$output[] = $row;
+			//$output[] = '2';
 		}
 		echo json_encode($output);
 		exit;
