@@ -92,7 +92,7 @@
 			//mkdir ('/var/www/spoken_tutorial_org/sites/default/files/st_videos/'.$name, 0777,true);
 			//echo $name;
 
-        $query = "INSERT INTO `tutorial_details` (`id`, `foss_category_id`, `tutorial_name`, `tutorial_level`, `order_code`) VALUES (NULL, '".$form_state['values']['foss_category']."', '".$form_state['values']['tutorial_name']."', '".$form_state['values']['tutorial_level']."', '".$form_state['values']['tutorial_order_no']."')";
+        $query = "INSERT INTO `tutorial_details` (`id`, `foss_category`, `tutorial_name`, `tutorial_level`, `order_code`) VALUES (NULL, '".$form_state['values']['foss_category']."', '".$form_state['values']['tutorial_name']."', '".$form_state['values']['tutorial_level']."', '".$form_state['values']['tutorial_order_no']."')";
 		if(db_query($query)){
 			drupal_set_message('New FOSS Category Added Successfully');
 		}else {

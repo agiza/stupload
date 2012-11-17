@@ -1,39 +1,39 @@
 <?php
 	function upload_english_script($params) {
-		$params_data = parse_url($params);
+		if($params){
+			$params_data = parse_url($params);
 
-		$data = explode('&', $params_data['query']);
+			$data = explode('&', $params_data['query']);
 
-		$tutorial_resourse = explode('=', $data[0]);
-		$tutorial_resourse_id = $tutorial_resourse[1];
+			$tutorial_resourse = explode('=', $data[0]);
+			$tutorial_resourse_id = $tutorial_resourse[1];
 
-		$tutorial_detail = explode('=', $data[1]);
-		$tutorial_detail_id = $tutorial_detail[1];
+			$tutorial_detail = explode('=', $data[1]);
+			$tutorial_detail_id = $tutorial_detail[1];
 
-		$query = "SELECT * FROM `tutorial_details` WHERE id='".$tutorial_detail_id."'";
+			$query = "SELECT * FROM `tutorial_details` WHERE id='".$tutorial_detail_id."'";
 
-		$result = db_query($query);
+			$result = db_query($query);
 
-		$tutorial_detail = db_fetch_object($result);
-
-		$query = "SELECT name FROM `foss_categories` WHERE id='".$tutorial_detail->foss_category_id."'";
-
-		$result = db_query($query);
-
-		$foss_category = db_fetch_object($result);
-
-		$wiki_url = 'wiki/index.php/'.$foss_category->name.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English';
-		// $f1 = 'http://www.spoken-tutorial.org/wiki/index.php/'.$wiki_url;
-		// $file_headers = @get_headers($f1);
-		// echo '<pre>';
-		// var_dump($file_headers);
-		// die;
+			$tutorial_detail = db_fetch_object($result);
 
 
-		$output = "<div class='wiki-script-file'></div>";
-		$output .= drupal_get_form('upload_english_script_form', $tutorial_resourse_id, $wiki_url, $tutorial_detail_id);
+			$wiki_url = 'wiki/index.php/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English';
+			// $f1 = 'http://www.spoken-tutorial.org/wiki/index.php/'.$wiki_url;
+			// $file_headers = @get_headers($f1);
+			// echo '<pre>';
+			// var_dump($file_headers);
+			// die;
 
-		return $output;
+
+			$output = "<div class='wiki-script-file'></div>";
+			$output .= drupal_get_form('upload_english_script_form', $tutorial_resourse_id, $wiki_url, $tutorial_detail_id);
+
+			return $output;
+		}else{
+			$output = "<p>Something went wrong. Please, try again.</p>";
+			return $output;
+		}
 
 
 	}

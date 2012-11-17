@@ -1,11 +1,15 @@
 <?php
 	function upload_english_outline($params) {
-
-		$data = parse_url($params);
-		$params = explode('=', $data['query']);
-
-		$output = drupal_get_form('upload_english_outline_form', $params[0], $params[1]);
-		return $output;
+		if($params){
+			$data = parse_url($params);
+			$params = explode('=', $data['query']);
+			$output = drupal_get_form('upload_english_outline_form', $params[0], $params[1]);
+			return $output;
+		}else{
+			$output = "<p>Somthing went wrong. Please, try again.</p>";
+			return $output;
+		}
+		
 	}
 	function upload_english_outline_form($form_state, $trid, $tdid) {
 		

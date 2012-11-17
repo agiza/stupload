@@ -1,31 +1,28 @@
 <?php
 
-	function upload_english_prerequest_form($form_state) {
+	function upload_other_lang_prerequest_form($form_state) {
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
 
 		$upload_option = array('Reqired' => 'Reqired', 'Not Reqired' => 'Not Reqired', 'Upload Later' => 'Upload Later');
 		$tutorial_name = array('' => 'Tutorial Name');
-		// $outline = array('' => 'Outline');
-		// $video = array('' => 'Video');
-		// $script = array('' => 'Script');
-		// $code_file = array('' => 'Code File');
-		// $slide = array('' => 'Slide');
-		// $assignment = array('' => 'Assignment');
-		// $outline = array_merge($outline, $upload_option);
-		// $video = array_merge($video, $upload_option);
-		// $script = array_merge($script, $upload_option);
-		// $code_file = array_merge($code_file, $upload_option);
-		// $slide = array_merge($slide, $upload_option);
-		// $assignment = array_merge($assignment, $upload_option);
-		// get foss category
+
+		// select FOSS Category
 		$query = "select * from foss_categories";
 		$result = db_query($query);
-		$foss_category = array('' => 'FOSS category');
+		$foss_category = array('' => 'Select FOSS category');
 		while($row = db_fetch_object($result)){
 			$foss_category[$row->name] =  $row->name;
 		}
+		// select Languages
+		$query = "select * from tutorial_languages";
+		$result = db_query($query);
+		$languages = array('' => 'Select language');
+		while($row = db_fetch_object($result)){
+			$languages[$row->name] =  $row->name;
+		}
+
 		$form['#prefix'] = '<div class="stupload-form">';
 		$form['#suffix'] = '</div>';
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'upload-english');
@@ -35,17 +32,27 @@
 			'#title' => t('FOSS Category Name'),
 			'#required' => TRUE,
 			'#options' => $foss_category,
-			'#attributes' => array('class' => 'upeng_foss_category_name'),
-			'#prefix' => '<div class="uenglish-category-level-name">',
+			'#attributes' => array('class' => 'uolang_foss_category_name'),
+			'#prefix' => '<div class="uolang-category-level-name">',
 		);
 		$form['tutorial_level'] = array(
 			'#type' => 'select',
-			'#title' => t('Tutorial Leval'),
+			'#title' => t('Tutorial level'),
 			'#required' => TRUE,
 			'#validated' => TRUE,
-			'#options' => array(''=> 'Level'),
-			'#attributes' => array('class' => 'upeng_tutorial_level'),
-			'#prefix' => '<div class="uenglish-level-name"><div class="uenglish-level">',
+			'#options' => array(''=> 'Select Tutorial level'),
+			'#attributes' => array('class' => 'uolang_tutorial_level uolang_tutorial_level'),
+			'#prefix' => '<div class="uolang-level-name"><div class="uolang-level">',
+			'#suffix' => '</div>', 
+		);
+		$form['tutorial_lang'] = array(
+			'#type' => 'select',
+			'#title' => t('Tutorial Languages'),
+			'#required' => TRUE,
+			'#validated' => TRUE,
+			'#options' => $languages,
+			'#attributes' => array('class' => 'uolang_tutorial_lang'),
+			'#prefix' => '<div class="uolang-lang">',
 			'#suffix' => '</div>', 
 		);
 		$form['tutorial_name'] = array(
@@ -54,50 +61,11 @@
 			'#required' => TRUE,
 			'#validated' => TRUE,
 			'#options' => $tutorial_name,
-			'#attributes' => array('class' => 'upeng_tutorial_name'),
-			'#prefix' => '<div class="uenglish-name">',
+			'#attributes' => array('class' => 'uolang_tutorial_name'),
+			'#prefix' => '<div class="uolang-name">',
 			'#suffix' => '</div></div></div>', 
 		);
-		/* $form['outline'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $outline,
-			'#attributes' => array('class' => 'upeng_outline'),
-			'#prefix' => '<div class="uenglish-outline-video-script">',
-		);
-		$form['video'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $video,
-			'#attributes' => array('class' => 'upeng_video')
-		);
-		$form['script'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $script,
-			'#attributes' => array('class' => 'upeng_script'),
-			'#suffix' => '</div>'
-		);
-		$form['code_file'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $code_file,
-			'#attributes' => array('class' => 'upeng_code_file'),
-			'#prefix' => '<div class="uenglish-code-slide-assignment">',
-		);
-		$form['slide'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $slide,
-			'#attributes' => array('class' => 'upeng_slide')
-		);
-		$form['assignment'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $assignment,
-			'#attributes' => array('class' => 'upeng_assignment'),
-			'#suffix' => '</div>'
-		); */
+		
 		$form['submit'] = array(
 			'#type' => 'submit',
 			'#value' => t('Submit')
@@ -108,7 +76,7 @@
 	}
 	
 	
-	function upload_english_prerequest_form_validate($form, &$form_state){
+	function upload_other_lang_prerequest_form_validate($form, &$form_state){
 		if($form_state['values']['tutorial_name'] != ''){
 			$query = "select id from tutorial_details where foss_category_id='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
 
@@ -124,7 +92,7 @@
 		return;
 	}
 	
-	function upload_english_prerequest_form_submit($form, &$form_state){
+	function upload_other_lang_prerequest_form_submit($form, &$form_state){
 
 		$query = "select id from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
 

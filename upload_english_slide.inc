@@ -1,19 +1,23 @@
 <?php
 	function upload_english_slide($params) {
-		$params_data = parse_url($params);
+		if($params){
+			$params_data = parse_url($params);
+
+			$data = explode('&', $params_data['query']);
+
+			$tutorial_resourse = explode('=', $data[0]);
+			$tutorial_resourse_id = $tutorial_resourse[1];
+
+			$tutorial_detail = explode('=', $data[1]);
+			$tutorial_detail_id = $tutorial_detail[1];
 
 
-		$data = explode('&', $params_data['query']);
-
-		$tutorial_resourse = explode('=', $data[0]);
-		$tutorial_resourse_id = $tutorial_resourse[1];
-
-		$tutorial_detail = explode('=', $data[1]);
-		$tutorial_detail_id = $tutorial_detail[1];
-
-
-		$output .= drupal_get_form('upload_english_slide_form', $tutorial_resourse_id, $tutorial_detail_id);
-		return $output;
+			$output .= drupal_get_form('upload_english_slide_form', $tutorial_resourse_id, $tutorial_detail_id);
+			return $output;
+		}else{
+			$output = "<p>Something went wrong. Please, try again.</p>";
+			return $output;
+		}
 
 
 	}
@@ -121,8 +125,6 @@
 		db_query($query);
 		// to track uploader 
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resourse_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'slide')";
-
-		db_query($query);
 
 
 		if(db_query($query)){

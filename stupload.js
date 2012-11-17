@@ -1,6 +1,6 @@
 $(document).ready(function(){
-	webroot = "http://10.102.6.113/spoken_tutorial_org/stupload/";
-	loading_image = "<img src='http://10.102.6.113/spoken_tutorial_org/ajax-loader.gif' />";
+	webroot = "http://localhost/spoken_tutorial_org/stupload/";
+	loading_image = "<img src='http://localhost/spoken_tutorial_org/ajax-loader.gif' />";
 	// for add availabel tutorial levels for add tutorial names
 	$('.uptn_tutorial_level').change(function(){
 		foss = $('.uptn_foss_category_name').val();
@@ -58,11 +58,13 @@ $(document).ready(function(){
 					// adding the tutorial name under tutorial level
 					$('.upeng_tutorial_level').change(function(){
 						level = $(this).val();
+						foss = $('.upeng_foss_category_name').val();
 						$.ajax({
 							type : 'POST',
 							url : webroot + "get_category_names",
 							data : {
-								'level' : level
+								'level' : level,
+								'foss' : foss
 							},
 							beforeSend: function() {
 							    field_data = $('.uenglish-name').html();
@@ -150,4 +152,111 @@ $(document).ready(function(){
 			$('div.stupload-form-asgmnt').css({'display' : 'none'});
 		}
 	});
+
+// Other languages 
+
+$('.uolang_foss_category_name').change(function(){
+		foss = $(this).val();
+		$.ajax({
+			type : 'POST',
+			url : webroot + "get_category_levels",
+			data : {
+				'foss' : foss
+			},
+			beforeSend: function() {
+			    field_data = $('.uolang-level-name').html();
+			    $('.uolang-level-name').html(loading_image);
+			},
+			success : function(data){
+				output = JSON.parse(data);
+				var html_data = "<option value=''>Level</option>";
+				if(output){
+					$('.uolang-level-name').html(field_data);
+					for (var i=0; i < output.length; i++)
+					{
+						html_data += "<option value='"+ output[i].tutorial_level +"'>" + output[i].tutorial_level + "</option>";	
+					}
+					$('.uolang_tutorial_level').html(html_data);
+
+					// adding the tutorial languages under tutorial level
+					// $('.uolang_tutorial_level').change(function(){
+					// 	level = $(this).val();;
+					// 	foss = $('.uolang_foss_category_name').val();
+					// 	$.ajax({
+					// 		type : 'POST',
+					// 		url : webroot + "get_languages",
+					// 		data : {
+					// 			'level' : level,
+					// 			'foss' : foss
+					// 		},
+					// 		beforeSend: function() {
+					// 		    field_data = $('.uolang-lang').html();
+					// 		    $('.uolang-lang').html(loading_image);
+					// 		},
+					// 		success : function(data){
+					// 			output = JSON.parse(data);
+					// 			console.log(output);
+					// 			var html_data = "<option value=''>Tutorial name</option>";
+					// 			if(output){
+					// 				$('.uolang-lang').html(field_data);
+					// 				for (var i=0; i < output.length; i++)
+					// 				{
+					// 					html_data += "<option value='"+ output[i].name +"'>" + output[i].name + "</option>";	
+					// 				}
+					// 				$('.uolang_tutorial_lang').html(html_data);
+
+									// get tutorial names under selected foss, level and languages
+									$('.uolang_tutorial_lang').change(function(){
+										lang = $(this).val();;
+										foss = $('.uolang_foss_category_name').val();
+										level = $('.uolang_tutorial_level').val();
+										$.ajax({
+											type : 'POST',
+											url : webroot + "get_olang_tnames",
+											data : {
+												'level' : level,
+												'foss' : foss,
+												'lang' : lang
+											},
+											beforeSend: function() {
+											    field_data = $('.uolang-name').html();
+											    $('.uolang-name').html(loading_image);
+											},
+											success : function(data){
+												output = JSON.parse(data);
+												console.log(output);
+												var html_data = "<option value=''>Tutorial name</option>";
+												if(output){
+													$('.uolang-name').html(field_data);
+													for (var i=0; i < output.length; i++)
+													{
+														html_data += "<option value='"+ output[i].tutorial_name +"'>" + output[i].tutorial_name + "</option>";	
+													}
+													$('.uolang_tutorial_name').html(html_data);
+													// get tutorial names under selected foss, level and languages
+													
+												}else{
+													alert('Somthing wrong, Please refresh page');
+												}
+											}
+										});
+									});
+						// 		}else{
+						// 			alert('Somthing wrong, Please refresh page');
+						// 		}
+						// 	}
+						// });
+					// });
+				}else{
+					alert('Somthing wrong, Please refresh page');
+				}
+			}
+		});
+	});
+
+
+
+
+
+
 });
