@@ -77,17 +77,18 @@
 	
 	
 	function upload_other_lang_prerequest_form_validate($form, &$form_state){
-		if($form_state['values']['tutorial_name'] != ''){
-			$query = "select id from tutorial_details where foss_category_id='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
 
-		$result = db_query($query);
-		$row = db_fetch_object($result);
-			$query = "select tutorial_detail_id from tutorial_resources where tutorial_detail_id='".$row->id."' and language='English'";
-			$result = db_query($query);
-			$row = db_fetch_object($result);
-			if($row){
-				form_set_error('tutorial_name', t('This Tutorial Already Exits.'));
-			}
+		if($form_state['values']['foss_category'] == ''){
+			form_set_error('tutorial_name', t('Please select FOSS Category.'));
+		}
+		if($form_state['values']['tutorial_level'] == ''){
+			form_set_error('tutorial_level', t('Please select Tutorial Level.'));
+		}
+		if($form_state['values']['tutorial_lang'] == ''){
+			form_set_error('tutorial_lang', t('Please select Language.'));
+		}
+		if($form_state['values']['tutorial_name'] == ''){
+			form_set_error('tutorial_name', t('Please select Tutorial Name.'));
 		}
 		return;
 	}
@@ -96,24 +97,32 @@
 
 		$query = "select id from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
 
+
 		$result = db_query($query);
 		$row = db_fetch_object($result);
 
 		$tutorial_detail_id = $row->id;
 
-		$language = 'English';
-		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `language`, `tutorial_outline`, `tutorial_script`, `tutorial_video`) VALUES (NULL, '".$tutorial_detail_id."', '".$language."', 'pending', 'pending', 'pending')";
+		$language = $form_state['values']['tutorial_lang'];
+
+		// update tutorial_common_contents id to tutorial_resources
+		$query = "select tutorial_content_id from tutorial_resources where language='English' and tutorial_resources.tutorial_detail_id IN (select id from tutorial_details)";
+		$result = db_query($query);
+		$common_id = db_fetch_object($result);
+		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `tutorial_content_id`, `language`, `tutorial_outline`, `tutorial_script`, `tutorial_video`) VALUES (NULL, '".$tutorial_detail_id."', '".$common_id->tutorial_content_id."', '".$language."', 'pending', 'pending', 'pending')";
+
 		if(db_query($query)){
-			drupal_set_message('New FOSS Category Added Successfully');
+			// resources ID
+			drupal_set_message('Successfully selected tutorial');
 			$query = "select id from tutorial_resources where tutorial_detail_id='".$tutorial_detail_id."' and language='".$language."'";
 			$result = db_query($query);
 			$row = db_fetch_object($result);
-			$redirect = 'stupload/upload_english/outline/?'.$row->id.'='.$tutorial_detail_id;
-			var_dump($redirect);
-			//die;
+
+			$redirect = 'stupload/upload_other_lang/outline/?tr='.$row->id;
+
 			drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
-			drupal_set_message('Error while Adding Foss Category, Please try again.');
+			drupal_set_message('Error while Tutorial, Please try again.');
 		}
 		
 

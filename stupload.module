@@ -126,6 +126,26 @@ function stupload_menu(){
 		'type' => MENU_NORMAL_ITEM,
 	);
 
+	$items['stupload/upload_other_lang/outline'] = array(
+		'page callback' => 'upload_olang_outline',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_olang_outline.inc',
+	);
+	$items['stupload/upload_other_lang/script'] = array(
+
+		'page callback' => 'upload_olang_script',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_olang_script.inc',
+	);
+	$items['stupload/upload_other_lang/video'] = array(
+		'page callback' => 'upload_olang_video',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'upload_olang_video.inc',
+	);
+
   return $items;
 }
 

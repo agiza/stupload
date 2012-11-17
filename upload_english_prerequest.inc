@@ -110,7 +110,7 @@
 	
 	function upload_english_prerequest_form_validate($form, &$form_state){
 		if($form_state['values']['tutorial_name'] != ''){
-			$query = "select id from tutorial_details where foss_category_id='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
+			$query = "select id from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
 
 		$result = db_query($query);
 		$row = db_fetch_object($result);
