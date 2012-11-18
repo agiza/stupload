@@ -210,13 +210,15 @@ $('.uolang_foss_category_name').change(function(){
 										lang = $(this).val();;
 										foss = $('.uolang_foss_category_name').val();
 										level = $('.uolang_tutorial_level').val();
+										flag = $('.upload_flag').val();
 										$.ajax({
 											type : 'POST',
 											url : webroot + "get_olang_tnames",
 											data : {
 												'level' : level,
 												'foss' : foss,
-												'lang' : lang
+												'lang' : lang,
+												'flag' : flag
 											},
 											beforeSend: function() {
 											    field_data = $('.uolang-name').html();

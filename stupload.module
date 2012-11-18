@@ -133,7 +133,6 @@ function stupload_menu(){
 		'file' => 'upload_olang_outline.inc',
 	);
 	$items['stupload/upload_other_lang/script'] = array(
-
 		'page callback' => 'upload_olang_script',
 		'access arguments' => array('Workshop Add New College'),
 		'type' => MENU_LOCAL_TASK,
@@ -144,6 +143,79 @@ function stupload_menu(){
 		'access arguments' => array('Workshop Add New College'),
 		'type' => MENU_LOCAL_TASK,
 		'file' => 'upload_olang_video.inc',
+	);
+	// update Tutorials
+	$items['stupload/update_tutorial'] = array(
+		'title' => 'Update Tutorials',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('update_tutorial_prerequest_form'),
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'update_tutorial_prerequest.inc',
+	);
+	$items['stupload/update_index'] = array(
+		'title' => 'Update Tutorials',
+		'page callback' => 'update_index',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'update_index.inc',
+	);
+
+	$items['stupload/update/studyplan'] = array(
+		'title' => 'Upload English Code',
+		'description' => 'Update Studtplan ',
+		'page callback' => 'update_studyplan',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'update_studyplan.inc',
+	);
+	$items['stupload/update/outline'] = array(
+		'title' => 'Upload English Code',
+		'description' => 'Update Studtplan ',
+		'page callback' => 'update_outline',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'update_outline.inc',
+	);
+	$items['stupload/update/script'] = array(
+		'title' => 'Update Script',
+		'description' => 'Update Script',
+		'page callback' => 'update_script',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'update_script.inc',
+	);
+	$items['stupload/update/video'] = array(
+		'title' => 'Update Video',
+		'description' => 'Update Video ',
+		'page callback' => 'update_video',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'update_video.inc',
+	);
+	$items['stupload/update/slide'] = array(
+		'title' => 'Update Slide',
+		'description' => 'Update Slide ',
+		'page callback' => 'update_slide',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'update_slide.inc',
+	);
+	$items['stupload/update/codefile'] = array(
+		'title' => 'Update Codefile',
+		'description' => 'Update Codefile ',
+		'page callback' => 'update_codefile',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'update_codefile.inc',
+	);
+	$items['stupload/update/assignment'] = array(
+		'title' => 'Update Assignment',
+		'description' => 'Update Assignment',
+		'page callback' => 'update_assignment',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'update_assignment.inc',
 	);
 
   return $items;
@@ -240,9 +312,12 @@ function get_category_names(){
 
 // getting tutorial names
 function get_olang_tnames(){
-	if(isset($_POST['level']) && isset($_POST['foss']) && isset($_POST['lang'])){
-
-		$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT tutorial_detail_id FROM tutorial_resources where language='".$_POST['lang']."')";
+	if(isset($_POST['level']) && isset($_POST['foss']) && isset($_POST['lang']) && isset($_POST['flag'])){
+		if($_POST['flag'] == 0){
+			$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT tutorial_detail_id FROM tutorial_resources where language='".$_POST['lang']."')";
+		}else{
+			$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."'";
+		}
 		$result = db_query($query);
 		$output = array();
 		while($row = db_fetch_object($result)){
