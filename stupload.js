@@ -1,6 +1,7 @@
 $(document).ready(function(){
 	webroot = "http://localhost/spoken_tutorial_org/stupload/";
 	loading_image = "<img src='http://localhost/spoken_tutorial_org/ajax-loader.gif' />";
+	wiki_url = "http://www.spoken-tutorial.org/wiki/index.php/";
 	// for add availabel tutorial levels for add tutorial names
 	$('.uptn_tutorial_level').change(function(){
 		foss = $('.uptn_foss_category_name').val();
@@ -107,7 +108,7 @@ $(document).ready(function(){
 	// for script file
 	$('.upeng_script_status').change(function(){
 		path = $('.upeng_script_wiki').val();
-		wiki_data = "<iframe width='100%' height='100%' src='http://www.spoken-tutorial.org/"+path+"'></iframe>";
+		wiki_data = "<iframe width='100%' height='100%' src='"+wiki_url+path+"'></iframe>";
 		if($(this).val() == 0){
 			$('div.wiki-script-file').html(wiki_data);
 		}else if($(this).val() == '' || $(this).val() == 1){
