@@ -11,7 +11,8 @@
 			$result = db_query($query);
 			$tutorial_detail = db_fetch_object($result);
 
-			$wiki_url = 'wiki/index.php/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.$tutorial_detail->language;
+			require_once('path.config.inc');
+			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.$tutorial_detail->language;
 
 			$output = "<div class='wiki-script-file'></div>";
 			$output .= drupal_get_form('upload_olang_script_form', $trid, $wiki_url);

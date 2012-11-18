@@ -21,7 +21,7 @@
 		$form['#suffix'] = '</div>';
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addtutorial-name');
 
-		$form['tutorial_resource_id'] = array(
+		$form['trid'] = array(
 			'#type' => 'hidden',
 			'#title' => t('id'),
 			'#required' => TRUE,
@@ -74,18 +74,18 @@
 		}
 
 
-		$query = "UPDATE tutorial_resources SET tutorial_outline='".$form_state['values']['outline']."' WHERE id='".$form_state['values']['tutorial_resource_id']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_outline='".$form_state['values']['outline']."' WHERE id='".$form_state['values']['trid']."'";
 
 		db_query($query);
 
-		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resource_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'outline')";
+		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'outline')";
 
 		if(db_query($query)){
 			drupal_set_message('Tutorial Outline Updated Successfully');
 		}else {
 			drupal_set_message('Error while Adding Tutorial Outline, Please try again.');
 		}
-		$redirect = 'stupload/upload_other_lang/script/?tr='.$form_state['values']['tutorial_resource_id'];
+		$redirect = 'stupload/upload_other_lang/script/?tr='.$form_state['values']['trid'];
 		drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 
 }

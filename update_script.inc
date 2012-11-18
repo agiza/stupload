@@ -7,10 +7,10 @@
 
 			$result = db_query($query);
 			$tutorial_detail = db_fetch_object($result);
+			require_once('path.config.inc');
+			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.$tutorial_detail->language;
 
-			$wiki_url = 'wiki/index.php/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.$tutorial_detail->language;
-
-			$output = "<div class='wiki-script-file'><iframe width='100%' height='100%' src='http://www.spoken-tutorial.org/".$wiki_url."'></iframe></div>";
+			$output = "<div class='wiki-script-file'><iframe width='100%' height='100%' src='".$wiki_path.$wiki_url."'></iframe></div>";
 			$output .= drupal_get_form('update_script_form', $_POST['trid'], $wiki_url);
 
 			return $output;

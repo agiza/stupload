@@ -64,7 +64,8 @@
 		$tutorial_detail = db_fetch_object($result);
 
 		$video_path = 'st_videos/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/';
-		$path = $GLOBALS['file_upload_path'].$video_path;
+		require_once('path.config.inc');
+		$path = $file_upload_path.$video_path;
 		$file_ext = substr($_FILES['files']['name']['video'], strripos($_FILES['files']['name']['video'], '.'));
 		$file_name = $tutorial_detail->tutorial_name.'-'.$tutorial_detail->language.$file_ext;
 	
