@@ -134,7 +134,7 @@
 		$tutorial_detail_id = $row->id;
 
 		$language = 'English';
-		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `language`, `tutorial_outline`, `tutorial_script`, `tutorial_video`) VALUES (NULL, '".$tutorial_detail_id."', '".$language."', 'pending', 'pending', 'pending')";
+		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `language`, `tutorial_outline`, `tutorial_script`, `tutorial_video`, `tutorial_status`) VALUES (NULL, '".$tutorial_detail_id."', '".$language."', 'pending', 'pending', 'pending', 'pending')";
 		if(db_query($query)){
 			drupal_set_message('New FOSS Category Added Successfully');
 			$query = "select id from tutorial_resources where tutorial_detail_id='".$tutorial_detail_id."' and language='".$language."'";
