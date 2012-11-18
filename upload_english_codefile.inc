@@ -99,7 +99,8 @@
 		$tutorial_details = db_fetch_object($result);
 
 		$codefile_path = 'st_videos/'.$tutorial_details->foss_category.'/'.$tutorial_details->tutorial_level.'/'.$tutorial_details->tutorial_name.'/Resource/';
-		$path = '/var/www/spoken_tutorial_org/sites/default/files/'.$codefile_path;
+		require_once('path.config.inc');
+		$path = $file_upload_path.$codefile_path;
 		$file_ext = substr($_FILES['files']['name']['codefile'], strripos($_FILES['files']['name']['codefile'], '.'));
 		$file_name = $tutorial_details->tutorial_name.'-Codefile-English'.$file_ext;
 		if($_FILES['files']['size']['codefile'] > 0){

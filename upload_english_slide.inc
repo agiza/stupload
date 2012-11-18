@@ -90,7 +90,8 @@
 		$tutorial_details = db_fetch_object($result);
 
 		$video_path = 'st_videos/'.$tutorial_details->foss_category.'/'.$tutorial_details->tutorial_level.'/'.$tutorial_details->tutorial_name.'/Resource/';
-		$path = '/var/www/spoken_tutorial_org/sites/default/files/'.$video_path;
+		require_once('path.config.inc');
+		$path = $file_upload_path.$video_path;
 		$file_ext = substr($_FILES['files']['name']['slide'], strripos($_FILES['files']['name']['slide'], '.'));
 		$file_name = $tutorial_details->tutorial_name.'-Slides-English'.$file_ext;
 

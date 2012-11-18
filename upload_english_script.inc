@@ -17,15 +17,9 @@
 
 			$tutorial_detail = db_fetch_object($result);
 
-
-			$wiki_url = 'wiki/index.php/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English';
-			// $f1 = 'http://www.spoken-tutorial.org/wiki/index.php/'.$wiki_url;
-			// $file_headers = @get_headers($f1);
-			// echo '<pre>';
-			// var_dump($file_headers);
-			// die;
-
-
+			require_once('path.config.inc');
+			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English';
+		
 			$output = "<div class='wiki-script-file'></div>";
 			$output .= drupal_get_form('upload_english_script_form', $tutorial_resourse_id, $wiki_url, $tutorial_detail_id);
 
