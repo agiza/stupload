@@ -17,9 +17,12 @@
 			$content = db_fetch_object($result);
 
 			// check if video exists ot not
+			require_once('path.config.inc');
 
 			if($content->tutorial_video != 'pending' && file_exists($GLOBALS['file_upload_path'].$content->tutorial_video)){
-				$video_url = $content->tutorial_video;
+				//$video_url = $content->tutorial_video;
+				$video_url = "<a href='".$tutorial_path.$content->tutorial_video."' target='_blank' >Accepted</a>";
+
 			}else{
 				$video_url = 'pending';
 			}
@@ -27,7 +30,8 @@
 			// check if slide exists ot not
 
 			if($content->tutorial_slide != 'pending' && file_exists($GLOBALS['file_upload_path'].$content->tutorial_slide)){
-				$slide_url = $content->tutorial_slide;
+				//$slide_url = $content->tutorial_slide;
+				$slide_url = "<a href='".$tutorial_path.$content->tutorial_slide."' target='_blank'>Accepted</a>";
 			}else{
 				$slide_url = 'pending';
 			}
@@ -35,7 +39,8 @@
 			// check if codefile exists ot not
 
 			if($content->tutorial_code != 'pending' && $content->tutorial_code != 'notrequired' && file_exists($GLOBALS['file_upload_path'].$content->tutorial_slide)){
-				$codefile_url = $content->tutorial_code;
+				//$codefile_url = $content->tutorial_code;
+				$codefile_url = "<a href='".$tutorial_path.$content->tutorial_code."' target='_blank'>Accepted</a>";
 			}elseif($content->tutorial_code == 'notrequired'){
 				$codefile_url = 'notrequired';
 			}else{
@@ -44,11 +49,12 @@
 
 			// check if assignment exists ot not
 			if($content->tutorial_assignment != 'pending' && $content->tutorial_assignment != 'notrequired' && file_exists($GLOBALS['file_upload_path'].$content->tutorial_assignment)){
-				$codefile_url = $content->tutorial_assignment;
+				//$codefile_url = $content->tutorial_assignment;
+				$assignment_url = "<a href='".$tutorial_path.$content->tutorial_assignment."' target='_blank'>Accepted</a>";
 			}elseif($content->tutorial_assignment == 'notrequired'){
-				$codefile_url = 'notrequired';
+				$assignment_url = 'notrequired';
 			}else{
-				$codefile_url = 'pending';
+				$assignment_url = 'pending';
 			}
 			
 			
@@ -70,9 +76,9 @@
 
 			$output .= "<tr><td class='title'>Tutorial slide</td><td class='content'>".$slide_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/slide' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
 
-			$output .= "<tr><td class='title'>Tutorial Code</td><td class='content'>".$content->tutorial_code."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/codefile' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
+			$output .= "<tr><td class='title'>Tutorial Code</td><td class='content'>".$codefile_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/codefile' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
 
-			$output .= "<tr><td class='title'>Tutorial Assignment</td><td class='content'>".$content->tutorial_assignment."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/assignment' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
+			$output .= "<tr><td class='title'>Tutorial Assignment</td><td class='content'>".$assignment_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/assignment' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
 
 			$output .= "</table>";
 			$output .= "</div>";
