@@ -37,17 +37,33 @@
 			'#options' => array('' => 'Level', 'D0' => 'D0', 'S1' => 'S1', 'C1' => 'C1', 'C2' => 'C2', 'C3' => 'C3', 'C4' => 'C4', 'C5' => 'C5'),
 			'#attributes' => array('class' => 'uptn_tutorial_level')
 		);
+
+		$form['available_name'] = array(
+			'#type' => 'select',
+			'#validated' => TRUE,
+			'#title' => t('Available names'),
+			'#options' => array('' => 'Select'),
+			'#attributes' => array('class' => 'uptn_tutorial_avnames'),
+			'#prefix' => '<div class="aable-tutorial-name">',
+			'#suffix' => '</div>', 
+		);
+
 		$form['tutorial_name'] = array(
 			'#type' => 'textfield',
 			'#title' => t('Tutorial Name'),
 			'#size' => 30,
 			'#required' => TRUE,
-			'#attributes' => array('class' => 'uptn_tutorial_name')
+			'#validated' => TRUE,
+			'#attributes' => array('class' => 'uptn_tutorial_name'),
+			'#prefix' => '<div class="add-new-tutorial-name">',
+			'#suffix' => '</div>', 
+
 		);
 		$form['tutorial_order_no'] = array(
 			'#type' => 'select',
 			'#title' => t('Tutorial Order Number'),
 			'#required' => TRUE,
+			'#validated' => TRUE,
 			'#options' => $tutorial_order_no,
 			'#attributes' => array('class' => 'uptn_tutorial_order_no'),
 			'#prefix' => '<div class="poll-form">',

@@ -61,12 +61,16 @@
 
 
 			$output = "<div class='stupload-form'>";
+			$output .= "<div class='summery-title-content'>";
+				$output .="<span class='left'>Foss Category</span><span class='right'>: ".$content->foss_category."</span>";
+				$output .="<span class='left'>Tutorial Name</span><span class='right'>: ".$content->tutorial_name."</span>";
+				$output .="<span class='left'>Tutorial Level</span><span class='right'>: ".$content->tutorial_level."</span>";
+				$output .="<span class='left'>Tutorial Language</span><span class='right'>: ".$content->language."</span>";
+			$output .= "</div>";
+
 			$output .= "<table class='upload-index'>";
-			$output .= "<tr><th class='title'>Title</th><th class='content'>Content</th><th class='update'>Update</th></tr>";
-			$output .= "<tr><td class='title'>Foss Category</td><td class='content'>".$content->foss_category."</td><td class='update'></td></tr>";
-			$output .= "<tr><td class='title'>Tutorial Name</td><td class='content'>".$content->tutorial_name."</td><td class='update'></td></tr>";
-			$output .= "<tr><td class='title'>Tutorial Level</td><td class='content'>".$content->tutorial_level."</td><td class='update'></td></tr>";
-			$output .= "<tr><td class='title'>Tutorial Language</td><td class='content'>".$content->language."</td><td class='update'></td></tr>";
+			$output .= "<tr><th class='title'>Title</th><th class='content'>Status</th><th class='update'>Update</th></tr>";
+			
 			$output .= "<tr><td class='title'>Study Plan</td><td class='content'>".$content->order_code."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/studyplan' method='post'><input type='hidden' name='tdid' value='".$content->tdid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
 			$output .= "<tr><td class='title'>Tutorial Outline</td><td class='content'>".$content->tutorial_outline."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/outline' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='outline' value='".$content->tutorial_outline."'><input type='submit' value='Update'></form></td></tr>";
 

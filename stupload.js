@@ -3,6 +3,7 @@ $(document).ready(function(){
 	loading_image = "<img src='http://localhost/spoken_tutorial_org/ajax-loader.gif' />";
 	wiki_url = "http://www.spoken-tutorial.org/wiki/index.php/";
 	// for add availabel tutorial levels for add tutorial names
+	$('.add-new-tutorial-name').css({'display':'none'});
 	$('.uptn_tutorial_level').change(function(){
 		foss = $('.uptn_foss_category_name').val();
 		level = $(this).val();
@@ -15,18 +16,38 @@ $(document).ready(function(){
 			beforeSend: function() {
 			    field_data = $('.poll-form').html();
 			    $('.poll-form').html(loading_image);
+			    name_data = $('.aable-tutorial-name').html();
+			    $('.aable-tutorial-name').html('');
 			},
 			success : function(data){
 				output = JSON.parse(data);
-				var html_data = "<option val=''>Order</option>";
+				var html_data = "<option val=''>Select</option>";
+				var html_data2 = "<option val=''>Select</option><option value=2>Add New</option>";
 				if(output){
 					$('.poll-form').html(field_data);
-					for (var i=0; i < output.length; i++)
+					// add levels
+					for (var i=0; i < output['tlevels'].length; i++)
 					{
-						html_data += "<option value='"+ output[i] +"'>" + output[i] + "</option>";	
+						html_data += "<option value='"+ output['tlevels'][i] +"'>" + output['tlevels'][i] + "</option>";	
 					}
-					console.log(html_data);
 					$('.uptn_tutorial_order_no').html(html_data);
+					$('.aable-tutorial-name').html(name_data);
+					if(output['tnames']){
+						for (var i=0; i < output['tnames'].length; i++)
+						{
+							html_data2 += "<option value='"+ output['tnames'][i] +"'>" + output['tnames'][i] + "</option>";	
+						}
+					}
+					$('.uptn_tutorial_avnames').html(html_data2);
+					//show add new tutorial names
+					$('.uptn_tutorial_avnames').change(function(){
+						if($(this).val() == 2){
+							$('.add-new-tutorial-name').css({'display':'block'});
+						}else{
+							$('.add-new-tutorial-name').css({'display':'none'});
+						}
+					});
+
 				}else{
 					alert('Somthing wrong, Please refresh page');
 				}
