@@ -78,12 +78,26 @@
 
 			$output .= "<tr><td class='title'>Tutorial Video</td><td class='content'>".$video_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/video' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
 
-			$output .= "<tr><td class='title'>Tutorial slide</td><td class='content'>".$slide_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/slide' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
+			$output .= "<tr><td class='title'>Tutorial slide</td><td class='content'>".$slide_url."</td><td class='update'>";
+				if($content->language == 'English'){
+					$output .= "<form action='".$GLOBALS['base_url']."/stupload/update/slide' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
+				}else{
+					$output .= "</td></tr>";
+				}
 
-			$output .= "<tr><td class='title'>Tutorial Code</td><td class='content'>".$codefile_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/codefile' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
+			$output .= "<tr><td class='title'>Tutorial Code</td><td class='content'>".$codefile_url."</td><td class='update'>";
+				if($content->language == 'English'){
+					$output .= "<form action='".$GLOBALS['base_url']."/stupload/update/codefile' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
+				}else{
+					$output .= "</td></tr>";
+				}
 
-			$output .= "<tr><td class='title'>Tutorial Assignment</td><td class='content'>".$assignment_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/assignment' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
-
+			$output .= "<tr><td class='title'>Tutorial Assignment</td><td class='content'>".$assignment_url."</td><td class='update'>";
+				if($content->language == 'English'){
+					$output .= "<form action='".$GLOBALS['base_url']."/stupload/update/assignment' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Update'></form></td></tr>";
+				}else{
+					$output .= "</td></tr>";
+				}
 			$output .= "</table>";
 			$output .= "</div>";
 
