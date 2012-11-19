@@ -1,6 +1,22 @@
 /* .uenglish-name, .uenglish-level{
 	display: none;
 } */
+.stupload-form .summery-title-content {
+  width: 80%;
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+.stupload-form .summery-title-content span.left {
+  width: 30%;
+  float: left;
+  font-weight: bold;
+  padding: 5px 0;
+}
+.stupload-form .summery-title-content span.right {
+  width: 70%;
+  float: left;
+  padding: 5px 0;
+}
 .stupload-form .summery {
   width: 100%;
   overflow: hidden;
@@ -15,19 +31,4 @@
 .stupload-form .summery .right-content {
   width: 60%;
   float: left;
-}
-.stupload-form .summery .summery-title-content {
-  width: 80%;
-  overflow: hidden;
-}
-.stupload-form .summery .summery-title-content span.left {
-  width: 30%;
-  float: left;
-  font-weight: bold;
-  padding: 5px 0;
-}
-.stupload-form .summery .summery-title-content span.right {
-  width: 70%;
-  float: left;
-  padding: 5px 0;
 }
