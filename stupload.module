@@ -35,6 +35,14 @@ function stupload_menu(){
 		'access arguments' => array('Workshop Add New College'),
 		'type' => MENU_NORMAL_ITEM,
 	);
+	// upload english
+	$items['stupload/english_index'] = array(
+		'title' => 'Update Tutorials',
+		'page callback' => 'english_index',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_LOCAL_TASK,
+		'file' => 'add_english_index.inc',
+	);
 	$items['stupload/upload_english'] = array(
 		'title' => 'Upload English',
 		'description' => 'Upload English',

@@ -7,19 +7,6 @@
 
 		$upload_option = array('Reqired' => 'Reqired', 'Not Reqired' => 'Not Reqired', 'Upload Later' => 'Upload Later');
 		$tutorial_name = array('' => 'Tutorial Name');
-		// $outline = array('' => 'Outline');
-		// $video = array('' => 'Video');
-		// $script = array('' => 'Script');
-		// $code_file = array('' => 'Code File');
-		// $slide = array('' => 'Slide');
-		// $assignment = array('' => 'Assignment');
-		// $outline = array_merge($outline, $upload_option);
-		// $video = array_merge($video, $upload_option);
-		// $script = array_merge($script, $upload_option);
-		// $code_file = array_merge($code_file, $upload_option);
-		// $slide = array_merge($slide, $upload_option);
-		// $assignment = array_merge($assignment, $upload_option);
-		// get foss category
 		$query = "select * from foss_categories";
 		$result = db_query($query);
 		$foss_category = array('' => 'FOSS category');
@@ -58,46 +45,7 @@
 			'#prefix' => '<div class="uenglish-name">',
 			'#suffix' => '</div></div></div>', 
 		);
-		/* $form['outline'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $outline,
-			'#attributes' => array('class' => 'upeng_outline'),
-			'#prefix' => '<div class="uenglish-outline-video-script">',
-		);
-		$form['video'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $video,
-			'#attributes' => array('class' => 'upeng_video')
-		);
-		$form['script'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $script,
-			'#attributes' => array('class' => 'upeng_script'),
-			'#suffix' => '</div>'
-		);
-		$form['code_file'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $code_file,
-			'#attributes' => array('class' => 'upeng_code_file'),
-			'#prefix' => '<div class="uenglish-code-slide-assignment">',
-		);
-		$form['slide'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $slide,
-			'#attributes' => array('class' => 'upeng_slide')
-		);
-		$form['assignment'] = array(
-			'#type' => 'select',
-			'#required' => TRUE,
-			'#options' => $assignment,
-			'#attributes' => array('class' => 'upeng_assignment'),
-			'#suffix' => '</div>'
-		); */
+		
 		$form['submit'] = array(
 			'#type' => 'submit',
 			'#value' => t('Submit')
@@ -134,15 +82,27 @@
 		$tutorial_detail_id = $row->id;
 
 		$language = 'English';
-		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `language`, `tutorial_outline`, `tutorial_script`, `tutorial_video`, `tutorial_status`) VALUES (NULL, '".$tutorial_detail_id."', '".$language."', 'pending', 'pending', 'pending', 'pending')";
+		
+		// // insert into common data table
+		$query = "INSERT INTO `tutorial_common_contents` (`id`, `tutorial_detail_id`, `tutorial_slide`, `tutorial_code`, `tutorial_assignment`) VALUES (NULL, '".$tutorial_detail_id."', 'pending' , 'pending', 'pending')";
+
+		db_query($query);
+
+		$query = "SELECT id FROM tutorial_common_contents WHERE tutorial_detail_id='".$tutorial_detail_id."'";
+
+		$result = db_query($query);
+
+		$common_content = db_fetch_object($result); 
+
+		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `language`, `tutorial_content_id`, `tutorial_outline`, `tutorial_script`, `tutorial_video`, `tutorial_status`) VALUES (NULL, '".$tutorial_detail_id."', '".$language."', '".$common_content->id."', 'pending', 'pending', 'pending', 'pending')";
+		
+
 		if(db_query($query)){
 			drupal_set_message('New FOSS Category Added Successfully');
 			$query = "select id from tutorial_resources where tutorial_detail_id='".$tutorial_detail_id."' and language='".$language."'";
 			$result = db_query($query);
 			$row = db_fetch_object($result);
-			$redirect = 'stupload/upload_english/outline/?'.$row->id.'='.$tutorial_detail_id;
-			var_dump($redirect);
-			//die;
+			$redirect = 'stupload/english_index/?tr='.$row->id;
 			drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
 			drupal_set_message('Error while Adding Foss Category, Please try again.');
