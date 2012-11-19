@@ -235,14 +235,14 @@ function index(){
 
 	$output = '<h2>Upload Options</h2>';
 	$output .= "<div class='upload-index-page list-link'>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a><br>";
-	$output .= "<a class='tutorial' href='".$GLOBALS['base_path']."stupload/tutorial'> Add Tutorial Name</a><br>";
-	$output .= "<a class='upload-english' href='".$GLOBALS['base_path']."stupload/upload_english'> Upload English</a><br>";
-	$output .= "<a class='update_tutorial' href='".$GLOBALS['base_path']."stupload/update_tutorial'> Add FOSS</a>";
-	//$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a>";
-	//$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a>";
-	//$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a>";
-	//$output .= "<a class='addfoss' href='".$GLOBALS['base_path']."stupload/addfoss'> Add FOSS</a>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add FOSS</a><br>";
+	$output .= "<a class='tutorial' href='".$GLOBALS['base_url']."/stupload/tutorial'> Add Tutorial Name</a><br>";
+	$output .= "<a class='upload-english' href='".$GLOBALS['base_url']."/stupload/upload_english'> Upload English</a><br>";
+	$output .= "<a class='update_tutorial' href='".$GLOBALS['base_url']."/stupload/update_tutorial'>Update Tutorial</a><br>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/upload_other_lang'> Upload Other Languages</a>";
+	//$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add FOSS</a>";
+	//$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add FOSS</a>";
+	//$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add FOSS</a>";
 	$output .= "</div>";
 	return $output;
 }

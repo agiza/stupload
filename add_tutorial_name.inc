@@ -68,7 +68,7 @@
 		if (!preg_match('/^[a-zA-Z-]+$/', $form_state['values']['tutorial_name'])){
 			form_set_error('tutorial_nam', t('Invalid Name, Please use a-z, A-Z, - Only'));
 		}else{
-			$query = "select tutorial_name from tutorial_details where foss_category_id='".$form_state['values']['foss_category']."' and tutorial_level='".$form_state['values']['tutorial_level']."' and tutorial_name='".$form_state['values']['tutorial_name']."'";
+			$query = "select tutorial_name from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_level='".$form_state['values']['tutorial_level']."' and tutorial_name='".$form_state['values']['tutorial_name']."'";
 			//echo $query;
 			//die;
 			$result = db_query($query);
@@ -84,9 +84,10 @@
 	function add_tutorial_name_form_submit($form, &$form_state){
 	
 		// create Directory
+		require_once('path.config.inc');
 		if (isset($form_state['values']['foss_category']) && isset($form_state['values']['tutorial_level']) && isset($form_state['values']['tutorial_name'])){
 			$name = $form_state['values']['foss_category'].'/'.$form_state['values']['tutorial_level'].'/'.$form_state['values']['tutorial_name'].'/'.Resource;
-		    mkdir ('/var/www/spoken_tutorial_org/sites/default/files/st_videos/'.$name, 0777,true);
+		    mkdir ($file_upload_path.'st_videos/'.$name, 0777,true);
 		    drupal_set_message('Directories created Successfully');
 		}
 			//mkdir ('/var/www/spoken_tutorial_org/sites/default/files/st_videos/'.$name, 0777,true);

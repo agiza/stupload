@@ -19,7 +19,7 @@
 			// check if video exists ot not
 			require_once('path.config.inc');
 
-			if($content->tutorial_video != 'pending' && file_exists($GLOBALS['file_upload_path'].$content->tutorial_video)){
+			if($content->tutorial_video != 'pending' && file_exists($file_upload_path.$content->tutorial_video)){
 				//$video_url = $content->tutorial_video;
 				$video_url = "<a href='".$tutorial_path.$content->tutorial_video."' target='_blank' >Accepted</a>";
 
@@ -29,7 +29,7 @@
 
 			// check if slide exists ot not
 
-			if($content->tutorial_slide != 'pending' && file_exists($GLOBALS['file_upload_path'].$content->tutorial_slide)){
+			if($content->tutorial_slide != 'pending' && file_exists($file_upload_path.$content->tutorial_slide)){
 				//$slide_url = $content->tutorial_slide;
 				$slide_url = "<a href='".$tutorial_path.$content->tutorial_slide."' target='_blank'>Accepted</a>";
 			}else{
@@ -38,7 +38,7 @@
 
 			// check if codefile exists ot not
 
-			if($content->tutorial_code != 'pending' && $content->tutorial_code != 'notrequired' && file_exists($GLOBALS['file_upload_path'].$content->tutorial_slide)){
+			if($content->tutorial_code != 'pending' && $content->tutorial_code != 'notrequired' && file_exists($file_upload_path.$content->tutorial_slide)){
 				//$codefile_url = $content->tutorial_code;
 				$codefile_url = "<a href='".$tutorial_path.$content->tutorial_code."' target='_blank'>Accepted</a>";
 			}elseif($content->tutorial_code == 'notrequired'){
@@ -48,7 +48,7 @@
 			}
 
 			// check if assignment exists ot not
-			if($content->tutorial_assignment != 'pending' && $content->tutorial_assignment != 'notrequired' && file_exists($GLOBALS['file_upload_path'].$content->tutorial_assignment)){
+			if($content->tutorial_assignment != 'pending' && $content->tutorial_assignment != 'notrequired' && file_exists($file_upload_path.$content->tutorial_assignment)){
 				//$codefile_url = $content->tutorial_assignment;
 				$assignment_url = "<a href='".$tutorial_path.$content->tutorial_assignment."' target='_blank'>Accepted</a>";
 			}elseif($content->tutorial_assignment == 'notrequired'){
