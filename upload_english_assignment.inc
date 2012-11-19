@@ -38,7 +38,7 @@
 			'#value' => $tutorial_content_id,
 		);
 
-		$form['tutorial_resourse_id'] = array(
+		$form['trid'] = array(
 			'#type' => 'hidden',
 			'#value' => $tutorial_resourse_id,
 		);
@@ -78,9 +78,9 @@
 			}else{
 				$file_ext = substr($_FILES['files']['name']['assignment'], strripos($_FILES['files']['name']['assignment'], '.')); // get file name
 				$filesize = $_FILES['files']['size']['assignment'];
-				$allowed_file_types = array('.zip', '.txt', '.pdf');
+				$allowed_file_types = array('.txt', '.pdf');
 				if (!in_array($file_ext,$allowed_file_types)  &&  ($filesize < 80000000)) {
-					form_set_error('assignment', t('Please select proper file. txt, pdf and zip files only allowed.'));
+					form_set_error('assignment', t('Please select proper file. txt and pdf files only allowed.'));
 				}
 			}
 		}
@@ -125,18 +125,17 @@
 		db_query($query);
 
 		// to track uploader 
-		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resourse_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'assignment')";
+		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'assignment')";
 
 
 		if(db_query($query)){
 			drupal_set_message('Tutorial Slide Updated Successfully');
+			$redirect = 'stupload/upload/summary/?tr='.$form_state['values']['trid'];
+			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+
 		}else {
 			drupal_set_message('Error while Adding Tutorial Slide, Please try again.');
 		}
-		#$redirect = 'stupload/upload_english/assignment/?tutorial_content_id='.$form_state['values']['tutorial_content_id'].'&tutorial_resources='.$form_state['values']['tutorial_resourse_id'].'&tutorial_detail_id='.$form_state['values']['tutorial_detail_id'];
-
-		drupal_goto($path = 'stupload/list', $query=NULL, $fragment = NULL, $http_response_code = 302);
-
 }
 
 ?>

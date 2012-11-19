@@ -25,7 +25,7 @@
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addfoss');
 
 		
-		$form['tutorial_resource_id'] = array(
+		$form['trid'] = array(
 			'#type' => 'hidden',
 			'#value' => $trid,
 		);
@@ -76,7 +76,7 @@
 
 
 		// select Tutorial categoty
-		$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['tutorial_resource_id']."'";
+		$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
 
 		$result = db_query($query);
 		$tutorial_detail = db_fetch_object($result);
@@ -104,23 +104,22 @@
 
 		// insert into common data table
 
-		$query = "UPDATE tutorial_resources SET tutorial_video='".$tutorial_video."' WHERE id='".$form_state['values']['tutorial_resource_id']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_video='".$tutorial_video."' WHERE id='".$form_state['values']['trid']."'";
 
 
 		db_query($query);
 
 		// to track uploader 
 
-		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resourse_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
+		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
 
 		if(db_query($query)){
 			drupal_set_message('Tutorial Video Updated Successfully');
+			$redirect = 'stupload/upload/summary/?tr='.$form_state['values']['trid'];
+			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
 			drupal_set_message('Error while Adding Tutorial Video, Please try again.');
 		}
-		$redirect = 'stupload/list';
-
-		drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 
 }
 
