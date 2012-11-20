@@ -1,6 +1,21 @@
 <?php
 
-function list_tutorials_form($form_state){
+function list_tutorials(){
+
+	$file_ext = substr($_REQUEST['q'], strripos($_REQUEST['q'], '/'));
+	$name = str_replace('/', '', $file_ext);
+	var_dump($name);
+	if($name == 'review_tutorial_lists'){
+		$flag = '0';
+	}else{
+		$flag = '1';
+	}
+	$output = drupal_get_form('list_tutorials_form', $flag);
+	return $output;
+
+}
+
+function list_tutorials_form($form_state, $flag){
 	global $user;
 	
 	$path = drupal_get_path('module', 'stupload');
@@ -16,6 +31,11 @@ function list_tutorials_form($form_state){
 	}
 	
 	$form['#attributes'] = array('enctype' => "multipart/form-data");
+	$form['flag'] = array(
+		'#type' => 'hidden',
+		'#value' => $flag,
+		'#attributes' => array('class' => 'flag')
+	);
 	$form['foss_category'] = array(
 		'#type' => 'select',
 		'#title' => t(''),
