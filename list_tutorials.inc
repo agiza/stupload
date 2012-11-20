@@ -49,7 +49,7 @@ function list_tutorials_form($form_state, $flag){
 	$lang = array();
 	$lang[''] = "Select Language";
 	$lang['English'] = "English";
-	$lang['English-Timed'] = "English-Timed";
+	$lang['English-timed'] = "English-timed";
 	while($row = db_fetch_object($result)){
 		$lang[$row->name] = $row->name;
 	}

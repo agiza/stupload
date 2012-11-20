@@ -30,7 +30,7 @@ function update_tutorial_search_form($form_state){
 	$lang = array();
 	$lang[''] = "Select Language";
 	$lang['English'] = "English";
-	$lang['English-Timed'] = "English-Timed";
+	$lang['English-timed'] = "English-timed";
 	while($row = db_fetch_object($result)){
 		$lang[$row->name] = $row->name;
 	}
