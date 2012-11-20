@@ -27,7 +27,7 @@
 		);
 		$form['tutorial_level'] = array(
 			'#type' => 'select',
-			'#title' => t('Tutorial Leval'),
+			'#title' => t('Tutorial Level'),
 			'#required' => TRUE,
 			'#validated' => TRUE,
 			'#options' => array(''=> 'Level'),
