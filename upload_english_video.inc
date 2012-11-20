@@ -1,20 +1,9 @@
 <?php
-	function upload_english_video($params) {
-		if($params){
-			$params_data = parse_url($params);
+	function upload_english_video() {
+		
+		if($_REQUEST['trid']){
 
-			$data = explode('&', $params_data['query']);
-			$tutorial_content = explode('=', $data[0]);
-			$tutorial_content_id = $tutorial_content[1];
-
-			$tutorial_resourse = explode('=', $data[1]);
-			$tutorial_resourse_id = $tutorial_resourse[1];
-
-			$tutorial_detail = explode('=', $data[2]);
-			$tutorial_detail_id = $tutorial_detail[1];
-
-
-			$output .= drupal_get_form('upload_english_video_form', $tutorial_content_id, $tutorial_resourse_id, $tutorial_detail_id);
+			$output .= drupal_get_form('upload_english_video_form', $_REQUEST['trid']);
 			return $output;
 		}else{
 			$output = "<p>Something went wrong. Please, try again.</p>";
@@ -24,7 +13,7 @@
 	}
 
 
-	function upload_english_video_form($form_state, $tutorial_content_id, $tutorial_resourse_id, $tutorial_detail_id) {
+	function upload_english_video_form($form_state, $trid) {
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -32,18 +21,9 @@
 		$form['#suffix'] = '</div>';
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addfoss');
 
-		$form['tutorial_content_id'] = array(
+		$form['trid'] = array(
 			'#type' => 'hidden',
-			'#value' => $tutorial_content_id,
-		);
-
-		$form['tutorial_resourse_id'] = array(
-			'#type' => 'hidden',
-			'#value' => $tutorial_resourse_id,
-		);
-		$form['tutorial_detail_id'] = array(
-			'#type' => 'hidden',
-			'#value' => $tutorial_detail_id,
+			'#value' => $trid,
 		);
 
 		$form['video_status'] = array(
@@ -89,19 +69,17 @@
 	
 	function upload_english_video_form_submit($form, &$form_state){
 
+		$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
 
-
-		// select Tutorial categoty
-		$query = "SELECT * FROM tutorial_details WHERE id='".$form_state['values']['tutorial_detail_id']."'";
 		$result = db_query($query);
+		$tutorial_detail = db_fetch_object($result);
 
-		$tutorial_details = db_fetch_object($result);
-
-		$video_path = 'st_videos/'.$tutorial_details->foss_category.'/'.$tutorial_details->tutorial_level.'/'.$tutorial_details->tutorial_name.'/';
+		$video_path = 'st_videos/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/';
 		require_once('path.config.inc');
+
 		$path = $file_upload_path.$video_path;
 		$file_ext = substr($_FILES['files']['name']['video'], strripos($_FILES['files']['name']['video'], '.'));
-		$file_name = $tutorial_details->tutorial_name.'-English'.$file_ext;
+		$file_name = $tutorial_detail->tutorial_name.'-English'.$file_ext;
 
 		if($_FILES['files']['size']['video'] > 0){
 			move_uploaded_file($_FILES['files']['tmp_name']['video'], $path.$file_name);
@@ -117,23 +95,22 @@
 
 		// insert into common data table
 
-		$query = "UPDATE tutorial_resources SET tutorial_video='".$tutorial_slide."' WHERE id='".$form_state['values']['tutorial_resourse_id']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_video='".$tutorial_slide."' WHERE id='".$form_state['values']['trid']."'";
 
 
 		db_query($query);
 
 		// to track uploader 
 
-		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resourse_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
+		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
 
 		if(db_query($query)){
 			drupal_set_message('Tutorial Video Updated Successfully');
+			$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
+			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
 			drupal_set_message('Error while Adding Tutorial Video, Please try again.');
 		}
-		$redirect = 'stupload/upload_english/codefile/?tutorial_content_id='.$form_state['values']['tutorial_content_id'].'&tutorial_resources='.$form_state['values']['tutorial_resourse_id'].'&tutorial_detail_id='.$form_state['values']['tutorial_detail_id'];
-
-		drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 
 }
 

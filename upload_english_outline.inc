@@ -1,9 +1,8 @@
 <?php
-	function upload_english_outline($params) {
-		if($params){
-			$data = parse_url($params);
-			$params = explode('=', $data['query']);
-			$output = drupal_get_form('upload_english_outline_form', $params[0], $params[1]);
+	function upload_english_outline() {
+
+		if($_REQUEST['trid']){			
+			$output = drupal_get_form('upload_english_outline_form', $_REQUEST['trid']);
 			return $output;
 		}else{
 			$output = "<p>Somthing went wrong. Please, try again.</p>";
@@ -11,7 +10,7 @@
 		}
 		
 	}
-	function upload_english_outline_form($form_state, $trid, $tdid) {
+	function upload_english_outline_form($form_state, $trid) {
 		
 		// add js file 
 		$path = drupal_get_path('module', 'stupload');
@@ -21,20 +20,13 @@
 		$form['#suffix'] = '</div>';
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addtutorial-name');
 
-		$form['tutorial_resource_id'] = array(
+		$form['trid'] = array(
 			'#type' => 'hidden',
 			'#title' => t('id'),
 			'#required' => TRUE,
-			'#value' => $trid,
-			//'#attributes' => array('class' => 'uptn_outline', '')
+			'#value' => $trid
 		);
-		$form['tutorial_detail_id'] = array(
-			'#type' => 'hidden',
-			'#title' => t('id'),
-			'#required' => TRUE,
-			'#value' => $tdid,
-			//'#attributes' => array('class' => 'uptn_outline', '')
-		);
+
 		$form['outline_status'] = array(
 			'#type' => 'select',
 			'#title' => t('Outline Status'),
@@ -80,22 +72,19 @@
 			$tutorial_outline = 'pending';
 		}
 
-
-		//$query = "UPDATE tutorial_resources SET tutorial_content_id='".$row->id."' WHERE id='".$form_state['values']['tutorial_resource_id']."'";
-
-		$query = "UPDATE tutorial_resources SET tutorial_outline='".$form_state['values']['outline']."' WHERE id='".$form_state['values']['tutorial_resource_id']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_outline='".$form_state['values']['outline']."' WHERE id='".$form_state['values']['trid']."'";
 
 		db_query($query);
 
-		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resource_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'outline')";
+		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'outline')";
 
 		if(db_query($query)){
 			drupal_set_message('Tutorial Outline Updated Successfully');
+			$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
+			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
 			drupal_set_message('Error while Adding Tutorial Outline, Please try again.');
 		}
-		$redirect = 'stupload/upload_english/script/?tutorial_resources='.$form_state['values']['tutorial_resource_id'].'&tutorial_detail_id='.$form_state['values']['tutorial_detail_id'];
-		drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 
 }
 

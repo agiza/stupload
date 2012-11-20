@@ -102,7 +102,7 @@
 					if(file_exists($path.$bac_file_name)){
 						rename($path.$bac_file_name, $path.$file_name);
 					}
-					drupal_set_message('Error while Adding Updating Codefile, Please try again.');
+					drupal_set_message('Error while Updating Codefile, Please try again.');
 				}
 			}else{
 				drupal_set_message('Error while Updating Codefile, Please try again..');
