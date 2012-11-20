@@ -1,8 +1,8 @@
 
 $(document).ready(function(){
 	
-	webroot = "http://localhost/spoken_tutorial_org/stupload/";
-	loading_image = "<img src='http://localhost/spoken_tutorial_org/ajax-loader.gif' />";
+	webroot = "http://localhost/tester/stupload/";
+	loading_image = "<img src='http://localhost/tester/ajax-loader.gif' />";
 
 	$('.search').click(function(){
 		var foss = $('.foss_category').val();

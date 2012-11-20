@@ -1,4 +1,6 @@
 ; $Id$
+; Auther Sanmugasundaram k
+; Email - k.sanmugam2@gmail.com
 name = "STUpload"
 description = "This is the module used to upload Spoken Tutorial videos"
 core = 6.x

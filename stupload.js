@@ -1,6 +1,6 @@
 $(document).ready(function(){
-	webroot = "http://localhost/spoken_tutorial_org/stupload/";
-	loading_image = "<img src='http://localhost/spoken_tutorial_org/ajax-loader.gif' />";
+	webroot = "http://localhost/tester/stupload/";
+	loading_image = "<img src='http://localhost/tester/ajax-loader.gif' />";
 	wiki_url = "http://www.spoken-tutorial.org/wiki/index.php/";
 	// for add availabel tutorial levels for add tutorial names
 	$('.add-new-tutorial-name').css({'display':'none'});
