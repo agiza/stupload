@@ -1,17 +1,9 @@
 <?php
-	function upload_english_script($params) {
-		if($params){
-			$params_data = parse_url($params);
+	function upload_english_script() {
 
-			$data = explode('&', $params_data['query']);
+		if($_REQUEST['trid']){
 
-			$tutorial_resourse = explode('=', $data[0]);
-			$tutorial_resourse_id = $tutorial_resourse[1];
-
-			$tutorial_detail = explode('=', $data[1]);
-			$tutorial_detail_id = $tutorial_detail[1];
-
-			$query = "SELECT * FROM `tutorial_details` WHERE id='".$tutorial_detail_id."'";
+			$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$_REQUEST['trid']."'";
 
 			$result = db_query($query);
 
@@ -21,7 +13,7 @@
 			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English';
 		
 			$output = "<div class='wiki-script-file'></div>";
-			$output .= drupal_get_form('upload_english_script_form', $tutorial_resourse_id, $wiki_url, $tutorial_detail_id);
+			$output .= drupal_get_form('upload_english_script_form', $_REQUEST['trid'], $wiki_url);
 
 			return $output;
 		}else{
@@ -33,7 +25,7 @@
 	}
 
 
-	function upload_english_script_form($form_state, $tutorial_resourse_id, $wiki_url, $tutorial_detail_id) {
+	function upload_english_script_form($form_state, $trid, $wiki_url) {
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -48,13 +40,9 @@
 			'#attributes' => array('class' => 'upeng_script_wiki'),
 		);
 
-		$form['tutorial_resourse_id'] = array(
+		$form['trid'] = array(
 			'#type' => 'hidden',
-			'#value' => $tutorial_resourse_id,
-		);
-		$form['tutorial_detail_id'] = array(
-			'#type' => 'hidden',
-			'#value' => $tutorial_detail_id,
+			'#value' => $trid,
 		);
 
 		$form['script_status'] = array(
@@ -82,30 +70,24 @@
 	function upload_english_script_form_submit($form, &$form_state){
 		
 		global $user;
-		$tutorial_outline = $form_state['values']['wiki_url'];
+		$tutorial_script = $form_state['values']['wiki_url'];
 		if($form_state['values']['script_status'] == 1){
-			$tutorial_outline = 'pending';
+			$tutorial_script = 'pending';
 		}
+		$query = "UPDATE tutorial_resources SET tutorial_script='".$tutorial_script."' where id='".$form_state['values']['trid']."'";
 
+		db_query($query);		
 
-		$query = "UPDATE tutorial_resources SET tutorial_script='".$form_state['values']['wiki_url']."' where id='".$form_state['values']['tutorial_resourse_id']."'";
-
-
-		db_query($query);
-		
-
-		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resourse_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'script')";
+		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'script')";
 
 
 		if(db_query($query)){
 			drupal_set_message('Tutorial script Updated Successfully');
+			$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
+			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
 			drupal_set_message('Error while Adding Tutorial Script, Please try again.');
 		}
-		$redirect = 'stupload/upload_english/slide/?tutorial_resources='.$form_state['values']['tutorial_resourse_id'].'&tutorial_detail_id='.$form_state['values']['tutorial_detail_id'];
-
-		drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
-
 }
 
 ?>
