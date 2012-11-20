@@ -332,6 +332,7 @@ function index(){
 	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/upload_other_lang'> Upload Other Languages</a><br>";
 	$output .= "<a class='log' href='".$GLOBALS['base_url']."/stupload/view_logs_list'>Upload Log</a><br>";
 	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/view_tutorials_list'>View Tutorial List</a><br>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/review_tutorial_lists'>Review Tutorial List</a><br>";
 	$output .= "</div>";
 	return $output;
 }
