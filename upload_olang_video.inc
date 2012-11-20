@@ -1,10 +1,8 @@
 <?php
-	function upload_olang_video($params) {
-		if($params){
-			$params = parse_url($params);
-			$tr_data = explode('=', $params['query']);
+	function upload_olang_video() {
+		if($_REQUEST['trid']){
 
-			$trid = $tr_data[1];
+			$trid = $_REQUEST['trid'];
 
 			$output .= drupal_get_form('upload_olang_video_form', $trid);
 			return $output;
@@ -115,7 +113,7 @@
 
 		if(db_query($query)){
 			drupal_set_message('Tutorial Video Updated Successfully');
-			$redirect = 'stupload/upload/summary/?tr='.$form_state['values']['trid'];
+			$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
 			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
 			drupal_set_message('Error while Adding Tutorial Video, Please try again.');

@@ -1,19 +1,17 @@
 <?php
-	function upload_olang_script($params) {
+	function upload_olang_script() {
 
-		if($params){
-			$params = parse_url($params);
-			$tr_data = explode('=', $params['query']);
-
-			$trid = $tr_data[1];
+		if($_REQUEST['trid']){
+			$trid = $_REQUEST['trid'];
 			$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$trid."'";
 
 			$result = db_query($query);
+
 			$tutorial_detail = db_fetch_object($result);
 
 			require_once('path.config.inc');
-			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.$tutorial_detail->language;
-
+			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English';
+		
 			$output = "<div class='wiki-script-file'></div>";
 			$output .= drupal_get_form('upload_olang_script_form', $trid, $wiki_url);
 
@@ -43,7 +41,7 @@
 			'#attributes' => array('class' => 'upeng_script_wiki'),
 		);
 
-		$form['tutorial_resourse_id'] = array(
+		$form['trid'] = array(
 			'#type' => 'hidden',
 			'#value' => $trid,
 		);
@@ -79,13 +77,13 @@
 		}
 
 
-		$query = "UPDATE tutorial_resources SET tutorial_script='".$form_state['values']['wiki_url']."' where id='".$form_state['values']['tutorial_resourse_id']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_script='".$form_state['values']['wiki_url']."' where id='".$form_state['values']['trid']."'";
 
 
 		db_query($query);
 		
 
-		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resourse_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'script')";
+		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'script')";
 
 
 		if(db_query($query)){
@@ -93,7 +91,7 @@
 		}else {
 			drupal_set_message('Error while Adding Tutorial Script, Please try again.');
 		}
-		$redirect = 'stupload/upload_other_lang/video/?tr='.$form_state['values']['tutorial_resourse_id'];
+		$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
 
 		drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 
