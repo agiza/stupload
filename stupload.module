@@ -1,7 +1,7 @@
 <?php
 
 function stupload_perm() {
-	return array('Workshop Add New College');
+	return array('Workshop Add New College', 'workshop stupload-view details', 'resource not available');
 }
 
 function stupload_menu(){
@@ -233,7 +233,71 @@ function stupload_menu(){
 		'type' => MENU_LOCAL_TASK,
 		'file' => 'update_assignment.inc',
 	);
-
+	//stupload-view by vishnu
+	
+	$items['stupload/view_logs_list'] = array(
+		'title' => 'Complete List Of Upload Log',
+		'description' => 'Complete List Of Upload Log',
+		'page callback' => 'view_logs_list',
+		'access arguments' => array('workshop stupload-view details'),
+		'file' => 'view_logs_list.inc',
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['stupload/view_tutorials_list'] = array(
+		'title' => 'Complete List Of Tutorials',
+		'description' => 'List Of ST Videos',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('list_tutorials_form'),
+		'access arguments' => array('workshop stupload-view details'),
+		'file' => 'list_tutorials.inc',
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['stupload/update_tutorial_search'] = array(
+		'title' => 'Update Pending Tutorial Submissions',
+		'description' => 'List Of Pending Tutorial Submissions',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('update_tutorial_search_form'),
+		'access arguments' => array('workshop stupload-view details'),
+		'file' => 'update_tutorial_search.inc',
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['stupload/get_tutorials_list'] = array(
+		'title' => 'Complete List Of Tutorials',
+		'description' => 'List Of ST Videos',
+		'page callback' => 'get_tutorials_list',
+		'access arguments' => array('workshop stupload-view details'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['stupload/get_update_tutorial_search'] = array(
+		'title' => 'Update Pending Tutorial Submissions',
+		'description' => 'List Of Pending Tutorial Submissions',
+		'page callback' => 'get_update_tutorial_search',
+		'access arguments' => array('workshop stupload-view details'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['resource_not_available'] = array(
+		'title' => 'Resource Not Available',
+		'description' => 'Resource Not Available',
+		'page callback' => 'get_resource_not_available',
+		'access arguments' => array('resource not available'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['resource_not_required'] = array(
+		'title' => 'Resource Not Required',
+		'description' => 'Resource Not Required',
+		'page callback' => 'get_resource_not_required',
+		'access arguments' => array('resource not available'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['stupload/play_video'] = array(
+		'title' => 'Spoken Tutorial Learners Interface',
+		'description' => 'Play selected video',
+		'page callback' => 'play_video',
+		'access arguments' => array('workshop stupload-view details'),
+		'file' => 'play_video.inc',
+		'type' => MENU_NORMAL_ITEM,
+	);
+	
   return $items;
 }
 
@@ -377,14 +441,267 @@ function read_ziparchive($file_path){
 
 }
 
-function get_file_extension($name){
-
+function get_tutorials_list(){
+	if(isset($_POST['foss']) && isset($_POST['lang'])){
+		$query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$_POST['lang']."' and td.foss_category='".$_POST['foss']."' order by td.order_code ASC";
+		$result = db_query($query);
+		$rows = array();
+		$index = 0;
+		while($r = db_fetch_object($result)) { 
+			$rows[$index++] = $r;
+		}
+		echo json_encode($rows);
+		exit;
+	}else{
+		echo json_encode('false');
+	}
 }
 
-function get_file_name($name){
-	return str_replace('/', '', substr($name, strripos($name, '/')));
+function get_update_tutorial_search(){
+	if(isset($_POST['foss']) && isset($_POST['lang'])){
+		$query = "select tr.id as trid, tr.language, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_video, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tc.tutorial_slide, tc.tutorial_code, tc.tutorial_assignment from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$_POST['lang']."' and td.foss_category='".$_POST['foss']."' order by td.order_code ASC";
+		$result = db_query($query);
+		$rows = array();
+		$index = 0;
+		while($r = db_fetch_object($result)) { 
+			$rows[$index++] = $r;
+		}
+		echo json_encode($rows);
+		exit;
+	}else{
+		echo json_encode('false');
+	}
 }
 
+function get_resource_not_required(){
+	echo '<html>
+			<head>
+				<meta name="author" content="Spoken Tutorials (www.spoken-tutorials.org)">
+				<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+				<link rel="stylesheet" href="drupst2nreq.php_files/style.css" type="text/css">
+				<title>Complete List of Spoken Tutorials</title>
+		
+				<style type="text/css">
+					td {font-family: tahoma, arial, verdana; font-size: 8pt }
+					th {font-family:tahoma, arial, verdana; font-size:9pt}
+				</style>
+			</head>
+			<body>
+				<form method="POST" action="drupst2.php" id="stform" name="stform">
+					<script type="text/javascript">
+						//Disable right click script
+						var message="Sorry, right-click has been disabled";
+		
+						function clickIE() {if (document.all) {(message);return false;}}
+						function clickNS(e) {
+						if(document.layers||(document.getElementById&&!document.all)){if (e.which==2||e.which==3) {(message);return false;}}}
+						if (document.layers){document.captureEvents(Event.MOUSEDOWN);document.onmousedown=clickNS;}
+						else{document.onmouseup=clickNS;document.oncontextmenu=clickIE;}
+						document.oncontextmenu=new Function("return false");
+		
+						function setOptions(chosen) {
+							var theContents = document.getElementById("foss1")[document.getElementById("foss1").selectedIndex].innerHTML;
+							document.getElementById("fossdata").value = theContents;
+							document.getElementById("fossid").value = theContents;
+							document.rbid.insht.value = theContents;
+						}
+		
+						function setOptions3(chosen) {
+							var theContenta = document.getElementById("lang")[document.getElementById("lang").selectedIndex].innerHTML;
+							document.getElementById("language").value = theContenta;
+							document.getElementById("fossid").value = theContenta;
+						}
+		
+						function GetSelectedItem() {
+							len = document.stform.radioid.length;
+							document.rbid.radiovalue.value=document.getElementById("fid").value;
+		
+							for (i = 0; i <len; i++) {
+								if (document.stform.radioid[i].checked) {
+									chosen = document.stform.radioid[i].value;
+								}
+							}
+		
+							if(chosen =="") {
+								alert("Please select a Tutorial to watch");
+							}
+							else
+							{
+								document.rbid.radiovalue.value=chosen;
+								document.rbid.insht.value=document.stform.fossdata.value;
+							}
+						}
+		
+						function showInstrsheet(){
+		
+							if(document.stform.fossdata.value =="")
+						  {
+								window.alert("Please select FOSS category to view instruction sheet");window.self;
+							}
+							else
+							{
+								inswindow=window.open(inks,"InstructionSheet","width=610 height=50 resizable=no scrollbars=no");
+								inswindow.moveTo(350,300);
+							}
+						}
+					</script>
+		
+					<center>
+						<br>
+						<p>
+							<table bgcolor="#D2691E" width="600">
+								<tbody>
+									<tr>
+										<td>
+											<b>
+												<font color="white" face="arial" size="2">
+													<center>
+														Resource Not Required<br><br>
+														This resource is not required to complete this tutorial.<br>
+														You can continue watching rest of the tutorials. 
+														Please use the search feature to watch several other interesting tutorials. 
+													</center>
+												</font>
+											</b>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</p>
+						<br>
+						<table height="5" bgcolor="lightgrey" width="600" border="0">
+							<tbody>
+								<tr>
+									<td>
+										<center>
+											© 2011 | <a href="http://www.spoken-tutorial.org/" target="_blank">Spoken Tutorial.org</a><br>
+											<b>IIT Bombay</b>
+										</center>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</center>
+				</form>
+			</body>
+		</html>';
+	exit;
+}
 
+function get_resource_not_available(){
+	
+	echo '<html>
+			<head>
+				<meta name="author" content="Spoken Tutorials (www.spoken-tutorials.org)">
+				<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+				<link rel="stylesheet" href="drupst2nreq.php_files/style.css" type="text/css">
+				<title>Complete List of Spoken Tutorials</title>
+		
+				<style type="text/css">
+					td {font-family: tahoma, arial, verdana; font-size: 8pt }
+					th {font-family:tahoma, arial, verdana; font-size:9pt}
+				</style>
+			</head>
+			<body>
+				<form method="POST" action="drupst2.php" id="stform" name="stform">
+					<script type="text/javascript">
+						//Disable right click script
+						var message="Sorry, right-click has been disabled";
+		
+						function clickIE() {if (document.all) {(message);return false;}}
+						function clickNS(e) {
+						if(document.layers||(document.getElementById&&!document.all)){if (e.which==2||e.which==3) {(message);return false;}}}
+						if (document.layers){document.captureEvents(Event.MOUSEDOWN);document.onmousedown=clickNS;}
+						else{document.onmouseup=clickNS;document.oncontextmenu=clickIE;}
+						document.oncontextmenu=new Function("return false");
+		
+						function setOptions(chosen) {
+							var theContents = document.getElementById("foss1")[document.getElementById("foss1").selectedIndex].innerHTML;
+							document.getElementById("fossdata").value = theContents;
+							document.getElementById("fossid").value = theContents;
+							document.rbid.insht.value = theContents;
+						}
+		
+						function setOptions3(chosen) {
+							var theContenta = document.getElementById("lang")[document.getElementById("lang").selectedIndex].innerHTML;
+							document.getElementById("language").value = theContenta;
+							document.getElementById("fossid").value = theContenta;
+						}
+		
+						function GetSelectedItem() {
+							len = document.stform.radioid.length;
+							document.rbid.radiovalue.value=document.getElementById("fid").value;
+		
+							for (i = 0; i <len; i++) {
+								if (document.stform.radioid[i].checked) {
+									chosen = document.stform.radioid[i].value;
+								}
+							}
+		
+							if(chosen =="") {
+								alert("Please select a Tutorial to watch");
+							}
+							else
+							{
+								document.rbid.radiovalue.value=chosen;
+								document.rbid.insht.value=document.stform.fossdata.value;
+							}
+						}
+		
+						function showInstrsheet(){
+		
+							if(document.stform.fossdata.value =="")
+						  {
+								window.alert("Please select FOSS category to view instruction sheet");window.self;
+							}
+							else
+							{
+								inswindow=window.open(inks,"InstructionSheet","width=610 height=50 resizable=no scrollbars=no");
+								inswindow.moveTo(350,300);
+							}
+						}
+					</script>
+		
+					<center>
+						<br>
+						<p>
+							<table bgcolor="#D2691E" width="600">
+								<tbody>
+									<tr>
+										<td>
+											<b>
+												<font color="white" face="arial" size="2">
+													<center>
+														Resource Not Available<br><br>
+														This resource is not available right now.<br>
+														You can continue watching rest of the tutorials.
+														Please use the search feature to watch several other interesting tutorials. 
+													</center>
+												</font>
+											</b>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</p>
+						<br>
+						<table height="5" bgcolor="lightgrey" width="600" border="0">
+							<tbody>
+								<tr>
+									<td>
+										<center>
+											© 2011 | <a href="http://www.spoken-tutorial.org/" target="_blank">Spoken Tutorial.org</a><br>
+											<b>IIT Bombay</b>
+										</center>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</center>
+				</form>
+			</body>
+		</html>';
+	exit;
+}
 
 ?>

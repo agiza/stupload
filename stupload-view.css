@@ -1,0 +1,25 @@
+.search_cls_main{
+	width: 50%;
+	margin: auto;
+}
+.search_cls{
+	float: left;
+	margin-left: 10px;
+}
+.list_data{
+	clear: both;
+}
+.code_red{
+	text-align : center;
+	color : red;
+	font-size : 18px;
+}
+.code_green{
+	text-align : center;
+	color : green;
+	font-size : 18px;
+}
+.logs_cls_main{
+	width: 30%;
+	margin: auto;
+}
