@@ -123,7 +123,7 @@
 			$result = db_query($query);
 			$row = db_fetch_object($result);
 
-			$redirect = 'stupload/upload_other_lang/outline/?tr='.$row->id;
+			$redirect = 'stupload/olang_index/?tr='.$row->id;
 
 			drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}else {

@@ -1,9 +1,7 @@
 <?php
-	function upload_olang_outline($params) {
-		if($params){
-			$params = parse_url($params);
-			$tr_data = explode('=', $params['query']);
-			$output = drupal_get_form('upload_olang_outline_form',  $tr_data[1]);
+	function upload_olang_outline() {
+		if($_POST['trid']){
+			$output = drupal_get_form('upload_olang_outline_form',  $_POST['trid']);
 			return $output;
 		}else{
 			$output = "<p>Somthing went wrong. Please, try again.</p>";
@@ -85,7 +83,7 @@
 		}else {
 			drupal_set_message('Error while Adding Tutorial Outline, Please try again.');
 		}
-		$redirect = 'stupload/upload_other_lang/script/?tr='.$form_state['values']['trid'];
+		$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
 		drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 
 }

@@ -1,4 +1,4 @@
-<?php
+	<?php
 
 function stupload_perm() {
 	return array('Workshop Add New College', 'workshop stupload-view details', 'resource not available');
@@ -8,6 +8,7 @@ function stupload_menu(){
 	$items = array();
 	
 	$items['stupload/list'] = array(
+		'title' => 'Module Index',
 		'page callback' => 'index',
 		'access arguments' => array('Workshop Add New College'),
 		'type' => MENU_NORMAL_ITEM,
@@ -18,7 +19,7 @@ function stupload_menu(){
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('add_foss_form'),
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'add_foss.inc',
 	);
 	$items['stupload/tutorial'] = array(
@@ -27,7 +28,7 @@ function stupload_menu(){
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('add_tutorial_name_form'),
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'add_tutorial_name.inc',
 	);
 	$items['stupload/get_tutorial_levels'] = array(
@@ -40,7 +41,7 @@ function stupload_menu(){
 		'title' => 'Update Tutorials',
 		'page callback' => 'english_index',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'add_english_index.inc',
 	);
 	$items['stupload/upload_english'] = array(
@@ -49,7 +50,7 @@ function stupload_menu(){
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('upload_english_prerequest_form'),
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_prerequest.inc',
 	);
 	$items['stupload/get_category_levels'] = array(
@@ -67,7 +68,7 @@ function stupload_menu(){
 		'description' => 'Upload English Outline',
 		'page callback' => 'upload_english_outline',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_outline.inc',
 	);
 	$items['stupload/upload_english/script'] = array(
@@ -75,7 +76,7 @@ function stupload_menu(){
 		'description' => 'Upload English Script',
 		'page callback' => 'upload_english_script',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_script.inc',
 	);
 	$items['stupload/upload_english/slide'] = array(
@@ -83,7 +84,7 @@ function stupload_menu(){
 		'description' => 'Upload English Slide',
 		'page callback' => 'upload_english_slide',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_slide.inc',
 	);
 	$items['stupload/upload_english/video'] = array(
@@ -91,7 +92,7 @@ function stupload_menu(){
 		'description' => 'Upload English Video',
 		'page callback' => 'upload_english_video',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_video.inc',
 	);
 	$items['stupload/upload_english/codefile'] = array(
@@ -99,7 +100,7 @@ function stupload_menu(){
 		'description' => 'Upload English Code ',
 		'page callback' => 'upload_english_codefile',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_codefile.inc',
 	);
 	$items['stupload/upload_english/assignment'] = array(
@@ -107,7 +108,7 @@ function stupload_menu(){
 		'description' => 'Upload English Assignment ',
 		'page callback' => 'upload_english_assignment',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_assignment.inc',
 	);
 	$items['stupload/upload/summary'] = array(
@@ -115,18 +116,26 @@ function stupload_menu(){
 		'description' => 'Upload Summary ',
 		'page callback' => 'upload_summary',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_summary.inc',
 	);
 
 	// other languages
+	$items['stupload/olang_index'] = array(
+		'title' => 'Update Tutorials',
+		'page callback' => 'olang_index',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'add_olang_index.inc',
+	);
+
 	$items['stupload/upload_other_lang'] = array(
 		'title' => 'Upload Other Languages',
 		'description' => 'Upload Other Languages',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('upload_other_lang_prerequest_form'),
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_other_lang_prerequest.inc',
 	);
 
@@ -145,19 +154,19 @@ function stupload_menu(){
 	$items['stupload/upload_other_lang/outline'] = array(
 		'page callback' => 'upload_olang_outline',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_olang_outline.inc',
 	);
 	$items['stupload/upload_other_lang/script'] = array(
 		'page callback' => 'upload_olang_script',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_olang_script.inc',
 	);
 	$items['stupload/upload_other_lang/video'] = array(
 		'page callback' => 'upload_olang_video',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_olang_video.inc',
 	);
 	// update Tutorials
@@ -166,14 +175,14 @@ function stupload_menu(){
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('update_tutorial_prerequest_form'),
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_tutorial_prerequest.inc',
 	);
 	$items['stupload/update_index'] = array(
 		'title' => 'Update Tutorials',
 		'page callback' => 'update_index',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_index.inc',
 	);
 
@@ -182,7 +191,7 @@ function stupload_menu(){
 		'description' => 'Update Studtplan ',
 		'page callback' => 'update_studyplan',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_studyplan.inc',
 	);
 	$items['stupload/update/outline'] = array(
@@ -190,7 +199,7 @@ function stupload_menu(){
 		'description' => 'Update Studtplan ',
 		'page callback' => 'update_outline',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_outline.inc',
 	);
 	$items['stupload/update/script'] = array(
@@ -198,7 +207,7 @@ function stupload_menu(){
 		'description' => 'Update Script',
 		'page callback' => 'update_script',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_script.inc',
 	);
 	$items['stupload/update/video'] = array(
@@ -206,7 +215,7 @@ function stupload_menu(){
 		'description' => 'Update Video ',
 		'page callback' => 'update_video',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_video.inc',
 	);
 	$items['stupload/update/slide'] = array(
@@ -214,7 +223,7 @@ function stupload_menu(){
 		'description' => 'Update Slide ',
 		'page callback' => 'update_slide',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_slide.inc',
 	);
 	$items['stupload/update/codefile'] = array(
@@ -222,7 +231,7 @@ function stupload_menu(){
 		'description' => 'Update Codefile ',
 		'page callback' => 'update_codefile',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_codefile.inc',
 	);
 	$items['stupload/update/assignment'] = array(
@@ -230,7 +239,7 @@ function stupload_menu(){
 		'description' => 'Update Assignment',
 		'page callback' => 'update_assignment',
 		'access arguments' => array('Workshop Add New College'),
-		'type' => MENU_LOCAL_TASK,
+		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_assignment.inc',
 	);
 	//stupload-view by vishnu
@@ -305,16 +314,14 @@ function stupload_menu(){
 
 function index(){
 
-	$output = '<h2>Upload Options</h2>';
 	$output .= "<div class='upload-index-page list-link'>";
 	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add FOSS</a><br>";
 	$output .= "<a class='tutorial' href='".$GLOBALS['base_url']."/stupload/tutorial'> Add Tutorial Name</a><br>";
 	$output .= "<a class='upload-english' href='".$GLOBALS['base_url']."/stupload/upload_english'> Upload English</a><br>";
-	$output .= "<a class='update_tutorial' href='".$GLOBALS['base_url']."/stupload/update_tutorial'>Update Tutorial</a><br>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/upload_other_lang'> Upload Other Languages</a>";
-	//$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add FOSS</a>";
-	//$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add FOSS</a>";
-	//$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add FOSS</a>";
+	$output .= "<a class='update_tutorial' href='".$GLOBALS['base_url']."/stupload/update_tutorial_search'>Update Tutorial</a><br>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/upload_other_lang'> Upload Other Languages</a><br>";
+	$output .= "<a class='log' href='".$GLOBALS['base_url']."/stupload/view_logs_list'>Upload Log</a><br>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/view_tutorials_list'>View Tutorial List</a><br>";
 	$output .= "</div>";
 	return $output;
 }
