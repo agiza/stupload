@@ -22,13 +22,19 @@ $(document).ready(function(){
 				success : function(data){
 					output = JSON.parse(data);
 					if(output){
-						console.log(output);
+						flag = $('.flag').val();
 						var html_data = "<table align='center' cellpadding='5' style='width : 100%;'><tr><th>Sno</th><th>FOSS Category</th><th>Level</th><th>Language</th><th colspan='2'>Tutorial Name</th>";
 						html_data += "</tr>";
 						for (var i=0; i < output.length; i++)
 						{
 							html_data += "<tr style='text-align : left;'><td>"+ output[i].order_code +"</td><td>" + output[i].foss_category + "</td><td>" + output[i].tutorial_level + "</td><td>" ;
-							html_data += output[i].language + "</td><td>" + output[i].tutorial_name + "</td><td><a href='" + webroot +"play_video?tr=" + output[i].trid + "'>View</a></td></tr>";
+							html_data += output[i].language + "</td><td>" + output[i].tutorial_name + "</td><td>";
+
+							if(flag == '0'){
+								html_data += "<a href='" + webroot +"upload/review/" + output[i].trid + "'>Review</a></td></tr>";
+							}else{
+								html_data += "<a href='" + webroot +"play_video?tr=" + output[i].trid + "'>View</a></td></tr>";
+							}
 						}
 						html_data += "</table>";
 						$('.list_data').html(html_data);

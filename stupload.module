@@ -111,13 +111,13 @@ function stupload_menu(){
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_assignment.inc',
 	);
-	$items['stupload/upload/summary'] = array(
-		'title' => 'Upload English Summary',
-		'description' => 'Upload Summary ',
-		'page callback' => 'upload_summary',
+	$items['stupload/upload/review'] = array(
+		'title' => 'Review Tutorial',
+		'description' => 'Review Tutorial ',
+		'page callback' => 'review_tutorial',
 		'access arguments' => array('Workshop Add New College'),
 		'type' => MENU_NORMAL_ITEM,
-		'file' => 'upload_summary.inc',
+		'file' => 'review_tutorial.inc',
 	);
 
 	// other languages
@@ -242,6 +242,17 @@ function stupload_menu(){
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_assignment.inc',
 	);
+
+	// review tutorial 
+	$items['stupload/review_tutorial_lists'] = array(
+		'title' => 'Complete List Of Tutorials',
+		'description' => 'List Of ST Videos',
+		'page callback' => 'list_tutorials',
+		'access arguments' => array('workshop stupload-view details'),
+		'file' => 'list_tutorials.inc',
+		'type' => MENU_NORMAL_ITEM,
+	);
+
 	//stupload-view by vishnu
 	
 	$items['stupload/view_logs_list'] = array(
@@ -255,8 +266,7 @@ function stupload_menu(){
 	$items['stupload/view_tutorials_list'] = array(
 		'title' => 'Complete List Of Tutorials',
 		'description' => 'List Of ST Videos',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('list_tutorials_form'),
+		'page callback' => 'list_tutorials',
 		'access arguments' => array('workshop stupload-view details'),
 		'file' => 'list_tutorials.inc',
 		'type' => MENU_NORMAL_ITEM,

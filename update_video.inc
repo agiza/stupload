@@ -7,9 +7,7 @@
 			$output = "<p>Something went wrong. Please, try again.</p>";
 			return $output;
 		}
-
 	}
-
 
 	function update_video_form($form_state, $trid) {
 		$path = drupal_get_path('module', 'stupload');
