@@ -31,7 +31,7 @@ $(document).ready(function(){
 							html_data += output[i].language + "</td><td>" + output[i].tutorial_name + "</td><td>";
 
 							if(flag == '0'){
-								html_data += "<a href='" + webroot +"upload/review/" + output[i].trid + "'>Review</a></td></tr>";
+								html_data += "<a href='" + webroot +"upload/review/%3Ftr%3D" + output[i].trid + "'>Review</a></td></tr>";
 							}else{
 								html_data += "<a href='" + webroot +"play_video?tr=" + output[i].trid + "'>View</a></td></tr>";
 							}

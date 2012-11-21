@@ -81,8 +81,8 @@
 	
 	function add_tutorial_name_form_validate($form, &$form_state){
 	
-		if (!preg_match('/^[a-zA-Z-]+$/', $form_state['values']['tutorial_name'])){
-			form_set_error('tutorial_nam', t('Invalid Name, Please use a-z, A-Z, - Only'));
+		if (!preg_match('/^[0-9a-zA-Z-]+$/', $form_state['values']['tutorial_name'])){
+			form_set_error('tutorial_nam', t('Invalid Name, Please use a-z, A-Z, -, 0-9 Only'));
 		}else{
 			$query = "select tutorial_name from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_level='".$form_state['values']['tutorial_level']."' and tutorial_name='".$form_state['values']['tutorial_name']."'";
 			//echo $query;

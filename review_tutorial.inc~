@@ -8,9 +8,9 @@
 		drupal_add_css($path . '/stupload.css');
 		drupal_add_js($path . '/video.js');
 		drupal_add_css($path . '/video-js.css');
-		global $user;
+
 		if($trid ){
-			$query = "select td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.id as trid, tr.language, tr.tutorial_status, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_video, tcc.tutorial_slide, tcc.tutorial_code, tcc.tutorial_assignment from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id='".$trid."'";
+			$query = "select td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_status, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_video, tcc.tutorial_slide, tcc.tutorial_code, tcc.tutorial_assignment from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id='".$trid."'";
 			$result = db_query($query);
 			$tutorial = db_fetch_object($result);
 
@@ -59,7 +59,7 @@
 			}
 
 			// show current status
-			$current_status = array('pending' => 'Pending', 'under_review' => 'Under Review', 'need_improvement' => 'Need Improvement', 'accepted' => 'Accepted');
+			$current_status = array('pending' => 'Pending', 'under_review' => 'Under Review', 'need_improvement' => 'Need Improvement');
 
 
 			$output = "<div class='stupload-form'>";
@@ -75,15 +75,7 @@
 						}else{
 							$status = $tutorial->tutorial_status;
 						}
-						// if need improvement, form should be hide
-						if($tutorial->tutorial_status == 'need_improvement'){
-							$query = "select comment from comment_improvement where trid='".$tutorial->trid."' and uid='".$user->uid."'";
-							$result = db_query($query);
-							$row = db_fetch_object($result);
-							$output .="<span class='left'>Remarks </span><span class='right'>: ".$row->comment."</span>";
-						}else{
-							$output .="<span class='left'></span><span class='right'>".drupal_get_form('review_tutorial_form', $trid, $status)."</span>";
-						}
+						$output .="<span class='left'></span><span class='right'>".drupal_get_form('review_tutorial_form', $trid, $status)."</span>";
 					$output .= "</div>";
 					$output .= "<div class='left-content'>";
 						$output .= "<div class='summery-outline'>";
@@ -126,12 +118,6 @@
 
 	function review_tutorial_form($form_state, $trid, $status){
 		// add js file 
-		global $user;
-		if(in_array('domain_user', $user->roles)){
-			$options = array('accepted' => 'Accepted', 'need_improvement' => 'Need Improvement');
-		}else{
-			$options = array('under_review' => 'Under Review', 'need_improvement' => 'Need Improvement');
-		}
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -148,14 +134,13 @@
 			'#type' => 'radios',
 			'#required' => TRUE,
 			'#default_value' => $status,
-			'#options' => $options,
+			'#options' => array('under_review' => 'Under Review', 'need_improvement' => 'Need Improvement'),
 			'#attributes' => array('class' => 'reviewer-status')
 		);
 
 		$form['comment'] = array(
 			'#type' => 'textarea',
-			'#required' => FALSE,
-			'#title' =>t('Remarks'),
+			'#title' =>t('Review Comment'),
 			'#prefix' => "<div class='reviewer-comment'>",
 			'#suffix' => "</div>"
 		);
@@ -177,9 +162,8 @@
 
 		// insert into the comment improvement table
 		if($form_state['values']['comment'] != ''){
-			$query = "INSERT INTO `comment_improvement` (`id`, `uid`, `trid`, `reviewed_time`, `comment`) VALUES (NULL, '".$user->uid."', '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$form_state['values']['comment']."')";
-
-			db_query($query);
+			$query = "INSERT INTO `comment_improvement` (`id`, `uid`, `trid`, `reviewed_time`, `comment`) VALUES (NULL, '".$user->uid."', '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$form_state['values']['comment']."'";
+			$db_query($query);
 		}
 
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'review')";

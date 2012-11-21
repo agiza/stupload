@@ -1,7 +1,6 @@
 <?php
 
 function list_tutorials(){
-
 	$file_ext = substr($_REQUEST['q'], strripos($_REQUEST['q'], '/'));
 	$name = str_replace('/', '', $file_ext);
 	if($name == 'review_tutorial_lists'){
