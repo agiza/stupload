@@ -316,6 +316,17 @@ function stupload_menu(){
 		'file' => 'play_video.inc',
 		'type' => MENU_NORMAL_ITEM,
 	);
+
+	// Add English Timed tutorials
+	$items['stupload/upload_english_timed'] = array(
+		'title' => 'Upload English Timed',
+		'description' => 'Upload English Timed',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('upload_english_timed_prerequest_form'),
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'upload_english_timed_prerequest.inc',
+	);
 	
   return $items;
 }
@@ -325,14 +336,14 @@ function stupload_menu(){
 function index(){
 
 	$output .= "<div class='upload-index-page list-link'>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add FOSS</a><br>";
-	$output .= "<a class='tutorial' href='".$GLOBALS['base_url']."/stupload/tutorial'> Add Tutorial Name</a><br>";
-	$output .= "<a class='upload-english' href='".$GLOBALS['base_url']."/stupload/upload_english'> Upload English</a><br>";
-	$output .= "<a class='update_tutorial' href='".$GLOBALS['base_url']."/stupload/update_tutorial_search'>Update Tutorial</a><br>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/upload_other_lang'> Upload Other Languages</a><br>";
-	$output .= "<a class='log' href='".$GLOBALS['base_url']."/stupload/view_logs_list'>Upload Log</a><br>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/view_tutorials_list'>View Tutorial List</a><br>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/review_tutorial_lists'>Review Tutorial List</a><br>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add New FOSS Category</a><br>";
+	$output .= "<a class='tutorial' href='".$GLOBALS['base_url']."/stupload/tutorial'> Add New Tutorial</a><br>";
+	$output .= "<a class='upload-english' href='".$GLOBALS['base_url']."/stupload/upload_english'> Upload English Tutorial</a><br>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/upload_other_lang'> Upload Other Languages Tutorials</a><br>";
+	$output .= "<a class='update_tutorial' href='".$GLOBALS['base_url']."/stupload/update_tutorial_search'>Update Tutorials</a><br>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/review_tutorial_lists'>Review Tutorial</a><br>";
+	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/view_tutorials_list'>View All Tutorials</a><br>";
+	$output .= "<a class='log' href='".$GLOBALS['base_url']."/stupload/view_logs_list'>View Upload Logs</a><br>";
 	$output .= "</div>";
 	return $output;
 }
@@ -461,7 +472,18 @@ function read_ziparchive($file_path){
 
 function get_tutorials_list(){
 	if(isset($_POST['foss']) && isset($_POST['lang'])){
+
 		$query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$_POST['lang']."' and td.foss_category='".$_POST['foss']."' order by td.order_code ASC";
+
+		// for domain_user role
+		global $user;
+		if(in_array('domain_user', $user->roles)){
+			$query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$_POST['lang']."' and td.foss_category='".$_POST['foss']."' and tr.tutorial_status='under_review' order by td.order_code ASC";
+		}
+		if(in_array('admin_user', $user->roles)){
+			$query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$_POST['lang']."' and td.foss_category='".$_POST['foss']."' and tr.tutorial_status='pending' order by td.order_code ASC";
+		}
+		
 		$result = db_query($query);
 		$rows = array();
 		$index = 0;
@@ -469,6 +491,7 @@ function get_tutorials_list(){
 			$rows[$index++] = $r;
 		}
 		echo json_encode($rows);
+
 		exit;
 	}else{
 		echo json_encode('false');
