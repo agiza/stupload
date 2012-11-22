@@ -1,7 +1,8 @@
 <?php
 	function upload_english_video() {
 		
-		if($_REQUEST['trid']){
+		if($_REQUEST['trid']){		
+			$output = "<h2>Upload English Video for ".$_REQUEST['tn']."</h2>";
 
 			$output .= drupal_get_form('upload_english_video_form', $_REQUEST['trid']);
 			return $output;
@@ -35,7 +36,7 @@
 		);
 		$form['video'] = array(
 			'#type' => 'file',
-			'#title' => t('Video'),
+			'#title' => t('Video <span class="upload-help-test"> (Upload .mp4 and .ogv files only)</span>'),
 			'#attributes' => array('class' => 'upeng_video'),
 			'#prefix' => '<div class="stupload-form-video">',
 			'#suffix' => '</div>'

@@ -1,6 +1,7 @@
 <?php
 	function update_codefile() {
 		if($_POST){
+			$output = "<h2>Update Codefile for ".$_REQUEST['tn']."</h2>";
 			$output .= drupal_get_form('update_codefile_form', $_POST['trid'], $_POST['tccid']);
 			return $output;
 		}else{
@@ -30,7 +31,7 @@
 
 		$form['codefile'] = array(
 			'#type' => 'file',
-			'#title' => t('Codefile'),
+			'#title' => t('Codefile <span class="upload-help-test"> (Upload .zip file only)</span>'),
 			'#attributes' => array('class' => 'upeng_codefile'),
 			'#prefix' => '<div class="stupload-form-codefileu">',
 			'#suffix' => '</div>'

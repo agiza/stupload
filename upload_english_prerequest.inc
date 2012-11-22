@@ -74,6 +74,8 @@
 	
 	function upload_english_prerequest_form_submit($form, &$form_state){
 
+		global $user;
+
 		$query = "select id from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
 
 		$result = db_query($query);
@@ -94,18 +96,18 @@
 
 		$common_content = db_fetch_object($result); 
 
-		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `language`, `tutorial_content_id`, `tutorial_outline`, `tutorial_script`, `tutorial_video`, `tutorial_status`) VALUES (NULL, '".$tutorial_detail_id."', '".$language."', '".$common_content->id."', 'pending', 'pending', 'pending', 'pending')";
+		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `uid`, `language`, `tutorial_content_id`, `tutorial_outline`, `tutorial_script`, `tutorial_video`, `tutorial_status`) VALUES (NULL, '".$tutorial_detail_id."', ".$user->uid.", '".$language."', '".$common_content->id."', 'pending', 'pending', 'pending', 'pending')";
 		
 
 		if(db_query($query)){
-			drupal_set_message('New FOSS Category Added Successfully');
+			drupal_set_message('New Tutorial Added Successfully');
 			$query = "select id from tutorial_resources where tutorial_detail_id='".$tutorial_detail_id."' and language='".$language."'";
 			$result = db_query($query);
 			$row = db_fetch_object($result);
 			$redirect = 'stupload/english_index/?tr='.$row->id;
 			drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
-			drupal_set_message('Error while Adding Foss Category, Please try again.');
+			drupal_set_message('Error while Adding Tutorial, Please try again.');
 		}
 		
 

@@ -1,7 +1,8 @@
 <?php
 	function upload_olang_outline() {
 		if($_POST['trid']){
-			$output = drupal_get_form('upload_olang_outline_form',  $_POST['trid']);
+			$output = "<h2>Upload English Outline for ".$_REQUEST['tn']."</h2>";
+			$output .= drupal_get_form('upload_olang_outline_form',  $_POST['trid']);
 			return $output;
 		}else{
 			$output = "<p>Somthing went wrong. Please, try again.</p>";
@@ -72,7 +73,7 @@
 		}
 
 
-		$query = "UPDATE tutorial_resources SET tutorial_outline='".$form_state['values']['outline']."' WHERE id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_outline='".$tutorial_outline."' WHERE id='".$form_state['values']['trid']."'";
 
 		db_query($query);
 

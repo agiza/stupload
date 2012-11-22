@@ -115,7 +115,67 @@ $(document).ready(function(){
 			}
 		});
 	});
-
+	$('.upeng_timed_foss_category_name').change(function(){
+		foss = $(this).val();
+		$.ajax({
+			type : 'POST',
+			url : webroot + "get_category_levels",
+			data : {
+				'foss' : foss
+			},
+			beforeSend: function() {
+			    field_data = $('.uenglish-timed-level-name').html();
+			    $('.uenglish-timed-level-name').html(loading_image);
+			},
+			success : function(data){
+				output = JSON.parse(data);
+				var html_data = "<option value=''>Level</option>";
+				if(output){
+					$('.uenglish-timed-level-name').html(field_data);
+					for (var i=0; i < output.length; i++)
+					{
+						html_data += "<option value='"+ output[i].tutorial_level +"'>" + output[i].tutorial_level + "</option>";	
+					}
+					console.log(html_data);
+					$('.upeng_timed_tutorial_level').html(html_data);
+					// adding the tutorial name under tutorial level
+					$('.upeng_timed_tutorial_level').change(function(){
+						level = $(this).val();
+						foss = $('.upeng_timed_foss_category_name').val();
+						$.ajax({
+							type : 'POST',
+							url : webroot + "get_timed_category_names",
+							data : {
+								'level' : level,
+								'foss' : foss
+							},
+							beforeSend: function() {
+							    field_data = $('.uenglish-timed-name').html();
+							    $('.uenglish-timed-name').html(loading_image);
+							},
+							success : function(data){
+								output = JSON.parse(data);
+								var html_data = "<option value=''>Tutorial name</option>";
+								if(output){
+									$('.uenglish-timed-name').html(field_data);
+									for (var i=0; i < output.length; i++)
+									{
+										html_data += "<option value='"+ output[i].tutorial_name +"'>" + output[i].tutorial_name + "</option>";	
+									}
+									console.log(html_data);
+									$('.upeng_timed_tutorial_name').html(html_data);
+								}else{
+									alert('Somthing wrong, Please refresh page');
+								}
+							}
+						});
+					});
+				}else{
+					alert('Somthing wrong, Please refresh page');
+				}
+			}
+		});
+	});
 	// field hide and show
 	$('div.stupload-outline').css({'display' : 'none'});
 	$('.uptn_outline_status').change(function(){

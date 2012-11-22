@@ -1,7 +1,8 @@
 <?php
 	function upload_english_script() {
 
-		if($_REQUEST['trid']){
+		if($_REQUEST['trid']){		
+			$output = "<h2>Upload English Script for ".$_REQUEST['tn']."</h2>";
 
 			$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$_REQUEST['trid']."'";
 
@@ -12,7 +13,7 @@
 			require_once('path.config.inc');
 			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English';
 		
-			$output = "<div class='wiki-script-file'></div>";
+			$output .= "<div class='wiki-script-file'></div>";
 			$output .= drupal_get_form('upload_english_script_form', $_REQUEST['trid'], $wiki_url);
 
 			return $output;

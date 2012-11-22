@@ -11,8 +11,8 @@
 
 			require_once('path.config.inc');
 			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English';
-		
-			$output = "<div class='wiki-script-file'></div>";
+			$output = "<h2>Upload English Script for ".$_REQUEST['tn']."</h2>";
+			$output .= "<div class='wiki-script-file'></div>";
 			$output .= drupal_get_form('upload_olang_script_form', $trid, $wiki_url);
 
 			return $output;

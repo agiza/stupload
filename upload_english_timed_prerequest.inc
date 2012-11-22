@@ -22,7 +22,7 @@
 			'#title' => t('FOSS Category Name'),
 			'#required' => TRUE,
 			'#options' => $foss_category,
-			'#attributes' => array('class' => 'upeng_foss_category_name'),
+			'#attributes' => array('class' => 'upeng_timed_foss_category_name'),
 			'#prefix' => '<div class="uenglish-category-level-name">',
 		);
 		$form['tutorial_level'] = array(
@@ -31,8 +31,8 @@
 			'#required' => TRUE,
 			'#validated' => TRUE,
 			'#options' => array(''=> 'Level'),
-			'#attributes' => array('class' => 'upeng_tutorial_level'),
-			'#prefix' => '<div class="uenglish-level-name"><div class="uenglish-level">',
+			'#attributes' => array('class' => 'upeng_timed_tutorial_level'),
+			'#prefix' => '<div class="uenglish-timed-level-name"><div class="uenglish-level">',
 			'#suffix' => '</div>', 
 		);
 		$form['tutorial_name'] = array(
@@ -41,7 +41,7 @@
 			'#required' => TRUE,
 			'#validated' => TRUE,
 			'#options' => $tutorial_name,
-			'#attributes' => array('class' => 'upeng_tutorial_name'),
+			'#attributes' => array('class' => 'upeng_timed_tutorial_name'),
 			'#prefix' => '<div class="uenglish-name">',
 			'#suffix' => '</div></div></div>', 
 		);
@@ -60,34 +60,30 @@
 		if($form_state['values']['tutorial_name'] != ''){
 			$query = "select id from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
 
-		$result = db_query($query);
-		$row = db_fetch_object($result);
-			$query = "select tutorial_detail_id from tutorial_resources where tutorial_detail_id='".$row->id."' and language='English'";
+			$result = db_query($query);
+			$row = db_fetch_object($result);
+			$query = "select tutorial_detail_id from tutorial_resources where tutorial_detail_id='".$row->id."' and language='English-timed'";
 			$result = db_query($query);
 			$row = db_fetch_object($result);
 			if($row){
-				form_set_error('tutorial_name', t('This Tutorial Already Exits.'));
+				form_set_error('tutorial_name', t('This tutorial is already exits.'));
 			}
 		}
 		return;
 	}
 	
 	function upload_english_timed_prerequest_form_submit($form, &$form_state){
-
+		
 		$query = "Select tr.tutorial_content_id, tr.tutorial_outline, tr.tutorial_video, tcc.tutorial_slide, tcc.tutorial_code, tcc.tutorial_assignment from tutorial_resources tr, tutorial_common_contents tcc, tutorial_details td where tcc.tutorial_detail_id=tr.tutorial_detail_id and ";
 		if(db_query($query)){
-			drupal_set_message('New FOSS Category Added Successfully');
+			drupal_set_message('New tutorial added successfully');
 			$query = "select id from tutorial_resources where tutorial_detail_id='".$tutorial_detail_id."' and language='".$language."'";
 			$result = db_query($query);
 			$row = db_fetch_object($result);
 			$redirect = 'stupload/english_index/?tr='.$row->id;
 			drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
-			drupal_set_message('Error while Adding Foss Category, Please try again.');
+			drupal_set_message('Error while adding new tutorial, Please try again.');
 		}
-		
-
-}
-
-
+	}
 ?>

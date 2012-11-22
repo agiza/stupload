@@ -37,7 +37,6 @@
 			}
 
 			// check if codefile exists ot not
-
 			if($content->tutorial_code != 'pending' && $content->tutorial_code != 'notrequired' && file_exists($file_upload_path.$content->tutorial_slide)){
 				//$codefile_url = $content->tutorial_code;
 				$codefile_url = "<a href='".$tutorial_path.$content->tutorial_code."' target='_blank'>Accepted</a>";
@@ -68,31 +67,31 @@
 			$output .= "</div>";
 
 			$output .= "<table class='upload-index'>";
-			$output .= "<tr><th class='title'>Title</th><th class='content'>Status</th><th class='update'>Update</th></tr>";
+			$output .= "<tr><th class='title'>Title</th><th class='content'>Status</th><th class='update'></th></tr>";
 			
-			$output .= "<tr><td class='title'>Tutorial Outline</td><td class='content'>".$content->tutorial_outline."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/outline' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Add'></form></td></tr>";
+			$output .= "<tr><td class='title'>Tutorial Outline</td><td class='content'>".$content->tutorial_outline."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/outline' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
 
-			$output .= "<tr><td class='title'>Tutorial Script</td><td class='content'>".$content->tutorial_script."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/script' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Add'></form></td></tr>";
+			$output .= "<tr><td class='title'>Tutorial Script</td><td class='content'>".$content->tutorial_script."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/script' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
 
-			$output .= "<tr><td class='title'>Tutorial Video</td><td class='content'>".$video_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/video' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Add'></form></td></tr>";
+			$output .= "<tr><td class='title'>Tutorial Video</td><td class='content'>".$video_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/video' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
 
 			$output .= "<tr><td class='title'>Tutorial slide</td><td class='content'>".$slide_url."</td><td class='update'>";
 				if($content->language == 'English'){
-					$output .= "<form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/slide' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Add'></form></td></tr>";
+					$output .= "<form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/slide' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
 				}else{
 					$output .= "</td></tr>";
 				}
 
 			$output .= "<tr><td class='title'>Tutorial Code</td><td class='content'>".$codefile_url."</td><td class='update'>";
 				if($content->language == 'English'){
-					$output .= "<form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/codefile' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Add'></form></td></tr>";
+					$output .= "<form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/codefile' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
 				}else{
 					$output .= "</td></tr>";
 				}
 
 			$output .= "<tr><td class='title'>Tutorial Assignment</td><td class='content'>".$assignment_url."</td><td class='update'>";
 				if($content->language == 'English'){
-					$output .= "<form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/assignment' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='submit' value='Add'></form></td></tr>";
+					$output .= "<form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/assignment' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
 				}else{
 					$output .= "</td></tr>";
 				}

@@ -1,6 +1,7 @@
 <?php
 	function update_slide() {
 		if($_POST){
+			$output = "<h2>Update Slide for ".$_REQUEST['tn']."</h2>";
 			$output .= drupal_get_form('update_slide_form', $_POST['trid'], $_POST['tccid']);
 			return $output;
 		}else{
@@ -30,7 +31,7 @@
 
 		$form['slide'] = array(
 			'#type' => 'file',
-			'#title' => t('Slide'),
+			'#title' => t('Slide <span class="upload-help-test"> (Upload .zip file only)</span>'),
 			'#attributes' => array('class' => 'upeng_video'),
 			'#prefix' => '<div class="stupload-form-videou">',
 			'#suffix' => '</div>'

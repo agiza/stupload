@@ -1,6 +1,7 @@
 <?php
 	function update_video() {
 		if($_POST){
+			$output = "<h2>Update Video for ".$_REQUEST['tn']."</h2>";
 			$output .= drupal_get_form('update_video_form', $_POST['trid']);
 			return $output;
 		}else{
@@ -24,7 +25,7 @@
 
 		$form['video'] = array(
 			'#type' => 'file',
-			'#title' => t('Video'),
+			'#title' => t('Video <span class="upload-help-test"> (Upload .mp4 and .ogv files only)</span>'),
 			'#attributes' => array('class' => 'upeng_video'),
 			'#prefix' => '<div class="stupload-form-videou">',
 			'#suffix' => '</div>'
