@@ -74,16 +74,26 @@
 	
 	function upload_english_timed_prerequest_form_submit($form, &$form_state){
 		
-		$query = "Select tr.tutorial_content_id, tr.tutorial_outline, tr.tutorial_video, tcc.tutorial_slide, tcc.tutorial_code, tcc.tutorial_assignment from tutorial_resources tr, tutorial_common_contents tcc, tutorial_details td where tcc.tutorial_detail_id=tr.tutorial_detail_id and ";
-		if(db_query($query)){
-			drupal_set_message('New tutorial added successfully');
-			$query = "select id from tutorial_resources where tutorial_detail_id='".$tutorial_detail_id."' and language='".$language."'";
-			$result = db_query($query);
-			$row = db_fetch_object($result);
-			$redirect = 'stupload/english_index/?tr='.$row->id;
-			drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);
+		global $user;	
+		
+		$query = "select td.id as tdid, tr.id as trid, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_video, tr.cvideo_version, tc.id as tcid from tutorial_details td, tutorial_resources tr, tutorial_common_contents tc where td.foss_category='".$form_state['values']['foss_category']."' and td.tutorial_level='".$form_state['values']['tutorial_level']."' and td.tutorial_name='".$form_state['values']['tutorial_name']."'";
+		$query .= " and tr.tutorial_detail_id=td.id and tr.language='English' and tc.tutorial_detail_id=td.id";
+		
+		if($res = db_query($query)){
+			$tut_detail = db_fetch_object($res);
+			
+			$query = "insert into tutorial_resources values('', ".$tut_detail->tdid.", ".$user->uid.", 'English-timed', '', '', ".$tut_detail->tcid.", '".$tut_detail->tutorial_outline."', 'pending', '".$tut_detail->tutorial_video."', 'pending', ".$tut_detail->cvideo_version.")";
+			if(db_query($query)){
+				$query = "select id from tutorial_resources where tutorial_detail_id='".$tut_detail->tdid."' and language='English-timed'";
+				$result = db_query($query);
+				$row = db_fetch_object($result);
+				$redirect = 'stupload/english_timed_script/?tr='.$row->id;
+				drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);
+			}else{
+				drupal_set_message('Something went wrong, Please try again.');
+			}
 		}else {
-			drupal_set_message('Error while adding new tutorial, Please try again.');
+			drupal_set_message('Something went wrong, Please try again.');
 		}
 	}
 ?>

@@ -319,6 +319,13 @@ function stupload_menu(){
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_timed_prerequest.inc',
 	);
+	$items['stupload/english_timed_script'] = array(
+		'description' => 'Script',
+		'page callback' => 'english_timed_script',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'english_timed_script.inc',
+	);
 	
   return $items;
 }

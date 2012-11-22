@@ -72,7 +72,12 @@
 			$output .= "<table class='upload-index'>";
 			$output .= "<tr><th class='title'>Title</th><th class='content'>Status</th><th class='update'></th></tr>";
 			
-			$output .= "<tr><td class='title'>Study Plan</td><td class='content'>".$content->order_code."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/studyplan' method='post'><input type='hidden' name='tdid' value='".$content->tdid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
+			$output .= "<tr><td class='title'>Study Plan</td><td class='content'>".$content->order_code."</td><td class='update'>";
+				if($content->language == 'English'){
+					$output .= "<form action='".$GLOBALS['base_url']."/stupload/update/studyplan' method='post'><input type='hidden' name='tdid' value='".$content->tdid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
+				}else{
+					$output .= "</td></tr>";
+				}
 			$output .= "<tr><td class='title'>Tutorial Outline</td><td class='content'>".$content->tutorial_outline."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/outline' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='outline' value='".$content->tutorial_outline."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
 
 			$output .= "<tr><td class='title'>Tutorial Script</td><td class='content'>".$content->tutorial_script."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/script' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
