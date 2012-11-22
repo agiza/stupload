@@ -1,6 +1,7 @@
 <?php
 	function update_assignment() {
 		if($_POST){
+			$output = "<h2>Update Assignment for ".$_REQUEST['tn']."</h2>";
 			$output .= drupal_get_form('update_assignment_form', $_POST['trid'], $_POST['tccid']);
 			return $output;
 		}else{
@@ -30,7 +31,7 @@
 
 		$form['assignment'] = array(
 			'#type' => 'file',
-			'#title' => t('Assignment'),
+			'#title' => t('Assignment <span class="upload-help-test"> (Upload .txt and .pdf files only)</span>'),
 			'#attributes' => array('class' => 'upeng_codefile'),
 			'#prefix' => '<div class="stupload-form-assignmentu">',
 			'#suffix' => '</div>'

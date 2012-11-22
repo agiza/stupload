@@ -1,7 +1,8 @@
 <?php
 	function update_outline() {
-		if($_POST){
-			$output = drupal_get_form('update_outline_form', $_POST['trid'], $_POST['outline']);
+		if($_REQUEST){
+			$output = "<h2>Update Outline for ".$_REQUEST['tn']."</h2>";
+			$output .= drupal_get_form('update_outline_form', $_REQUEST['trid'], $_REQUEST['outline']);
 			return $output;
 		}else{
 			$output = "Somthing went wrong. Please try again";

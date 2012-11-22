@@ -2,7 +2,8 @@
 	function update_studyplan() {
 	
 		if($_POST){
-			$output = drupal_get_form('update_studyplan_form', $_POST['tdid'], $_POST['trid']);
+			$output = "<h2>Update Study Plan for ".$_REQUEST['tn']."</h2>";
+			$output .= drupal_get_form('update_studyplan_form', $_POST['tdid'], $_POST['trid']);
 			return $output;
 		}else{
 			$output = "Somthing went wrong. Please try again";

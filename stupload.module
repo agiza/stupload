@@ -38,7 +38,7 @@ function stupload_menu(){
 	);
 	// upload english
 	$items['stupload/english_index'] = array(
-		'title' => 'Update Tutorials',
+		'title' => 'Upload Tutorials',
 		'page callback' => 'english_index',
 		'access arguments' => array('Workshop Add New College'),
 		'type' => MENU_NORMAL_ITEM,
@@ -63,8 +63,12 @@ function stupload_menu(){
 		'access arguments' => array('Workshop Add New College'),
 		'type' => MENU_NORMAL_ITEM,
 	);
+	$items['stupload/get_timed_category_names'] = array(
+		'page callback' => 'get_timed_category_names',
+		'access arguments' => array('Workshop Add New College'),
+		'type' => MENU_NORMAL_ITEM,
+	);
 	$items['stupload/upload_english/outline'] = array(
-		'title' => 'Upload English Outline',
 		'description' => 'Upload English Outline',
 		'page callback' => 'upload_english_outline',
 		'access arguments' => array('Workshop Add New College'),
@@ -72,7 +76,6 @@ function stupload_menu(){
 		'file' => 'upload_english_outline.inc',
 	);
 	$items['stupload/upload_english/script'] = array(
-		'title' => 'Upload English Script',
 		'description' => 'Upload English Script',
 		'page callback' => 'upload_english_script',
 		'access arguments' => array('Workshop Add New College'),
@@ -80,7 +83,6 @@ function stupload_menu(){
 		'file' => 'upload_english_script.inc',
 	);
 	$items['stupload/upload_english/slide'] = array(
-		'title' => 'Upload English Slide',
 		'description' => 'Upload English Slide',
 		'page callback' => 'upload_english_slide',
 		'access arguments' => array('Workshop Add New College'),
@@ -88,7 +90,6 @@ function stupload_menu(){
 		'file' => 'upload_english_slide.inc',
 	);
 	$items['stupload/upload_english/video'] = array(
-		'title' => 'Upload English Video',
 		'description' => 'Upload English Video',
 		'page callback' => 'upload_english_video',
 		'access arguments' => array('Workshop Add New College'),
@@ -96,7 +97,6 @@ function stupload_menu(){
 		'file' => 'upload_english_video.inc',
 	);
 	$items['stupload/upload_english/codefile'] = array(
-		'title' => 'Upload English Code',
 		'description' => 'Upload English Code ',
 		'page callback' => 'upload_english_codefile',
 		'access arguments' => array('Workshop Add New College'),
@@ -104,7 +104,6 @@ function stupload_menu(){
 		'file' => 'upload_english_codefile.inc',
 	);
 	$items['stupload/upload_english/assignment'] = array(
-		'title' => 'Upload English Assignment',
 		'description' => 'Upload English Assignment ',
 		'page callback' => 'upload_english_assignment',
 		'access arguments' => array('Workshop Add New College'),
@@ -187,7 +186,6 @@ function stupload_menu(){
 	);
 
 	$items['stupload/update/studyplan'] = array(
-		'title' => 'Upload English Code',
 		'description' => 'Update Studtplan ',
 		'page callback' => 'update_studyplan',
 		'access arguments' => array('Workshop Add New College'),
@@ -195,7 +193,6 @@ function stupload_menu(){
 		'file' => 'update_studyplan.inc',
 	);
 	$items['stupload/update/outline'] = array(
-		'title' => 'Upload English Code',
 		'description' => 'Update Studtplan ',
 		'page callback' => 'update_outline',
 		'access arguments' => array('Workshop Add New College'),
@@ -203,7 +200,6 @@ function stupload_menu(){
 		'file' => 'update_outline.inc',
 	);
 	$items['stupload/update/script'] = array(
-		'title' => 'Update Script',
 		'description' => 'Update Script',
 		'page callback' => 'update_script',
 		'access arguments' => array('Workshop Add New College'),
@@ -211,7 +207,6 @@ function stupload_menu(){
 		'file' => 'update_script.inc',
 	);
 	$items['stupload/update/video'] = array(
-		'title' => 'Update Video',
 		'description' => 'Update Video ',
 		'page callback' => 'update_video',
 		'access arguments' => array('Workshop Add New College'),
@@ -219,7 +214,6 @@ function stupload_menu(){
 		'file' => 'update_video.inc',
 	);
 	$items['stupload/update/slide'] = array(
-		'title' => 'Update Slide',
 		'description' => 'Update Slide ',
 		'page callback' => 'update_slide',
 		'access arguments' => array('Workshop Add New College'),
@@ -227,7 +221,6 @@ function stupload_menu(){
 		'file' => 'update_slide.inc',
 	);
 	$items['stupload/update/codefile'] = array(
-		'title' => 'Update Codefile',
 		'description' => 'Update Codefile ',
 		'page callback' => 'update_codefile',
 		'access arguments' => array('Workshop Add New College'),
@@ -235,7 +228,6 @@ function stupload_menu(){
 		'file' => 'update_codefile.inc',
 	);
 	$items['stupload/update/assignment'] = array(
-		'title' => 'Update Assignment',
 		'description' => 'Update Assignment',
 		'page callback' => 'update_assignment',
 		'access arguments' => array('Workshop Add New College'),
@@ -397,7 +389,22 @@ function get_category_names(){
 	if(isset($_POST['level']) && isset($_POST['foss'])){
 		//$query = "select distinct tutorial_name from tutorial_details where tutorial_level='".$_POST['level']."'";
 
-		$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT tutorial_detail_id FROM tutorial_resources)";
+		$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT distinct tutorial_detail_id FROM tutorial_resources where language='English')";
+		$result = db_query($query);
+		$output = array();
+		while($row = db_fetch_object($result)){
+			$output[] = $row;
+		}
+		echo json_encode($output);
+		exit;
+	}
+}
+
+function get_timed_category_names(){
+	if(isset($_POST['level']) && isset($_POST['foss'])){
+		//$query = "select distinct tutorial_name from tutorial_details where tutorial_level='".$_POST['level']."'";
+
+		$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT distinct tutorial_detail_id FROM tutorial_resources where language='English-timed')";
 		$result = db_query($query);
 		$output = array();
 		while($row = db_fetch_object($result)){
