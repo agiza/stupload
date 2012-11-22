@@ -69,7 +69,7 @@
 	}
 	
 	function upload_english_video_form_submit($form, &$form_state){
-
+		global $user;
 		$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
 
 		$result = db_query($query);
@@ -81,37 +81,43 @@
 		$path = $file_upload_path.$video_path;
 		$file_ext = substr($_FILES['files']['name']['video'], strripos($_FILES['files']['name']['video'], '.'));
 		$file_name = $tutorial_detail->tutorial_name.'-English'.$file_ext;
-
-		if($_FILES['files']['size']['video'] > 0){
-			move_uploaded_file($_FILES['files']['tmp_name']['video'], $path.$file_name);
-
-		}
-
-		global $user;
-
-		$tutorial_slide = $video_path.$file_name;
 		if($form_state['values']['video_status'] == 1){
 			$tutorial_slide = 'pending';
+			$query = "UPDATE tutorial_resources SET cvideo_version=1, tutorial_video='".$tutorial_slide."' WHERE id='".$form_state['values']['trid']."'";
+			db_query($query);
+			// to track uploader 
+			$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
+
+			if(db_query($query)){
+				drupal_set_message('Tutorial Video Updated Successfully');
+				$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
+				drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+			}else {
+				drupal_set_message('Error while Adding Tutorial Video, Please try again.');
+			}
+		}
+		if($_FILES['files']['size']['video'] > 0){
+			if(move_uploaded_file($_FILES['files']['tmp_name']['video'], $path.$file_name)){
+				$tutorial_slide = $video_path.$file_name;
+				// insert into common data table
+				$query = "UPDATE tutorial_resources SET cvideo_version=1, tutorial_video='".$tutorial_slide."' WHERE id='".$form_state['values']['trid']."'";
+				db_query($query);
+				// to track uploader 
+				$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
+
+				if(db_query($query)){
+					drupal_set_message('Tutorial Video Updated Successfully');
+					$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
+					drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+				}else {
+					drupal_set_message('Error while Adding Tutorial Video, Please try again.');
+				}
+			}else{
+				drupal_set_message('Error while Uploading Video file, Please try again..');
+			}
+
 		}
 
-		// insert into common data table
-
-		$query = "UPDATE tutorial_resources SET tutorial_video='".$tutorial_slide."' WHERE id='".$form_state['values']['trid']."'";
-
-
-		db_query($query);
-
-		// to track uploader 
-
-		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
-
-		if(db_query($query)){
-			drupal_set_message('Tutorial Video Updated Successfully');
-			$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
-			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
-		}else {
-			drupal_set_message('Error while Adding Tutorial Video, Please try again.');
-		}
 
 }
 
