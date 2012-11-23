@@ -83,7 +83,7 @@
 
 				$tutorial_video = $video_path.$file_name;
 				// insert into common data table
-				$query = "UPDATE tutorial_resources SET tutorial_video='".$tutorial_video."' WHERE id='".$form_state['values']['trid']."'";
+				$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_video='".$tutorial_video."' WHERE id='".$form_state['values']['trid']."'";
 				db_query($query);
 
 				// to track uploader 

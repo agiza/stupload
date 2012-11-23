@@ -340,7 +340,7 @@ $('.uolang_foss_category_name').change(function(){
 
 	// review tutorial
 	$('.reviewer-comment').css({'display': 'none'});
-	$('#edit-status-under-review, #edit-status-need-improvement, #edit-status-accepted, #edit-status-need-improvement').click(function(){
+	$('#edit-status-under-review, #edit-status-pending, #edit-status-need-improvement, #edit-status-accepted, #edit-status-need-improvement').click(function(){
 		if($(this).val() == 'need_improvement'){
 			$('.reviewer-comment').css({'display': 'block'});
 		}else{

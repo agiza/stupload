@@ -63,7 +63,7 @@
 		
 		global $user;
 
-		$query = "UPDATE tutorial_resources SET tutorial_script='".$form_state['values']['wiki_url']."' where id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_script='".$form_state['values']['wiki_url']."' where id='".$form_state['values']['trid']."'";
 
 		db_query($query);		
 

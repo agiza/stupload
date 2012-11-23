@@ -56,7 +56,7 @@
 	function update_outline_form_submit($form, &$form_state){
 		global $user;
 
-		$query = "UPDATE tutorial_resources SET tutorial_outline='".$form_state['values']['outline']."' WHERE id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_outline='".$form_state['values']['outline']."' WHERE id='".$form_state['values']['trid']."'";
 
 		db_query($query);
 

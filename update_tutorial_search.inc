@@ -23,13 +23,18 @@ function update_tutorial_search($params){
 function update_tutorial_search_form($form_state, $foss, $language){
 	global $user;
 	
-	$query = "select tr.id as trid, tr.language, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_video, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tc.tutorial_slide, tc.tutorial_code, tc.tutorial_assignment from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.uid=".$user->uid." and tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
+	$query = "select tr.id as trid, tr.language, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_video, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tc.tutorial_slide, tc.tutorial_code, tc.tutorial_assignment from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.uid=".$user->uid." and tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
 	$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.uid=".$user->uid." and tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
 	$result = pager_query($query, 30, 0, $sql_count);
 	$row = array();
 	$output = '';
 	$sno = 1;
-	$header = array('Sno', 'Level', 'Tutorial Name', 'Outline', 'Script', 'Video', 'Slides', 'Assignment', 'Code', 'Action');
+
+	if($language == 'English'){
+		$header = array('Sno', 'Level', 'Tutorial Name', 'Outline', 'Script', 'Timed-script', 'Video', 'Slides', 'Assignment', 'Code', 'Action');
+	}else{
+		$header = array('Sno', 'Level', 'Tutorial Name', 'Outline', 'Script', 'Video', 'Slides', 'Assignment', 'Code', 'Action');
+	}
 	while ($item = db_fetch_object($result)) {
 		if($item->tutorial_outline == 'pending')
 			$tutorial_outline = "<div class='code_red'>&#8855;</div>";
@@ -59,7 +64,17 @@ function update_tutorial_search_form($form_state, $foss, $language){
 			$tutorial_code = "<div class='code_green'>&#8722;</div>";
 		else
 			$tutorial_code = "<div class='code_green'>&#10004</div>";
-		$row[] = array($sno++, $item -> tutorial_level, $item -> tutorial_name, $tutorial_outline, $tutorial_script, $tutorial_video, $tutorial_slide, $tutorial_assignment, $tutorial_code, "<a href='".$GLOBALS['base_path']."stupload/update_index/%3Ftr%3D".$item -> trid."'>Update</a>");
+		// timed secript
+		if($language == 'English'){
+			if($item->tutorial_script_timed == 'pending')
+				$tutorial_timed_script = "<div class='code_red'>&#8855;</div>";
+			else
+				$tutorial_timed_script = "<div class='code_green'>&#10004</div>";
+
+			$row[] = array($sno++, $item -> tutorial_level, $item -> tutorial_name, $tutorial_outline, $tutorial_script,  $tutorial_timed_script,  $tutorial_video, $tutorial_slide, $tutorial_assignment, $tutorial_code, "<a href='".$GLOBALS['base_path']."stupload/update_index/%3Ftr%3D".$item -> trid."'>Update</a>");
+		}else{
+			$row[] = array($sno++, $item -> tutorial_level, $item -> tutorial_name, $tutorial_outline, $tutorial_script, $tutorial_video, $tutorial_slide, $tutorial_assignment, $tutorial_code, "<a href='".$GLOBALS['base_path']."stupload/update_index/%3Ftr%3D".$item -> trid."'>Update</a>");
+		}
 	}
 	if (count($row) == 0) {
 		$output = '<div style="color:red;text-align:center;">List is empty.</div>';

@@ -441,7 +441,8 @@ function get_timed_category_names(){
 function get_olang_tnames(){
 	if(isset($_POST['level']) && isset($_POST['foss']) && isset($_POST['lang']) && isset($_POST['flag'])){
 		if($_POST['flag'] == 0){
-			$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT tutorial_detail_id FROM tutorial_resources where language='".$_POST['lang']."')";
+			$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id IN ( SELECT tutorial_detail_id FROM tutorial_resources where language='English' AND tutorial_status='accepted' ) AND tutorial_details.id NOT IN ( SELECT tutorial_detail_id FROM tutorial_resources where language='".$_POST['lang']."')";
+			// $query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT tutorial_detail_id FROM tutorial_resources where language='".$_POST['lang']."')";
 		}else{
 			$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."'";
 		}

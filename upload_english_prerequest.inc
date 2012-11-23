@@ -96,7 +96,7 @@
 
 		$common_content = db_fetch_object($result); 
 
-		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `uid`, `language`, `tutorial_content_id`, `tutorial_outline`, `tutorial_script`, `tutorial_video`, `tutorial_status`) VALUES (NULL, '".$tutorial_detail_id."', ".$user->uid.", '".$language."', '".$common_content->id."', 'pending', 'pending', 'pending', 'pending')";
+		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`, `uid`, `language`, `tutorial_content_id`, `tutorial_outline`, `tutorial_script`, `tutorial_script_timed`, `tutorial_video`, `tutorial_status`) VALUES (NULL, '".$tutorial_detail_id."', ".$user->uid.", '".$language."', '".$common_content->id."', 'pending', 'pending', 'pending', 'pending', 'pending')";
 		
 
 		if(db_query($query)){
