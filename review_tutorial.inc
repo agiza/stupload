@@ -128,7 +128,16 @@
 		// add js file 
 		global $user;
 		if(in_array('domain_user', $user->roles)){
-			$options = array('accepted' => 'Accepted', 'need_improvement' => 'Need Improvement');
+			// check if tutorial pending or not
+			$query = "select tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_video, tcc.tutorial_slide, tcc.tutorial_code, tcc.tutorial_assignment from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id='".$trid."'";
+
+			$result = db_query($query);
+
+			$row = db_fetch_array($result);
+			$options = array('pending' => 'Accepted', 'need_improvement' => 'Need Improvement');
+			if(!in_array('pending', $row)){
+				$options = array('pending' => 'Accepted', 'need_improvement' => 'Need Improvement', 'accepted' => 'Accept the Entire Tutorial');
+			}
 		}else{
 			$options = array('under_review' => 'Under Review', 'need_improvement' => 'Need Improvement');
 		}

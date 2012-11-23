@@ -7,16 +7,12 @@ function list_tutorials($params){
 	$flag = 0;
 
 	$url_path = explode('/', $_GET['q']);
-
-	var_dump($url_path);
 	$name = 'review_tutorial_lists';
 	if(in_array($name, $url_path)){
 		$flag = 0;
 	}else{
 		$flag = 1;
 	}
-
-	var_dump($flag);
 	if($params){
 		$params_data = parse_url($params);
 		$data = explode('&', $params_data['query']);
@@ -40,16 +36,22 @@ function list_tutorials_form($form_state, $flag, $foss, $language){
 	$sql_count = "";
 	if($flag == 0){
 		if(in_array('domain_user', $user->roles)){
-			$query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='under_review' order by td.order_code ASC";
-			$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='under_review' order by td.order_code ASC";
+			$query = "select tr.id as trid, tr.language, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_script_timed, tr.tutorial_video, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tc.tutorial_slide, tc.tutorial_code, tc.tutorial_assignment from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='under_review' order by td.order_code ASC";
+			$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='under_review'";
+			// $query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='under_review' order by td.order_code ASC";
+			// $sql_count = "select count(*) from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='under_review' order by td.order_code ASC";
 		}
 		if(in_array('admin_user', $user->roles)){
-			$query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='pending' order by td.order_code ASC";
-			$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='pending' order by td.order_code ASC";
+			$query = "select tr.id as trid, tr.language, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_script_timed, tr.tutorial_video, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tc.tutorial_slide, tc.tutorial_code, tc.tutorial_assignment from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='pending' order by td.order_code ASC";
+			$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='pending'";
+			// $query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='pending' order by td.order_code ASC";
+			// $sql_count = "select count(*) from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' and tr.tutorial_status='pending' order by td.order_code ASC";
 		}
 	}else{
-		$query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
-		$sql_count = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
+		$query = "select tr.id as trid, tr.language, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_script_timed, tr.tutorial_video, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tc.tutorial_slide, tc.tutorial_code, tc.tutorial_assignment from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
+		$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."'";
+		// $query = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
+		// $sql_count = "select tr.id as trid, tr.language, td.id as tdid, td.foss_category, td.tutorial_level, td.order_code, td.tutorial_name from tutorial_resources tr, tutorial_details td where tr.tutorial_detail_id=td.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
 	}
 	
 	$result = pager_query($query, 30, 0, $sql_count);
