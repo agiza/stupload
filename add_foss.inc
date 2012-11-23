@@ -1,15 +1,39 @@
 <?php
 
 	function add_foss_form($form_state) {
+
+		$query = "select * from foss_categories order by name";
+		$result = db_query($query);
+		$foss_categories = array('' => '-- Select --', 'addnew' => '-- Add New FOSS --');
+		$tutorial_order_no = array('' => 'Order');
+		while($row = db_fetch_object($result)){
+			$foss_categories[$row->name] .= $row->name;
+		}
+
+		// add js file 
+		$path = drupal_get_path('module', 'stupload');
+		drupal_add_js($path . '/stupload.js');
+		drupal_add_css($path . '/stupload.css');
+
 		$form['#prefix'] = '<div class="stupload-form">';
 		$form['#suffix'] = '</div>';
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'addfoss');
+
+		$form['foss_categories'] = array(
+			'#type' => 'select',
+			'#title' => t('Available FOSS'),
+			'#required' => TRUE,
+			'#attributes' => array('class' => 'foss_category_add'),
+			'#options' => $foss_categories
+		);
 
 		$form['name'] = array(
 			'#type' => 'textfield',
 			'#title' => t('FOSS Category Name'),
 			'#required' => TRUE,
-			'#attributes' => array('class' => 'foss_category_name')
+			'#attributes' => array('class' => 'foss_category_name'),
+			'#prefix' => '<div class="aable-foss-name" style="display: none">',
+			'#suffix' => '</div>',
 		);
 		$form['submit'] = array(
 			'#type' => 'submit',

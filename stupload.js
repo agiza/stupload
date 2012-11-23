@@ -21,8 +21,8 @@ $(document).ready(function(){
 			},
 			success : function(data){
 				output = JSON.parse(data);
-				var html_data = "<option val=''>Select</option>";
-				var html_data2 = "<option val=''>Select</option><option value=2>Add New</option>";
+				var html_data = "<option val=''>-- Select --</option>";
+				var html_data2 = "<option val=''>-- Select --</option><option value=2>-- Add New Tutorial --</option>";
 				if(output){
 					$('.poll-form').html(field_data);
 					// add levels
@@ -347,6 +347,13 @@ $('.uolang_foss_category_name').change(function(){
 			$('.reviewer-comment').css({'display': 'none'});
 		}
 	});
-
+	// foss category
+	$('.foss_category_add').change(function(){
+		if($(this).val() == 'addnew'){
+			$('.aable-foss-name').css({'display':'block'});
+		}else{
+			$('.aable-foss-name').css({'display':'none'});
+		}
+	});
 
 });
