@@ -23,8 +23,8 @@ function update_tutorial_search($params){
 function update_tutorial_search_form($form_state, $foss, $language){
 	global $user;
 	
-	$query = "select tr.id as trid, tr.language, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_video, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tc.tutorial_slide, tc.tutorial_code, tc.tutorial_assignment from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.uid=".$user->uid." and tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
-	$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.uid=".$user->uid." and tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
+	$query = "select tr.id as trid, tr.language, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_video, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tc.tutorial_slide, tc.tutorial_code, tc.tutorial_assignment from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.uid=".$user->uid." and tr.tutorial_status!='accepted' and tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
+	$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tc where tr.uid=".$user->uid." and tr.tutorial_status!='accepted' and tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tc.id and tr.language='".$language."' and td.foss_category='".$foss."' order by td.order_code ASC";
 	$result = pager_query($query, 30, 0, $sql_count);
 	$row = array();
 	$output = '';
@@ -109,7 +109,6 @@ function update_tutorial_search_form($form_state, $foss, $language){
 	$lang = array();
 	$lang[''] = "Select Language";
 	$lang['English'] = "English";
-	$lang['English-timed'] = "English-timed";
 	while($row = db_fetch_object($result)){
 		$lang[$row->name] = $row->name;
 	}

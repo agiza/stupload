@@ -18,8 +18,8 @@
 
 			//for codefile
 			if($tutorial->tutorial_code != 'pending' && $tutorial->tutorial_code != 'notrequired' && file_exists($file_upload_path.$tutorial->tutorial_code)){
-
-				$codefile = read_ziparchive($file_upload_path.$tutorial->tutorial_code);
+				$codefile = "<ul><li><a href='".$tutorial_path.$tutorial->tutorial_code."'>Click here to view code files</a></li></ul>";
+				$codefile .= read_ziparchive($file_upload_path.$tutorial->tutorial_code);
 			}else{
 				$codefile = $tutorial->tutorial_code;
 			}
@@ -38,22 +38,29 @@
 
 			// for slide
 			if($tutorial->tutorial_slide != 'pending' && file_exists($file_upload_path.$tutorial->tutorial_slide)){
-				$slide = read_ziparchive($file_upload_path.$tutorial->tutorial_slide);
+				$slide = "<ul><li><a href='".$tutorial_path.$tutorial->tutorial_slide."'>Click here to view slides</a></li></ul>";
+				$slide .= read_ziparchive($file_upload_path.$tutorial->tutorial_slide);
 			}else{
 				$slide = $tutorial->tutorial_slide;
 			}
 
 			// video
 			if($tutorial->tutorial_video != 'pending' && file_exists($file_upload_path.$tutorial->tutorial_video)){
-				$video = '<video id="example_video_1" class="video-js vjs-default-skin" controls width="400" height="300" data-setup="{}">
-				    		<source src="'.$tutorial_path.$tutorial->tutorial_video.'" type="video/mp4" />
-				  		</video>';
+				$file_ext = substr($tutorial->tutorial_video, strripos($tutorial->tutorial_video, '.'));
+				//$video = '<video id="example_video_1" class="video-js vjs-default-skin" controls width="400" height="300" src="'.$tutorial_path.$tutorial->tutorial_video.'" >';
+				$video ='<video id="example_video_1" class="video-js vjs-default-skin" controls width="400" height="300" data-setup="{}">';
+				if($file_ext == '.mp4'){
+                    	$video .='<source src="'.$tutorial_path.$tutorial->tutorial_video.'" type="video/mp4" />';
+                    }else{
+                    	$video .='<source src="'.$tutorial_path.$tutorial->tutorial_video.'" type="video/ogg" />';
+                    }
+                    $video .= '</video>';
 			}else{
 				$video = $tutorial->tutorial_slide;
 			}
 			// script
 			if($tutorial->tutorial_script != 'pending'){
-				$script = "<iframe width='100%' height='100%' src='".$wiki_path.$tutorial->tutorial_script."'></iframe>";
+				$script = "<iframe width='100%' height='600px' src='".$wiki_path.$tutorial->tutorial_script."'></iframe>";
 			}else{
 				$script = $tutorial->tutorial_script;
 			}
@@ -76,14 +83,24 @@
 							$status = $tutorial->tutorial_status;
 						}
 						// if need improvement, form should be hide
-						if($tutorial->tutorial_status == 'need_improvement'){
-							$query = "select comment from comment_improvement where trid='".$tutorial->trid."' and uid='".$user->uid."'";
-							$result = db_query($query);
-							$row = db_fetch_object($result);
-							$output .="<span class='left'>Remarks </span><span class='right'>: ".$row->comment."</span>";
-						}else{
+						if($tutorial->tutorial_status != 'need_improvement'){
 							$output .="<span class='left'></span><span class='right'>".drupal_get_form('review_tutorial_form', $trid, $status)."</span>";
 						}
+						//Previous Remarks for the tutorial
+						$query = "select comment from comment_improvement where trid='".$tutorial->trid."' and uid='".$user->uid."'";
+						$result = db_query($query);
+						$tmp_comment = " - ";
+						$flg = 0;
+						while($row = db_fetch_object($result)){
+							if($flg == 0){
+								$tmp_comment = "<ul>";
+								$flg = 1;
+							}
+							$tmp_comment .= "<li>".$row->comment."</li>";
+						}
+						if($tmp_comment != " - ")
+							$tmp_comment .= "</ul>";
+						$output .="<span class='left'>Remarks </span><span class='right'>".$tmp_comment."</span>";
 					$output .= "</div>";
 					$output .= "<div class='left-content'>";
 						$output .= "<div class='summery-outline'>";
@@ -134,9 +151,10 @@
 			$result = db_query($query);
 
 			$row = db_fetch_array($result);
+			$row['tutorial_script_timed'] = 'notnecessary';
 			$options = array('pending' => 'Accepted', 'need_improvement' => 'Need Improvement');
 			if(!in_array('pending', $row)){
-				$options = array('pending' => 'Accepted', 'need_improvement' => 'Need Improvement', 'accepted' => 'Accept the Entire Tutorial');
+				$options = array('accepted' => 'Accept the tutorial', 'need_improvement' => 'Need improvement');
 			}
 		}else{
 			$options = array('under_review' => 'Under Review', 'need_improvement' => 'Need Improvement');
@@ -194,11 +212,9 @@
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'review')";
 
 		if(db_query($query)){
-			drupal_set_message('Tutorial Status Updated succrssfully.');
+			drupal_set_message('Tutorial Status Updated successfully.');
 			$redirect = 'stupload/upload/review/?tr='.$form_state['values']['trid'];
 			drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}
 	}
-
-
 ?>

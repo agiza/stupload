@@ -67,6 +67,7 @@
 			$row = db_fetch_object($result);
 			if($row){
 				form_set_error('tutorial_name', t('This Tutorial Already Exits.'));
+				drupal_goto($path = 'stupload/upload_english', $query = NULL, $fragment = NULL, $http_response_code = 302);
 			}
 		}
 		return;

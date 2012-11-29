@@ -83,6 +83,7 @@
 	
 		if (!preg_match('/^[0-9a-zA-Z-]+$/', $form_state['values']['tutorial_name'])){
 			form_set_error('tutorial_nam', t('Invalid Name, Please use a-z, A-Z, -, 0-9 Only'));
+			drupal_goto($path = 'stupload/tutorial', $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}else{
 			$query = "select tutorial_name from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_level='".$form_state['values']['tutorial_level']."' and tutorial_name='".$form_state['values']['tutorial_name']."'";
 			//echo $query;
@@ -91,6 +92,7 @@
 			$row = db_fetch_object($result);
 			if($row){
 				form_set_error('tutorial_name', t('Name already exists.'));
+				drupal_goto($path = 'stupload/tutorial', $query = NULL, $fragment = NULL, $http_response_code = 302);
 			}
 		}
 		
@@ -113,7 +115,7 @@
 		}else {
 			drupal_set_message('Error while Adding Foss Category, Please try again.');
 		}
-		drupal_goto($path = 'stupload/list', $query = NULL, $fragment = NULL, $http_response_code = 302);
+		drupal_goto($path = 'stupload/tutorial', $query = NULL, $fragment = NULL, $http_response_code = 302);
 
 }
 

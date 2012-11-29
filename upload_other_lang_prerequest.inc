@@ -83,17 +83,26 @@
 	
 	function upload_other_lang_prerequest_form_validate($form, &$form_state){
 
+		$flag_val = 0;
+
 		if($form_state['values']['foss_category'] == ''){
 			form_set_error('tutorial_name', t('Please select FOSS Category.'));
+			$flag_val = 1;
 		}
 		if($form_state['values']['tutorial_level'] == ''){
 			form_set_error('tutorial_level', t('Please select Tutorial Level.'));
+			$flag_val = 1;
 		}
 		if($form_state['values']['tutorial_lang'] == ''){
 			form_set_error('tutorial_lang', t('Please select Language.'));
+			$flag_val = 1;
 		}
 		if($form_state['values']['tutorial_name'] == ''){
 			form_set_error('tutorial_name', t('Please select Tutorial Name.'));
+			$flag_val = 1;
+		}
+		if($flag_val == 1){
+			drupal_goto($path = "stupload/upload_other_lang", $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}
 		return;
 	}

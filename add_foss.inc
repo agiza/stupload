@@ -29,7 +29,7 @@
 
 		$form['name'] = array(
 			'#type' => 'textfield',
-			'#title' => t('FOSS Category Name'),
+			'#title' => t('FOSS Category (use a-z, A-Z, - Only)'),
 			'#required' => TRUE,
 			'#attributes' => array('class' => 'foss_category_name'),
 			'#prefix' => '<div class="aable-foss-name" style="display: none">',
@@ -52,13 +52,14 @@
 		$row = db_fetch_object($result);
 		if (!preg_match('/^[a-zA-Z-]+$/', $form_state['values']['name'])){
 			form_set_error('name', t('Invalid Name, Please use a-z, A-Z, - Only'));
+			drupal_goto($path = 'stupload/addfoss', $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}else{
 			if($row){
 				form_set_error('name', t('Name already exists.'));
+				drupal_goto($path = 'stupload/addfoss', $query = NULL, $fragment = NULL, $http_response_code = 302);
 			}
 		}
-
-	  	return;
+		return;
 	}
 	
 	function add_foss_form_submit($form, &$form_state){
@@ -68,9 +69,7 @@
 		}else {
 			drupal_set_message('Error while Adding Foss Category, Please try again.');
 		}
-		drupal_goto($path = 'stupload/list', $query = NULL, $fragment = NULL, $http_response_code = 302);
+		drupal_goto($path = 'stupload/addfoss', $query = NULL, $fragment = NULL, $http_response_code = 302);
 
-}
-
-
+	}
 ?>
