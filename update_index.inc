@@ -1,7 +1,7 @@
 <?php
 
 	function update_index($params) {
-
+		global $user;
 		if($params){
 			$path = drupal_get_path('module', 'stupload');
 			drupal_add_js($path . '/stupload.js');
@@ -64,6 +64,14 @@
 				$output .="<span class='left'>Tutorial Name</span><span class='right'>: ".$content->tutorial_name."</span>";
 				$output .="<span class='left'>Tutorial Level</span><span class='right'>: ".$content->tutorial_level."</span>";
 				$output .="<span class='left'>Tutorial Language</span><span class='right'>: ".$content->language."</span>";
+				//Previous Remarks for the tutorial
+				$query = "select reviewed_time, comment from comment_improvement where trid='".$trid."' and uid='".$user->uid."' order by reviewed_time DESC";
+				$result = db_query($query);
+				$tmp_comment = ": - ";
+				if($row = db_fetch_object($result)){
+					$tmp_comment = ": ".$row->reviewed_time."<br /> &nbsp;<textarea readonly='readonly' rows='6' cols='50'>".$row->comment."</textarea>";
+				}
+				$output .="<span class='left'>Remarks </span><span class='right'>".$tmp_comment."</span>";
 			$output .= "</div>";
 
 			$output .= "<table class='upload-index'>";
@@ -75,7 +83,7 @@
 				}else{
 					$output .= "</td></tr>";
 				}
-			$output .= "<tr><td class='title'>Outline</td><td class='content'>".$content->tutorial_outline."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/outline' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='outline' value='".$content->tutorial_outline."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
+			$output .= "<tr><td class='title'>Outline</td><td class='content'><textarea readonly='readonly' rows='6' cols='30'>".$content->tutorial_outline."</textarea></td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/outline' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='outline' value='".$content->tutorial_outline."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
 
 			$output .= "<tr><td class='title'>Script</td><td class='content'>".$content->tutorial_script."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/update/script' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
 			if($content->language == 'English')

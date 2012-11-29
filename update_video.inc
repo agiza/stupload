@@ -25,7 +25,7 @@
 
 		$form['video'] = array(
 			'#type' => 'file',
-			'#title' => t('Video <span class="upload-help-test"> (Upload .mp4 and .ogv files only)</span>'),
+			'#title' => t('Video <span class="upload-help-test"> (Upload .ogv file only)</span>'),
 			'#attributes' => array('class' => 'upeng_video'),
 			'#prefix' => '<div class="stupload-form-videou">',
 			'#suffix' => '</div>'
@@ -45,9 +45,9 @@
 		}else{
 			$file_ext = substr($_FILES['files']['name']['video'], strripos($_FILES['files']['name']['video'], '.')); // get file name
 			$filesize = $_FILES['files']['size']['video'];
-			$allowed_file_types = array('.mp4', '.ogv');
+			$allowed_file_types = array('.ogv');
 			if (!in_array($file_ext,$allowed_file_types)  &&  ($filesize < 80000000)) {
-				form_set_error('slide', t('Please select proper file. ogv and mp4 files only allowed.'));
+				form_set_error('video', t('Please select proper file. ogv files only allowed.'));
 			}
 		}
 		

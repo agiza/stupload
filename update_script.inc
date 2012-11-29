@@ -10,7 +10,7 @@
 			require_once('path.config.inc');
 			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.$tutorial_detail->language;
 			$output = "<h2>Update Script for ".$_REQUEST['tn']."</h2><br /><b>Script:</b>";
-			$output .= "<div class='wiki-script-file'><iframe width='100%' height='100%' src='".$wiki_path.$wiki_url."'></iframe></div>";
+			$output .= "<div class='wiki-script-file'><iframe width='100%' height='600px' src='".$wiki_path.$wiki_url."'></iframe></div>";
 			$output .= drupal_get_form('update_script_form', $_POST['trid'], $wiki_url);
 
 			return $output;

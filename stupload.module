@@ -2,6 +2,13 @@
 
 function stupload_perm() {
 	return array(
+		'stupload upload english-timed script',
+		'stupload play video',
+		'stupload update tutorials index',
+		'stupload view tutorials index',
+		'stupload logs index',
+		'stupload review tutorials index',
+		'stupload update assignment',
 		'stupload update codefile',
 		'stupload update slide',
 		'stupload update video',
@@ -28,7 +35,9 @@ function stupload_perm() {
 		'stupload list index',
 		'resource not available',
 		'resource not required',
-		'stupload ajax-fill methods'
+		'stupload ajax-fill methods',
+		'stupload reviewed list',
+		'stupload need improvement list'
 	);
 }
 
@@ -40,6 +49,30 @@ function stupload_menu(){
 		'page callback' => 'index',
 		'access arguments' => array('stupload list index'),
 		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['stupload/reviewed_list'] = array(
+		'title' => 'List of all reviewed tutorials',
+		'description' => 'List Of All Reviewed Tutorials',
+		'page callback' => 'reviewed_list',
+		'access arguments' => array('stupload reviewed list'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'reviewed_list.inc',
+	);
+	$items['stupload/need_improvement_list'] = array(
+		'title' => 'List of tutorials sent for improvement',
+		'description' => 'List of tutorials sent for improvement',
+		'page callback' => 'need_improvement_list',
+		'access arguments' => array('stupload need improvement list'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'need_improvement_list.inc',
+	);
+	$items['stupload/uploaded_tutorials_list'] = array(
+		'title' => 'List of tutorials uploaded',
+		'description' => 'List of tutorials uploaded',
+		'page callback' => 'uploaded_tutorials_list',
+		'access arguments' => array('stupload need improvement list'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'uploaded_tutorials_list.inc',
 	);
 	$items['stupload/addfoss'] = array(
 		'title' => 'Add New Foss Category',
@@ -342,18 +375,27 @@ function stupload_menu(){
 // index page
 
 function index(){
-
-	$output .= "<div class='upload-index-page list-link'>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/addfoss'> Add New FOSS Category</a><br>";
-	$output .= "<a class='tutorial' href='".$GLOBALS['base_url']."/stupload/tutorial'> Add New Tutorial</a><br>";
-	$output .= "<a class='upload-english' href='".$GLOBALS['base_url']."/stupload/upload_english'> Upload English Tutorial</a><br>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/upload_other_lang'> Upload Other Languages Tutorials</a><br>";
-	$output .= "<a class='update_tutorial' href='".$GLOBALS['base_url']."/stupload/update_tutorial_search'>Update Tutorials</a><br>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/review_tutorial_lists'>Review Tutorial</a><br>";
-	$output .= "<a class='addfoss' href='".$GLOBALS['base_url']."/stupload/view_tutorials_list'>View All Tutorials</a><br>";
-	$output .= "<a class='log' href='".$GLOBALS['base_url']."/stupload/view_logs_list'>View Upload Logs</a><br>";
-	$output .= "</div>";
-	return $output;
+	
+	global $user;
+	
+	$content = "<div class='upload-index-page list-link'><ul>";
+	if(in_array('admin_review_user', $user->roles) || in_array('admin_user', $user->roles)){
+		$content .="<li><a href='".$GLOBALS['base_url']."/stupload/addfoss'> Add New FOSS</a></li>";
+		$content .="<li><a href='".$GLOBALS['base_url']."/stupload/tutorial'> Add New Tutorial</a></li>";
+	}
+	if(in_array('contributor', $user->roles) || in_array('admin_user', $user->roles)){
+		$content .="<li><a href='".$GLOBALS['base_url']."/stupload/upload_english'> Upload English Tutorial</a></li>";
+		$content .="<li><a href='".$GLOBALS['base_url']."/stupload/upload_other_lang'>Upload Other Language Tutorial</a></li>";
+		$content .="<li><a href='".$GLOBALS['base_url']."/stupload/update_tutorial_search'>Update Existing Tutorial</a></li>";
+	}
+	if(in_array('admin_review_user', $user->roles) || in_array('domain_user', $user->roles) || in_array('admin_user', $user->roles)){
+		$content .="<li><a href='".$GLOBALS['base_url']."/stupload/review_tutorial_lists'>Review Tutorials</a></li>";
+	}
+	$content .="<li><a href='".$GLOBALS['base_url']."/stupload/view_tutorials_list'>View All Tutorials</a></li>";
+	if(in_array('admin_user', $user->roles)){
+		$content .="<li><a href='".$GLOBALS['base_url']."/stupload/view_logs_list'>View Update Logs</a></li>";
+	}
+	return $content."</ul></div>";
 }
 // for add availabel tutorial levels for add tutorial names
 function get_tutorial_levels(){
