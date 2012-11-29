@@ -34,7 +34,7 @@
 			'#type' => 'select',
 			'#title' => t('Assignment Status'),
 			'#required' => TRUE,
-			'#options' => array('' => 'Assignment', 0 => 'Required' , 1 => 'Will upload later', 2 => 'Not Required'),
+			'#options' => array(0 => 'Required' , 1 => 'Will upload later', 2 => 'Not Required'),
 			'#attributes' => array('class' => 'upeng_asgmnt_status'),
 		);
 		$form['assignment'] = array(

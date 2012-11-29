@@ -50,7 +50,7 @@
 			'#type' => 'select',
 			'#title' => t('Script'),
 			'#required' => TRUE,
-			'#options' => array('' => 'Script', 0 => 'Required' , 1 => 'Will upload later'),
+			'#options' => array(0 => 'Required' , 1 => 'Will upload later'),
 			'#attributes' => array('class' => 'upeng_script_status'),
 		);
 		$form['submit'] = array(

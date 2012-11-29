@@ -68,7 +68,7 @@ $(document).ready(function(){
 			},
 			success : function(data){
 				output = JSON.parse(data);
-				var html_data = "<option value=''>Level</option>";
+				var html_data = "<option value=''>-- Select --</option>";
 				if(output){
 					$('.uenglish-level-name').html(field_data);
 					for (var i=0; i < output.length; i++)
@@ -94,7 +94,7 @@ $(document).ready(function(){
 							},
 							success : function(data){
 								output = JSON.parse(data);
-								var html_data = "<option value=''>Tutorial name</option>";
+								var html_data = "<option value=''>-- Select --</option>";
 								if(output){
 									$('.uenglish-name').html(field_data);
 									for (var i=0; i < output.length; i++)
@@ -129,7 +129,7 @@ $(document).ready(function(){
 			},
 			success : function(data){
 				output = JSON.parse(data);
-				var html_data = "<option value=''>Level</option>";
+				var html_data = "<option value=''>-- Select --</option>";
 				if(output){
 					$('.uenglish-timed-level-name').html(field_data);
 					for (var i=0; i < output.length; i++)
@@ -155,7 +155,7 @@ $(document).ready(function(){
 							},
 							success : function(data){
 								output = JSON.parse(data);
-								var html_data = "<option value=''>Tutorial name</option>";
+								var html_data = "<option value=''>-- Select --</option>";
 								if(output){
 									$('.uenglish-timed-name').html(field_data);
 									for (var i=0; i < output.length; i++)
@@ -177,60 +177,73 @@ $(document).ready(function(){
 		});
 	});
 	// field hide and show
-	$('div.stupload-outline').css({'display' : 'none'});
+	if($('.uptn_outline_status').val() == 0){
+		$('div.stupload-outline').css({'display' : 'block'});
+	}
 	$('.uptn_outline_status').change(function(){
 		if($(this).val() == 0){
 			$('div.stupload-outline').css({'display' : 'block'});
-		}else if($(this).val() == '' || $(this).val() == 1){
+		}else{
 			$('div.stupload-outline').css({'display' : 'none'});
 		}
 	});
 
 	// for script file
+	path = $('.upeng_script_wiki').val();
+	wiki_data = "<iframe width='100%' height='600px' src='"+wiki_url+path+"'></iframe>";
+	if($('.upeng_script_status').val() == 0){
+		$('div.wiki-script-file').html(wiki_data);
+	}
 	$('.upeng_script_status').change(function(){
-		path = $('.upeng_script_wiki').val();
-		wiki_data = "<iframe width='100%' height='100%' src='"+wiki_url+path+"'></iframe>";
 		if($(this).val() == 0){
 			$('div.wiki-script-file').html(wiki_data);
-		}else if($(this).val() == '' || $(this).val() == 1){
+		}else{
 			$('div.wiki-script-file').html('<p></p>');
 		}
 	});
 	// for slide file
-	$('div.stupload-form-slide').css({'display' : 'none'});
+	if($('.upeng_slide_status').val() == 0){
+		$('div.stupload-form-slide').css({'display' : 'block'});
+	}
 	$('.upeng_slide_status').change(function(){
 		if($(this).val() == 0){
 			$('div.stupload-form-slide').css({'display' : 'block'});
-		}else if($(this).val() == '' || $(this).val() == 1){
+		}else{
 			$('div.stupload-form-slide').css({'display' : 'none'});
 		}
 	});
 
 	// for video file
-	$('div.stupload-form-video').css({'display' : 'none'});
+	if($('.upeng_video_status').val() == 0){
+		$('div.stupload-form-video').css({'display' : 'block'});
+	}
 	$('.upeng_video_status').change(function(){
 		if($(this).val() == 0){
 			$('div.stupload-form-video').css({'display' : 'block'});
-		}else if($(this).val() == '' || $(this).val() == 1){
+		}else{
 			$('div.stupload-form-video').css({'display' : 'none'});
 		}
 	});
 
 	// for codefile file
-	$('div.stupload-form-codefile').css({'display' : 'none'});
+	if($('.upeng_codefile_status').val() == 0){
+		$('div.stupload-form-codefile').css({'display' : 'block'});
+	}
 	$('.upeng_codefile_status').change(function(){
 		if($(this).val() == 0){
 			$('div.stupload-form-codefile').css({'display' : 'block'});
-		}else if($(this).val() == '' || $(this).val() == 1 || $(this).val() == 2){
+		}else{
 			$('div.stupload-form-codefile').css({'display' : 'none'});
 		}
 	});
 	// for assignment file
-	$('div.stupload-form-asgmnt').css({'display' : 'none'});
+	if($('.upeng_asgmnt_status').val() == 0){
+		$('div.stupload-form-asgmnt').css({'display' : 'block'});
+	}
 	$('.upeng_asgmnt_status').change(function(){
 		if($(this).val() == 0){
 			$('div.stupload-form-asgmnt').css({'display' : 'block'});
-		}else if($(this).val() == '' || $(this).val() == 1 || $(this).val() == 2){
+		}else{
 			$('div.stupload-form-asgmnt').css({'display' : 'none'});
 		}
 	});
@@ -251,7 +264,7 @@ $('.uolang_foss_category_name').change(function(){
 			},
 			success : function(data){
 				output = JSON.parse(data);
-				var html_data = "<option value=''>Level</option>";
+				var html_data = "<option value=''>-- Select --</option>";
 				if(output){
 					$('.uolang-level-name').html(field_data);
 					for (var i=0; i < output.length; i++)
@@ -309,7 +322,7 @@ $('.uolang_foss_category_name').change(function(){
 											success : function(data){
 												output = JSON.parse(data);
 												console.log(output);
-												var html_data = "<option value=''>Tutorial name</option>";
+												var html_data = "<option value=''>-- Select --</option>";
 												if(output){
 													$('.uolang-name').html(field_data);
 													for (var i=0; i < output.length; i++)

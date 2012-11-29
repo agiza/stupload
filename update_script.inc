@@ -1,5 +1,5 @@
 <?php
-	function update_script() {
+	function update_scripts() {
 
 		if($_POST){
 			

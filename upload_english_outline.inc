@@ -32,7 +32,7 @@
 			'#type' => 'select',
 			'#title' => t('Outline Status'),
 			'#required' => TRUE,
-			'#options' => array('' => 'Status', 0 => 'Required', 1 => 'Will upload later'),
+			'#options' => array(0 => 'Required', 1 => 'Will upload later'),
 			'#attributes' => array('class' => 'uptn_outline_status', '')
 		);
 		$form['outline'] = array(

@@ -58,7 +58,7 @@
 			'#type' => 'select',
 			'#title' => t('Script'),
 			'#required' => TRUE,
-			'#options' => array('' => 'Script', 0 => 'Required' , 1 => 'Will upload later'),
+			'#options' => array(0 => 'Required' , 1 => 'Will upload later'),
 			'#attributes' => array('class' => 'upeng_script_status'),
 		);
 		$form['submit'] = array(
@@ -92,7 +92,7 @@
 
 		if(db_query($query)){
 			drupal_set_message('Tutorial script Updated Successfully');
-			if($form_state['values']['flag'] == 0)
+			if($_POST['flag'] == 1)
 				$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
 			else
 				$redirect = 'stupload/update_index/?tr='.$form_state['values']['trid'];
