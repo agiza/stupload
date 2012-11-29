@@ -32,7 +32,7 @@
 			'#type' => 'select',
 			'#title' => t('Slide Status'),
 			'#required' => TRUE,
-			'#options' => array('' => 'Slide', 0 => 'Required' , 1 => 'Will upload later'),
+			'#options' => array(0 => 'Required' , 1 => 'Will upload later'),
 			'#attributes' => array('class' => 'upeng_slide_status'),
 		);
 		$form['slide'] = array(

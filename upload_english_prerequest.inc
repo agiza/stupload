@@ -6,10 +6,10 @@
 		drupal_add_css($path . '/stupload.css');
 
 		$upload_option = array('Reqired' => 'Reqired', 'Not Reqired' => 'Not Reqired', 'Upload Later' => 'Upload Later');
-		$tutorial_name = array('' => 'Tutorial Name');
+		$tutorial_name = array('' => '-- Select --');
 		$query = "select * from foss_categories";
 		$result = db_query($query);
-		$foss_category = array('' => 'FOSS category');
+		$foss_category = array('' => '-- Select --');
 		while($row = db_fetch_object($result)){
 			$foss_category[$row->name] =  $row->name;
 		}
@@ -30,7 +30,7 @@
 			'#title' => t('Tutorial Level'),
 			'#required' => TRUE,
 			'#validated' => TRUE,
-			'#options' => array(''=> 'Level'),
+			'#options' => array(''=> '-- Select --'),
 			'#attributes' => array('class' => 'upeng_tutorial_level'),
 			'#prefix' => '<div class="uenglish-level-name"><div class="uenglish-level">',
 			'#suffix' => '</div>', 
@@ -57,18 +57,11 @@
 	
 	
 	function upload_english_prerequest_form_validate($form, &$form_state){
-		if($form_state['values']['tutorial_name'] != ''){
-			$query = "select id from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
-
-		$result = db_query($query);
-		$row = db_fetch_object($result);
-			$query = "select tutorial_detail_id from tutorial_resources where tutorial_detail_id='".$row->id."' and language='English'";
-			$result = db_query($query);
-			$row = db_fetch_object($result);
-			if($row){
-				form_set_error('tutorial_name', t('This Tutorial Already Exits.'));
-				drupal_goto($path = 'stupload/upload_english', $query = NULL, $fragment = NULL, $http_response_code = 302);
-			}
+		if($form_state['values']['tutorial_name'] == ''){
+			form_set_error('tutorial_name', t('There is no Tutorial for this combination'));
+		}
+		if($form_state['values']['tutorial_level'] == ''){
+			form_set_error('tutorial_level', t('Please select Level'));
 		}
 		return;
 	}

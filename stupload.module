@@ -253,7 +253,7 @@ function stupload_menu(){
 	);
 	$items['stupload/update/script'] = array(
 		'description' => 'Update Script',
-		'page callback' => 'update_script',
+		'page callback' => 'update_scripts',
 		'access arguments' => array('stupload update script'),
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_script.inc',

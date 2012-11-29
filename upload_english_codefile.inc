@@ -32,7 +32,7 @@
 			'#type' => 'select',
 			'#title' => t('Codefile Status'),
 			'#required' => TRUE,
-			'#options' => array('' => 'Codefile', 0 => 'Required' , 1 => 'Will upload later', 2 => 'Not Required'),
+			'#options' => array(0 => 'Required' , 1 => 'Will upload later', 2 => 'Not Required'),
 			'#attributes' => array('class' => 'upeng_codefile_status'),
 		);
 		$form['codefile'] = array(
