@@ -78,7 +78,7 @@
 			$output .= "<tr><th class='title'>Title</th><th class='content'>Status</th><th class='update'></th></tr>";
 			
 			$output .= "<tr><td class='title'>Study Plan</td><td class='content'>".$content->order_code."</td><td class='update'>";
-				if($content->language == 'English'){
+				if($content->language == 'English' && ('admin_review_user' == in_array('admin_review_user', $user->roles) || 'admin_user' == in_array('admin_user', $user->roles))){
 					$output .= "<form action='".$GLOBALS['base_url']."/stupload/update/studyplan' method='post'><input type='hidden' name='tdid' value='".$content->tdid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
 				}else{
 					$output .= "</td></tr>";

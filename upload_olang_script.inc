@@ -11,7 +11,7 @@
 
 			require_once('path.config.inc');
 			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English';
-			$output = "<h2>Upload English Script for ".$_REQUEST['tn']."</h2>";
+			$output = "<h2>Upload Script for ".$_REQUEST['tn']."</h2>";
 			$output .= "<div class='wiki-script-file'></div>";
 			$output .= drupal_get_form('upload_olang_script_form', $trid, $wiki_url);
 
@@ -77,7 +77,7 @@
 		}
 
 
-		$query = "UPDATE tutorial_resources SET tutorial_script='".$form_state['values']['wiki_url']."' where id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_script='".$form_state['values']['wiki_url']."' where id='".$form_state['values']['trid']."'";
 
 
 		db_query($query);
@@ -87,13 +87,30 @@
 
 
 		if(db_query($query)){
+			//Mail to contributor
+			$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
+			$result = db_query($query);
+			$td = db_fetch_array($result, MYSQL_ASSOC);
+			$tds = array_merge($td, array('tc' => 'Script'));
+		    $mailto = $user->mail;
+		    $role = 'contributor';
+		    $message = "";
+			stupload_notify($mailto, $role, $message, $tds);
+
+			//Mail to admin_review_user 
+			$role = 'admin_review_user';
+			$mailto = get_role_emails($role);
+		    $message = "";
+			stupload_notify($mailto, $role, $message, $tds);
+
+			$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
+
+			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+
 			drupal_set_message('Tutorial script Updated Successfully');
 		}else {
 			drupal_set_message('Error while Adding Tutorial Script, Please try again.');
 		}
-		$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
-
-		drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 
 }
 

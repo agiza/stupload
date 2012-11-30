@@ -3,7 +3,7 @@
 		if($_REQUEST['trid']){
 
 			$trid = $_REQUEST['trid'];
-			$output = "<h2>Upload English Video for ".$_REQUEST['tn']."</h2>";
+			$output = "<h2>Upload Video for ".$_REQUEST['tn']."</h2>";
 			$output .= drupal_get_form('upload_olang_video_form', $trid);
 			return $output;
 		}else{
@@ -74,8 +74,8 @@
 		global $user;
 		$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
 
-		$result = db_query($query);
-		$tutorial_detail = db_fetch_object($result);
+		$tdresult = db_query($query);
+		$tutorial_detail = db_fetch_object($tdresult);
 
 		$video_path = 'st_videos/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/';
 		require_once('path.config.inc');
@@ -84,7 +84,7 @@
 		$file_name = $tutorial_detail->tutorial_name.'-'.$tutorial_detail->language.$file_ext;
 		if($form_state['values']['video_status'] == 1){
 			$tutorial_video = 'pending';
-			$query = "UPDATE tutorial_resources SET cvideo_version=1, tutorial_video='".$tutorial_video."' WHERE id='".$form_state['values']['trid']."'";
+			$query = "UPDATE tutorial_resources SET tutorial_status='pending', cvideo_version=1, tutorial_video='".$tutorial_video."' WHERE id='".$form_state['values']['trid']."'";
 			db_query($query);
 			// to track uploader
 			$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
@@ -101,12 +101,27 @@
 			if(move_uploaded_file($_FILES['files']['tmp_name']['video'], $path.$file_name)){
 				$tutorial_video = $video_path.$file_name;
 				// insert into common data table
-				$query = "UPDATE tutorial_resources SET cvideo_version=1, tutorial_video='".$tutorial_video."' WHERE id='".$form_state['values']['trid']."'";
+				$query = "UPDATE tutorial_resources SET tutorial_status='pending', cvideo_version=1, tutorial_video='".$tutorial_video."' WHERE id='".$form_state['values']['trid']."'";
 				db_query($query);
 				// to track uploader
 				$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
 
 				if(db_query($query)){
+					//Mail to contributor
+					$a = new stdClass();
+					$a->tc = 'Video';					
+					$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+				    $mailto = $user->mail;
+				    $role = 'contributor';
+				    $message = "";
+					stupload_notify($mailto, $role, $message, $tds);
+
+					//Mail to admin_review_user 
+					$role = 'admin_review_user';
+					$mailto = get_role_emails($role);
+				    $message = "";
+					stupload_notify($mailto, $role, $message, $tds);
+
 					drupal_set_message('Tutorial Video Updated Successfully');
 					$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
 					drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
