@@ -31,7 +31,7 @@
 			'#type' => 'select',
 			'#title' => t('Outline Status'),
 			'#required' => TRUE,
-			'#options' => array('' => 'Status', 0 => 'Required', 1 => 'Will upload later'),
+			'#options' => array(0 => 'Required', 1 => 'Will upload later'),
 			'#attributes' => array('class' => 'uptn_outline_status', '')
 		);
 		$form['outline'] = array(
@@ -73,19 +73,35 @@
 		}
 
 
-		$query = "UPDATE tutorial_resources SET tutorial_outline='".$tutorial_outline."' WHERE id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_outline='".$tutorial_outline."' WHERE id='".$form_state['values']['trid']."'";
 
 		db_query($query);
 
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'outline')";
 
 		if(db_query($query)){
+			//Mail to contributor
+			$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
+			$result = db_query($query);
+			$td = db_fetch_array($result, MYSQL_ASSOC);
+			$tds = array_merge($td, array('tc' => 'Outline'));
+		    $mailto = $user->mail;
+		    $role = 'contributor';
+		    $message = "";
+			stupload_notify($mailto, $role, $message, $tds);
+
+			//Mail to admin_review_user 
+			$role = 'admin_review_user';
+			$mailto = get_role_emails($role);
+		    $message = "";
+			stupload_notify($mailto, $role, $message, $tds);
+
 			drupal_set_message('Tutorial Outline Updated Successfully');
+			$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
+			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 		}else {
 			drupal_set_message('Error while Adding Tutorial Outline, Please try again.');
 		}
-		$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
-		drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
 
 }
 

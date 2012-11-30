@@ -199,6 +199,63 @@
 	function review_tutorial_form_submit($form, &$form_state){
 
 		global $user;
+
+		// Get the Tutorial Details
+		$query = "select tr.language, tr.uid, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
+		$result = db_query($query);
+		$td = db_fetch_array($result, MYSQL_ASSOC);
+		$tds = array_merge($td, array('tc' => 'Review'));
+
+		// send Email
+		if(in_array('domain_user', $user->roles)){
+			// Mail to Contibutor
+			if($form_state['values']['status'] == 'pending' || $form_state['values']['status'] == 'need_improvement'){
+				//Mail to contributor
+			    $role = 'contributor';
+			    $mailto = get_contributor_email($td['uid']);
+			    $message = (($form_state['values']['status'] == 'need_improvement') ? $form_state['values']['comment'] : '');
+				stupload_notify($mailto, $role, $message, $tds);
+
+			}else if($form_state['values']['status'] == 'accepted'){  // accept overall tutorial 
+
+				//Mail to contributor
+			    $role = 'contributor';
+			    $mailto = get_contributor_email($td['uid']);
+			    $message = $form_state['values']['comment'];
+				stupload_notify($mailto, $role, $message, $tds);
+
+				//Mail to Admin User 
+				$role = 'admin_user';
+				$mailto = get_role_emails($role);
+			    $message = "";
+				stupload_notify($mailto, $role, $message, $tds);
+
+			}
+
+		}else if(in_array('admin_review_user', $user->roles)){
+			// Mail to Contibutor and Domain Reviewr(domain_user)
+			if($form_state['values']['status'] == 'under_review'){
+				//Mail to contributor
+			    $role = 'contributor';
+			    $mailto = get_contributor_email($td['uid']);
+			    $message = "";
+				stupload_notify($mailto, $role, $message, $tds);
+
+				//Mail to domain_user Domail reviewer 
+				$role = 'domain_user';
+				$mailto = get_role_emails($role);
+			    $message = "";
+				stupload_notify($mailto, $role, $message, $tds);
+			}else{  // need_improvement
+
+				//Mail to contributor
+			    $role = 'contributor';
+			    $mailto = get_contributor_email($td['uid']);
+			    $message = $form_state['values']['comment'];
+				stupload_notify($mailto, $role, $message, $tds);
+			}
+		}
+		
 		$query = "UPDATE tutorial_resources SET tutorial_status='".$form_state['values']['status']."' WHERE id='".$form_state['values']['trid']."'";
 		db_query($query);
 

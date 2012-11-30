@@ -72,8 +72,8 @@
 		global $user;
 		$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
 
-		$result = db_query($query);
-		$tutorial_detail = db_fetch_object($result);
+		$tdresult = db_query($query);
+		$tutorial_detail = db_fetch_object($tdresult);
 
 		$video_path = 'st_videos/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/';
 		require_once('path.config.inc');
@@ -106,6 +106,21 @@
 				$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'video')";
 
 				if(db_query($query)){
+					//Mail to contributor
+					$a = new stdClass();
+					$a->tc = 'Video';					
+					$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+				    $mailto = $user->mail;
+				    $role = 'contributor';
+				    $message = "";
+					stupload_notify($mailto, $role, $message, $tds);
+
+					//Mail to admin_review_user 
+					$role = 'admin_review_user';
+					$mailto = get_role_emails($role);
+				    $message = "";
+					stupload_notify($mailto, $role, $message, $tds);
+
 					drupal_set_message('Tutorial Video Updated Successfully');
 					$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
 					drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);

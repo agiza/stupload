@@ -71,6 +71,22 @@
 
 
 		if(db_query($query)){
+			//Mail to contributor
+			$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
+			$result = db_query($query);
+			$td = db_fetch_array($result, MYSQL_ASSOC);
+			$tds = array_merge($td, array('tc' => 'Script'));
+		    $mailto = $user->mail;
+		    $role = 'contributor';
+		    $message = "";
+			stupload_notify($mailto, $role, $message, $tds);
+
+			//Mail to admin_review_user 
+			$role = 'admin_review_user';
+			$mailto = get_role_emails($role);
+		    $message = "";
+			stupload_notify($mailto, $role, $message, $tds);
+
 			drupal_set_message('Tutorial Script Updated succrssfully.');
 			$redirect = 'stupload/update_index/?tr='.$form_state['values']['trid'];		
 

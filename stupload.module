@@ -811,4 +811,77 @@ function get_resource_not_available(){
 	exit;
 }
 
+
+// send email
+	// get message
+	function get_meassage($role, $message, $td){
+		if($role == 'contributor'){
+			if($message != ''){
+				//var_dump($td);  // if $td['tc'] == 'review' na it should be review tutorial
+				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the contributor message</p><p>".$message.'</p>';
+			}else{
+				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the contributor message</p>";
+			}
+		}else if($role == 'admin_review_user'){
+			if($message != ''){
+				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the admin_review_user message</p><p>".$message.'</p>';
+			}else{
+				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the admin_review_user message</p>";
+			}
+		}else if($role == 'domain_user'){
+			if($message != ''){
+				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the domain_user message</p><p>".$message.'</p>';
+			}else{
+				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the domain_user message</p>";
+			}
+		}else if($role == 'admin_user'){
+			if($message != ''){
+				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the admin_user message</p><p>".$message.'</p>';
+			}else{
+				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the admin_user message</p>";
+			}
+		}
+		return $body_msg;
+	}
+	function get_role_emails($role){
+		//var_dump($role);
+		$query = "SELECT users.name, users.mail FROM role LEFT JOIN users_roles ON users_roles.rid = role.rid LEFT JOIN users ON users_roles.uid = users.uid WHERE role.name = '".$role."'";
+		$result = db_query($query);
+		$email_ids = array();
+		while($row = db_fetch_object($result)){
+			$email_ids .= $row->mail;
+		}
+		return $email_ids;
+	}
+	function get_contributor_email($uid){
+		$query = "SELECT mail FROM users WHERE uid ='".$uid."'";
+		$result = db_query($query);
+		$row = db_fetch_object($result);
+		return $row->mail;
+	}
+	function stupload_notify($mailto, $role, $message, $td) {
+		// get subject
+		$subject_content = array('contributor' => 'Spoken Tutorial Content Uploaded Details', 'admin_review_user' => 'Spoken Tutorial Content Uploaded Details', 'admin_user' => 'Spoken Tutorial Content Uploaded Details', 'domain_user' => 'Spoken Tutorial Content Uploaded Details');
+		//echo $mailto."---".$subject_content[$role]."---".get_meassage($role, $message, $td)."<br>";
+		global $custom_email;
+		$mailfrom = $custom_email;
+		drupal_mail('notifier', 'reply', $mailto, language_default(),
+		             array('body' => $message, 'subject' => $subject_content[$subject]), $mailfrom, TRUE);
+	}
+  
+	function stupload_mail($key, &$message, $params) {
+		$message['subject'] = $params['subject'];
+		$message['body'] = $params['body'];
+		$headers = array(
+		    'MIME-Version' => '1.0',
+		    'Content-Type' => 'text/html; charset=UTF-8; format=flowed',
+		    'Content-Transfer-Encoding' => '8Bit',
+		    'X-Mailer' => 'Drupal'
+		  );
+		
+		foreach ($headers as $key => $value) {
+		    $message['headers'][$key] = $value;
+		}
+	}
+
 ?>
