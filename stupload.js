@@ -274,6 +274,7 @@ $('.uolang_foss_category_name').change(function(){
 				'foss' : foss
 			},
 			beforeSend: function() {
+				$('.uolang_tutorial_name').html("<option value=''>-- Select --</option>");
 			    field_data = $('.uolang-level-name').html();
 			    $('.uolang-level-name').html(loading_image);
 			},
@@ -316,6 +317,10 @@ $('.uolang_foss_category_name').change(function(){
 					// 				$('.uolang_tutorial_lang').html(html_data);
 
 									// get tutorial names under selected foss, level and languages
+									$('.uolang_tutorial_level').change(function(){
+										$('.uolang_tutorial_name').html("<option value=''>-- Select --</option>");
+										$('.uolang_tutorial_lang').attr("value",'');
+									});
 									$('.uolang_tutorial_lang').change(function(){
 										lang = $(this).val();;
 										foss = $('.uolang_foss_category_name').val();
