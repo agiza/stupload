@@ -106,13 +106,22 @@ function stupload_menu(){
 		'file' => 'add_english_index.inc',
 	);
 	$items['stupload/upload_english'] = array(
-		'title' => 'Upload English',
+		'title' => 'Upload English-timed Script',
 		'description' => 'Upload English',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('upload_english_prerequest_form'),
 		'access arguments' => array('stupload english-upload prerequisites'),
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'upload_english_prerequest.inc',
+	);
+	$items['stupload/upload_english_timed'] = array(
+		'title' => 'Upload English',
+		'description' => 'Upload English',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('upload_english_timed_prerequest_form'),
+		'access arguments' => array('stupload english-upload prerequisites'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'upload_english_timed_prerequest.inc',
 	);
 	$items['stupload/get_category_levels'] = array(
 		'page callback' => 'get_category_levels',
@@ -368,10 +377,60 @@ function stupload_menu(){
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'english_timed_script.inc',
 	);
+
+	$items['stupload/get_english_ouline'] = array(
+		'page callback' => 'get_english_ouline',
+		'access arguments' => array('stupload ajax-fill methods'),
+		'type' => MENU_NORMAL_ITEM
+	);
+
+	// English timed 
+
+	$items['stupload/get_etimed_tnames'] = array(
+		'page callback' => 'get_etimed_tnames',
+		'access arguments' => array('stupload ajax-fill methods'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+
+	$items['stupload/etscript'] = array(
+		'description' => 'Upload English Script',
+		'page callback' => 'update_english_timed_script',
+		'access arguments' => array('stupload english-upload script'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'update_english_timed_script.inc',
+	);
 	
   return $items;
 }
 
+// English timed getting tutorial names
+function get_etimed_tnames(){
+	if(isset($_POST['level']) && isset($_POST['foss'])){
+		$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id IN ( SELECT distinct tutorial_detail_id FROM tutorial_resources where language='English')";
+		$result = db_query($query);
+		$output = array();
+		while($row = db_fetch_object($result)){
+			$output[] = $row;
+		}
+		echo json_encode($output);
+		exit;
+	}
+}
+
+// get_english_ouline
+function get_english_ouline(){
+	if(isset($_POST['trid'])){
+		$query = "SELECT  `tutorial_detail_id` FROM tutorial_resources WHERE id = '".$_POST['trid']."'";
+		$result = db_query($query);
+		$tr = db_fetch_object($result);
+
+		$query = "SELECT  `tutorial_outline` FROM tutorial_resources WHERE tutorial_detail_id = '".$tr->tutorial_detail_id."' and language='English'";
+		$result = db_query($query);
+		$troutline = db_fetch_object($result);
+		echo json_encode($troutline);
+		exit;
+	}
+}
 // index page
 
 function index(){
@@ -400,7 +459,7 @@ function index(){
 // for add availabel tutorial levels for add tutorial names
 function get_tutorial_levels(){
 	if(isset($_POST['foss']) && !empty($_POST['level'])){
-		$query = "select order_code, tutorial_name from tutorial_details where foss_category='".$_POST['foss']."' and tutorial_level = '".$_POST['level']."'";
+		$query = "select order_code, tutorial_name from tutorial_details where foss_category='".$_POST['foss']."' and tutorial_level = '".$_POST['level']."' order by order_code";
 		$result = db_query($query);
 		$exists_order = array();
 		$existing_tutorial_name = array();
@@ -427,6 +486,7 @@ function get_tutorial_levels(){
 	echo json_encode($send_data);
 	exit;
 }
+
 // getting tutorial level
 function get_category_levels(){
 	if(isset($_POST['foss'])){
@@ -447,7 +507,7 @@ function get_category_names(){
 	if(isset($_POST['level']) && isset($_POST['foss'])){
 		//$query = "select distinct tutorial_name from tutorial_details where tutorial_level='".$_POST['level']."'";
 
-		$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT distinct tutorial_detail_id FROM tutorial_resources where language='English')";
+		$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT distinct tutorial_detail_id FROM tutorial_resources where language='English') order by order_code";
 		$result = db_query($query);
 		$output = array();
 		while($row = db_fetch_object($result)){
@@ -815,30 +875,32 @@ function get_resource_not_available(){
 // send email
 	// get message
 	function get_meassage($role, $message, $td){
+
 		if($role == 'contributor'){
 			if($message != ''){
-				//var_dump($td);  // if $td['tc'] == 'review' na it should be review tutorial
-				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the contributor message</p><p>".$message.'</p>';
+				//var_dump($td);  // if $td->tc == 'review' na it should be review tutorial
+				$body_msg = "<p> Dear Contributor, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
-				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the contributor message</p>";
+				//var_dump($td);
+				$body_msg = "<p> Dear Contributor, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}else if($role == 'admin_review_user'){
 			if($message != ''){
-				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the admin_review_user message</p><p>".$message.'</p>';
+				$body_msg = "<p>Dear Admin Reviewer, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
-				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the admin_review_user message</p>";
+				$body_msg = "<p> Dear Admin Reviewer, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}else if($role == 'domain_user'){
 			if($message != ''){
-				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the domain_user message</p><p>".$message.'</p>';
+				$body_msg = "<p> Dear Domain Reviewer, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
-				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the domain_user message</p>";
+				$body_msg = "<p> Dear Domain Reviewer, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}else if($role == 'admin_user'){
 			if($message != ''){
-				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the admin_user message</p><p>".$message.'</p>';
+				$body_msg = "<p> Dear Admin User, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
-				$body_msg = "<h2>".$td->foss_category."/".$td->tutorial_name."/".$td->tutorial_level.'/'.$td->language.'/'.$td->tc."</h2><p>This is the admin_user message</p>";
+				$body_msg = "<p> Dear Admin User, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}
 		return $body_msg;
@@ -847,9 +909,9 @@ function get_resource_not_available(){
 		//var_dump($role);
 		$query = "SELECT users.name, users.mail FROM role LEFT JOIN users_roles ON users_roles.rid = role.rid LEFT JOIN users ON users_roles.uid = users.uid WHERE role.name = '".$role."'";
 		$result = db_query($query);
-		$email_ids = array();
+		$email_ids = '';
 		while($row = db_fetch_object($result)){
-			$email_ids .= $row->mail;
+			$email_ids .= $row->mail.',';
 		}
 		return $email_ids;
 	}
@@ -861,12 +923,13 @@ function get_resource_not_available(){
 	}
 	function stupload_notify($mailto, $role, $message, $td) {
 		// get subject
-		$subject_content = array('contributor' => 'Spoken Tutorial Content Uploaded Details', 'admin_review_user' => 'Spoken Tutorial Content Uploaded Details', 'admin_user' => 'Spoken Tutorial Content Uploaded Details', 'domain_user' => 'Spoken Tutorial Content Uploaded Details');
+		$subject_content = array('contributor' => 'Spoken Tutorial Upload Notification', 'admin_review_user' => 'Spoken Tutorial Upload Notification', 'admin_user' => 'Spoken Tutorial Upload Notification', 'domain_user' => 'Spoken Tutorial Upload Notification');
 		//echo $mailto."---".$subject_content[$role]."---".get_meassage($role, $message, $td)."<br>";
+		//echo "</br>";
 		global $custom_email;
 		$mailfrom = $custom_email;
-		drupal_mail('notifier', 'reply', $mailto, language_default(),
-		             array('body' => $message, 'subject' => $subject_content[$subject]), $mailfrom, TRUE);
+		drupal_mail('stupload', 'reply', $mailto, language_default(),
+		             array('body' => get_meassage($role, $message, $td), 'subject' => $subject_content[$role]), $mailfrom, TRUE);
 	}
   
 	function stupload_mail($key, &$message, $params) {

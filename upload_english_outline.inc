@@ -74,7 +74,7 @@
 			$tutorial_outline = 'pending';
 		}
 
-		$query = "UPDATE tutorial_resources SET tutorial_outline='".$tutorial_outline."' WHERE id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_outline='".db_escape_string($tutorial_outline)."' WHERE id='".$form_state['values']['trid']."'";
 
 		db_query($query);
 

@@ -105,25 +105,25 @@ function list_tutorials_form($form_state, $flag, $foss, $language){
 	drupal_add_css($path.'/stupload-view.css');
 	
 	//fetching list of foss category details
-	$query = "select distinct foss_category from tutorial_details";
+	$query = "select distinct foss_category from tutorial_details ORDER BY foss_category ASC";
 	$result = db_query($query);
-	$foss = array();
-	$foss[''] = "Select FOSS Category";
+	$foss_list = array();
+	$foss_list[''] = "Select FOSS Category";
 	while($row = db_fetch_object($result)){
-		$foss[$row->foss_category] = $row->foss_category;
+		$foss_list[$row->foss_category] = $row->foss_category;
 	}
 	
 	$form['#attributes'] = array('enctype' => "multipart/form-data");
 	$form['foss_category'] = array(
 		'#type' => 'select',
 		'#title' => t(''),
-		'#options' => $foss,
+		'#options' => $foss_list,
 		'#attributes' => array('class' => 'foss_category'),
 		'#prefix' => '<br /><center><b>Select FOSS Category, Select Language and Search for a list of Tutorials</b></center><div style="width: 70%; margin: auto;"><table class="foss_search" align="Center" style="border-collapse: inherit; width: 70%;" cellpadding="7"><tr><td>',
 		'#suffix' => '</td>'
 	);
 	
-	$query = "select name from tutorial_languages";
+	$query = "select name from tutorial_languages ORDER BY name ASC";
 	$result = db_query($query);
 	$lang = array();
 	$lang[''] = "Select Language";
@@ -147,7 +147,7 @@ function list_tutorials_form($form_state, $flag, $foss, $language){
 		'#type' => 'submit',
 		'#value' => 'Search',
 		'#prefix' => '<td>',
-		'#suffix' => '</td></tr></table></div><div class="list_data">'.$output.'</div>',
+		'#suffix' => '</td></tr></table></div><div class="list_data"><ul><li><b>Foss : </b>'.$foss.'</li><li><b>Language : </b>'.$language.'</li></ul>'.$output.'</div>',
 		'#attributes' => array('class' => 'form-select locate_tutorial')
 	);
 	

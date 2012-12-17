@@ -29,7 +29,7 @@
 
 		$form['video_status'] = array(
 			'#type' => 'select',
-			'#title' => t('Slide Status'),
+			'#title' => t('Video Status'),
 			'#required' => TRUE,
 			'#options' => array(0 => 'Required' , 1 => 'Will upload later'),
 			'#attributes' => array('class' => 'upeng_video_status'),

@@ -75,6 +75,7 @@
 						$output .="<span class='left'>Foss Category</span><span class='right'>: ".$tutorial->foss_category."</span>";
 						$output .="<span class='left'>Name</span><span class='right'>: ".$tutorial->tutorial_name."</span>";
 						$output .="<span class='left'>Level</span><span class='right'>: ".$tutorial->tutorial_level."</span>";
+						$output .="<span class='left'>Language</span><span class='right'>: ".$tutorial->language."</span>";
 						$output .="<span class='left'>Current Status</span><span class='right'>: ".$current_status[$tutorial->tutorial_status]."</span>";
 						// set status
 						if($tutorial->tutorial_status == 'pending'){
@@ -256,7 +257,7 @@
 			}
 		}
 		
-		$query = "UPDATE tutorial_resources SET tutorial_status='".$form_state['values']['status']."' WHERE id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET reviewer='".$user->name."', tutorial_status='".$form_state['values']['status']."' WHERE id='".$form_state['values']['trid']."'";
 		db_query($query);
 
 		// insert into the comment improvement table

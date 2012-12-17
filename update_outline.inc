@@ -56,7 +56,10 @@
 	function update_outline_form_submit($form, &$form_state){
 		global $user;
 
-		$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_outline='".$form_state['values']['outline']."' WHERE id='".$form_state['values']['trid']."'";
+		//$tmp_out = mysql_real_escape_string($form_state['values']['outline']);
+		//var_dump($form_state['values']['outline']);
+		//exit;
+		$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_outline='".db_escape_string($form_state['values']['outline'])."' WHERE id='".$form_state['values']['trid']."'";
 
 		db_query($query);
 
@@ -80,7 +83,7 @@
 		    $message = "";
 			stupload_notify($mailto, $role, $message, $tds);
 
-			drupal_set_message('Tutorial Outline Updated succrssfully.');
+			drupal_set_message('Tutorial Outline Updated successfully.');
 			$redirect = 'stupload/update_index/?tr='.$form_state['values']['trid'];		
 
 			drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);

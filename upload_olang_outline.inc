@@ -1,7 +1,7 @@
 <?php
 	function upload_olang_outline() {
 		if($_POST['trid']){
-			$output = "<h2>Upload English Outline for ".$_REQUEST['tn']."</h2>";
+			$output = "<h2>Upload Outline for ".$_REQUEST['tn']."</h2>";
 			$output .= drupal_get_form('upload_olang_outline_form',  $_POST['trid']);
 			return $output;
 		}else{
@@ -25,13 +25,13 @@
 			'#title' => t('id'),
 			'#required' => TRUE,
 			'#value' => $trid,
-			//'#attributes' => array('class' => 'uptn_outline', '')
+			'#attributes' => array('class' => 'uptn_outline_trid')
 		);
 		$form['outline_status'] = array(
 			'#type' => 'select',
 			'#title' => t('Outline Status'),
 			'#required' => TRUE,
-			'#options' => array(0 => 'Required', 1 => 'Will upload later'),
+			'#options' => array(0 => 'Required', 1 => 'Will upload later', '2' => 'Get from English'),
 			'#attributes' => array('class' => 'uptn_outline_status', '')
 		);
 		$form['outline'] = array(
@@ -67,14 +67,11 @@
 	
 	function upload_olang_outline_form_submit($form, &$form_state){
 		global $user;
-		$tutorial_outline = $form_state['values']['outline'];
+		$tuo = $form_state['values']['outline'];
 		if($form_state['values']['outline_status'] == 1){
-			$tutorial_outline = 'pending';
+			$tuo = 'pending';
 		}
-
-
-		$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_outline='".$tutorial_outline."' WHERE id='".$form_state['values']['trid']."'";
-
+		$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_outline='".db_escape_string($tuo)."' WHERE id='".$form_state['values']['trid']."'";
 		db_query($query);
 
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'outline')";
