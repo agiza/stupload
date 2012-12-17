@@ -39,7 +39,7 @@
 
 			// check if codefile exists ot not
 
-			if($content->tutorial_code != 'pending' && $content->tutorial_code != 'notrequired' && file_exists($file_upload_path.$content->tutorial_slide)){
+			if($content->tutorial_code != 'pending' && $content->tutorial_code != 'notrequired' && file_exists($file_upload_path.$content->tutorial_code)){
 				//$codefile_url = $content->tutorial_code;
 				$codefile_url = "<a href='".$tutorial_path.$content->tutorial_code."' target='_blank'>Accepted</a>";
 			}elseif($content->tutorial_code == 'notrequired'){

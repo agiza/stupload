@@ -7,7 +7,7 @@
 
 		$upload_option = array('Reqired' => 'Reqired', 'Not Reqired' => 'Not Reqired', 'Upload Later' => 'Upload Later');
 		$tutorial_name = array('' => '-- Select --');
-		$query = "select * from foss_categories";
+		$query = "select distinct name from foss_categories ORDER BY name ASC";
 		$result = db_query($query);
 		$foss_category = array('' => '-- Select --');
 		while($row = db_fetch_object($result)){

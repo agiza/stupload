@@ -2,7 +2,7 @@
 
 	function add_tutorial_name_form($form_state) {
 		// get all foss categories
-		$query = "select * from foss_categories";
+		$query = "select * from foss_categories order by name";
 		$result = db_query($query);
 		$foss_categories = array('' => 'Select FOSS');
 		$tutorial_order_no = array('' => 'Order');
@@ -34,7 +34,7 @@
 			'#type' => 'select',
 			'#title' => t('Tutorial Level'),
 			'#required' => TRUE,
-			'#options' => array('' => 'Level', 'D0' => 'D0', 'S1' => 'S1', 'C1' => 'C1', 'C2' => 'C2', 'C3' => 'C3', 'C4' => 'C4', 'C5' => 'C5'),
+			'#options' => array('' => 'Level', 'D0' => 'D0', 'S1' => 'S1', 'C2' => 'C2', 'C3' => 'C3', 'C4' => 'C4', 'C5' => 'C5'),
 			'#attributes' => array('class' => 'uptn_tutorial_level')
 		);
 
@@ -111,9 +111,9 @@
 
         $query = "INSERT INTO `tutorial_details` (`id`, `foss_category`, `tutorial_name`, `tutorial_level`, `order_code`) VALUES (NULL, '".$form_state['values']['foss_category']."', '".$form_state['values']['tutorial_name']."', '".$form_state['values']['tutorial_level']."', '".$form_state['values']['tutorial_order_no']."')";
 		if(db_query($query)){
-			drupal_set_message('New FOSS Category Added Successfully');
+			drupal_set_message('New Tutorial Name Added Successfully');
 		}else {
-			drupal_set_message('Error while Adding Foss Category, Please try again.');
+			drupal_set_message('Error while Adding Tutorial Name, Please try again.');
 		}
 		drupal_goto($path = 'stupload/tutorial', $query = NULL, $fragment = NULL, $http_response_code = 302);
 

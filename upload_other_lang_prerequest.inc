@@ -109,21 +109,17 @@
 	
 	function upload_other_lang_prerequest_form_submit($form, &$form_state){
 		global $user;
-		$query = "select id from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."'";
-
+		$query = "select td.id as tdid, tcc.id as tccid from tutorial_details td, tutorial_common_contents tcc where foss_category='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' and tutorial_level='".$form_state['values']['tutorial_level']."' and tcc.tutorial_detail_id=td.id";
 
 		$result = db_query($query);
 		$row = db_fetch_object($result);
 
-		$tutorial_detail_id = $row->id;
+		$tutorial_detail_id = $row->tdid;
 
 		$language = $form_state['values']['tutorial_lang'];
+		$common_id = $row->tccid;
 
-		// update tutorial_common_contents id to tutorial_resources
-		$query = "select tutorial_content_id from tutorial_resources where language='English' and tutorial_resources.tutorial_detail_id IN (select id from tutorial_details)";
-		$result = db_query($query);
-		$common_id = db_fetch_object($result);
-		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`,`uid`, `tutorial_content_id`, `language`, `tutorial_outline`, `tutorial_script`, `tutorial_video`) VALUES (NULL, '".$tutorial_detail_id."', '".$user->uid."', '".$common_id->tutorial_content_id."', '".$language."', 'pending', 'pending', 'pending')";
+		$query = "INSERT INTO `tutorial_resources` (`id`, `tutorial_detail_id`,`uid`, `tutorial_content_id`, `language`, `tutorial_outline`, `tutorial_script`, `tutorial_video`) VALUES (NULL, '".$tutorial_detail_id."', '".$user->uid."', '".$common_id."', '".$language."', 'pending', 'pending', 'pending')";
 
 		if(db_query($query)){
 			// resources ID

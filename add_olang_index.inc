@@ -70,7 +70,7 @@
 			$output .= "<tr><th class='title'>Title</th><th class='content'>Status</th><th class='update'></th></tr>";
 			
 			$output .= "<tr><td class='title'>Outline</td><td class='content'><textarea readonly='readonly' rows='5' cols='30'>".$content->tutorial_outline."</textarea></td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/outline' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
-
+			
 			$output .= "<tr><td class='title'>Script</td><td class='content'>".$content->tutorial_script."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/script' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
 
 			$output .= "<tr><td class='title'>Video</td><td class='content'>".$video_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_other_lang/video' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
