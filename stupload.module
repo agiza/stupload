@@ -879,28 +879,28 @@ function get_resource_not_available(){
 		if($role == 'contributor'){
 			if($message != ''){
 				//var_dump($td);  // if $td->tc == 'review' na it should be review tutorial
-				$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
 				//var_dump($td);
-				$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
+				$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}else if($role == 'admin_review_user'){
 			if($message != ''){
-				$body_msg = "<p>Dear Admin Reviewer, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				$body_msg = "<p>Dear Admin Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
-				$body_msg = "<p> Dear Admin Reviewer, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
+				$body_msg = "<p> Dear Admin Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}else if($role == 'domain_user'){
 			if($message != ''){
-				$body_msg = "<p> Dear Domain Reviewer, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				$body_msg = "<p> Dear Domain Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
-				$body_msg = "<p> Dear Domain Reviewer, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
+				$body_msg = "<p> Dear Domain Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}else if($role == 'admin_user'){
 			if($message != ''){
-				$body_msg = "<p> Dear Admin User, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				$body_msg = "<p> Dear Admin User, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
-				$body_msg = "<p> Dear Admin User, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
+				$body_msg = "<p> Dear Admin User, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}
 		return $body_msg;
