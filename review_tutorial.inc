@@ -215,7 +215,7 @@
 			    $role = 'contributor';
 			    $mailto = get_contributor_email($td['uid']);
 			    $message = (($form_state['values']['status'] == 'need_improvement') ? $form_state['values']['comment'] : '');
-				stupload_notify($mailto, $role, $message, $tds);
+				stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 			}else if($form_state['values']['status'] == 'accepted'){  // accept overall tutorial 
 
@@ -223,13 +223,13 @@
 			    $role = 'contributor';
 			    $mailto = get_contributor_email($td['uid']);
 			    $message = $form_state['values']['comment'];
-				stupload_notify($mailto, $role, $message, $tds);
+				stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 				//Mail to Admin User 
 				$role = 'admin_user';
 				$mailto = get_role_emails($role);
 			    $message = "";
-				stupload_notify($mailto, $role, $message, $tds);
+				stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 			}
 
@@ -240,20 +240,20 @@
 			    $role = 'contributor';
 			    $mailto = get_contributor_email($td['uid']);
 			    $message = "";
-				stupload_notify($mailto, $role, $message, $tds);
+				stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 				//Mail to domain_user Domail reviewer 
 				$role = 'domain_user';
 				$mailto = get_role_emails($role);
 			    $message = "";
-				stupload_notify($mailto, $role, $message, $tds);
+				stupload_notify($mailto, $role, $message, $tds, $user->name);
 			}else{  // need_improvement
 
 				//Mail to contributor
 			    $role = 'contributor';
 			    $mailto = get_contributor_email($td['uid']);
 			    $message = $form_state['values']['comment'];
-				stupload_notify($mailto, $role, $message, $tds);
+				stupload_notify($mailto, $role, $message, $tds, $user->name);
 			}
 		}
 		

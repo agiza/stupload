@@ -94,16 +94,16 @@
 					$a = new stdClass();
 					$a->tc = 'Video';					
 					$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
-				    $mailto = $user->mail;
+				    $mailto = 'k.sanmugam2@gmail.com';
 				    $role = 'contributor';
 				    $message = "";
-					stupload_notify($mailto, $role, $message, $tds);
+					stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 					//Mail to admin_review_user 
 					$role = 'admin_review_user';
 					$mailto = get_role_emails($role);
 				    $message = "";
-					stupload_notify($mailto, $role, $message, $tds);
+					stupload_notify($mailto, $role, $message, $tds, $user->name);
 					
 					drupal_set_message('Tutorial Video Updated Successfully');
 					$redirect = 'stupload/update_index/?tr='.$form_state['values']['trid'];

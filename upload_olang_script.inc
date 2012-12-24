@@ -95,13 +95,13 @@
 		    $mailto = $user->mail;
 		    $role = 'contributor';
 		    $message = "";
-			stupload_notify($mailto, $role, $message, $tds);
+			stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 			//Mail to admin_review_user 
 			$role = 'admin_review_user';
 			$mailto = get_role_emails($role);
 		    $message = "";
-			stupload_notify($mailto, $role, $message, $tds);
+			stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 			$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
 
