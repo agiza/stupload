@@ -874,15 +874,15 @@ function get_resource_not_available(){
 
 // send email
 	// get message
-	function get_meassage($role, $message, $td){
+	function get_meassage($role, $message, $td, $user_name){
 
 		if($role == 'contributor'){
 			if($message != ''){
 				//var_dump($td);  // if $td->tc == 'review' na it should be review tutorial
-				$body_msg = "<p> Dear Contributor, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
 				//var_dump($td);
-				$body_msg = "<p> Dear Contributor, </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
+				$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}else if($role == 'admin_review_user'){
 			if($message != ''){
@@ -921,15 +921,19 @@ function get_resource_not_available(){
 		$row = db_fetch_object($result);
 		return $row->mail;
 	}
-	function stupload_notify($mailto, $role, $message, $td) {
+	function stupload_notify($mailto, $role, $message, $td, $user_name) {
 		// get subject
 		$subject_content = array('contributor' => 'Spoken Tutorial Upload Notification', 'admin_review_user' => 'Spoken Tutorial Upload Notification', 'admin_user' => 'Spoken Tutorial Upload Notification', 'domain_user' => 'Spoken Tutorial Upload Notification');
-		//echo $mailto."---".$subject_content[$role]."---".get_meassage($role, $message, $td)."<br>";
+		//echo $mailto."---".$subject_content[$role]."---".get_meassage($role, $message, $user_name$td)."<br>";
 		//echo "</br>";
 		global $custom_email;
 		$mailfrom = $custom_email;
-		drupal_mail('stupload', 'reply', $mailto, language_default(),
-		             array('body' => get_meassage($role, $message, $td), 'subject' => $subject_content[$role]), $mailfrom, TRUE);
+		if(isset($td->tc) && $td->tc != ''){
+			drupal_mail('stupload', 'reply', $mailto, language_default(),
+		             array('body' => get_meassage($role, $message, $td, $user_name), 'subject' => $subject_content[$role]), $mailfrom, TRUE);
+		}else{
+			return true;
+		}
 	}
   
 	function stupload_mail($key, &$message, $params) {
