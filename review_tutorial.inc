@@ -155,7 +155,7 @@
 			$row['tutorial_script_timed'] = 'notnecessary';
 			$options = array('pending' => 'Accepted', 'need_improvement' => 'Need Improvement');
 			if(!in_array('pending', $row)){
-				$options = array('accepted' => 'Accept the tutorial', 'need_improvement' => 'Need improvement');
+				$options = array('reviewed' => 'Accept the tutorial', 'need_improvement' => 'Need improvement');
 			}
 		}else{
 			$options = array('under_review' => 'Under Review', 'need_improvement' => 'Need Improvement');
