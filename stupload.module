@@ -399,6 +399,13 @@ function stupload_menu(){
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'update_english_timed_script.inc',
 	);
+	$items['stupload/delete'] = array(
+		'title' => 'Delete Tutorial',
+		'page callback' => 'delete_tutorial',
+		'access arguments' => array('stupload ajax-fill methods'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'delete_tutorial.inc',
+	);
 	
   return $items;
 }

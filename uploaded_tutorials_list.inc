@@ -15,7 +15,7 @@ function uploaded_tutorials_list(){
 	$row = array();
 	$output = '';
 	$sno = 1;
-	$header = array('Sno', 'FOSS', 'Level', 'Tutorial Name', 'Language', 'Status');
+	$header = array('Sno', 'FOSS', 'Level', 'Tutorial Name', 'Language', 'Status', 'Action');
 	$tutorial_status = "";
 	while ($item = db_fetch_object($result)) {
 		if($item->tutorial_status == 'need_improvement')
@@ -26,7 +26,7 @@ function uploaded_tutorials_list(){
 			$tutorial_status = "<div class='code_red' style='text-align : left; color : red; font-size : 12px;'>".$item->tutorial_status."</div>";
 		}
 		
-		$row[] = array($sno++, $item->foss_category, $item -> tutorial_level, $item -> tutorial_name, $item -> language, $tutorial_status);
+		$row[] = array($sno++, $item->foss_category, $item -> tutorial_level, $item -> tutorial_name, $item -> language, $tutorial_status, "<a href='".$GLOBALS['base_path']."stupload/delete/".$item -> trid."/".$item -> tutorial_name."'>Delete</a>" );
 	}
 	if (count($row) == 0) {
 		$output = '<div style="color:red;text-align:center;">List is empty.</div>';
