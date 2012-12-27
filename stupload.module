@@ -37,7 +37,8 @@ function stupload_perm() {
 		'resource not required',
 		'stupload ajax-fill methods',
 		'stupload reviewed list',
-		'stupload need improvement list'
+		'stupload need improvement list',
+		'stupload quality review tutorials index'
 	);
 }
 
@@ -189,6 +190,16 @@ function stupload_menu(){
 		'file' => 'review_tutorial.inc',
 	);
 
+	//quality review tutorial list
+	$items['stupload/upload/qreview'] = array(
+		'title' => 'Review Tutorial',
+		'description' => 'Review Tutorial ',
+		'page callback' => 'review_tutorial',
+		'access arguments' => array('stupload quality review tutorials index'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'qreview_tutorial.inc',
+	);
+
 	// other languages
 	$items['stupload/olang_index'] = array(
 		'title' => 'Update Tutorials',
@@ -296,13 +307,22 @@ function stupload_menu(){
 		'file' => 'update_assignment.inc',
 	);
 
-	// review tutorial 
+	// review tutorial
 	$items['stupload/review_tutorial_lists'] = array(
 		'title' => 'Complete List Of Tutorials',
 		'description' => 'List Of ST Videos',
 		'page callback' => 'list_tutorials',
 		'access arguments' => array('stupload review tutorials index'),
 		'file' => 'list_tutorials.inc',
+		'type' => MENU_NORMAL_ITEM,
+	);
+
+	$items['stupload/qreview_tutorial_list'] = array(
+		'title' => 'Complete List Of Tutorials',
+		'description' => 'List Of ST Videos',
+		'page callback' => 'list_tutorials',
+		'access arguments' => array('stupload quality review tutorials index'),
+		'file' => 'quality_list_tutorials.inc',
 		'type' => MENU_NORMAL_ITEM,
 	);
 

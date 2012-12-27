@@ -1,4 +1,4 @@
-<?php
+	<?php
 	function review_tutorial($params) {
 
 		$data = explode('=', $params);
@@ -66,7 +66,7 @@
 			}
 
 			// show current status
-			$current_status = array('pending' => 'Pending', 'under_review' => 'Under Review', 'need_improvement' => 'Need Improvement', 'accepted' => 'Accepted', 'publish' => 'Published');
+			$current_status = array('pending' => 'Pending', 'under_review' => 'Under Review', 'need_improvement' => 'Need Improvement', 'accepted' => 'Accepted', 'reviewed' => 'Reviewed');
 
 
 			$output = "<div class='stupload-form'>";
@@ -78,15 +78,15 @@
 						$output .="<span class='left'>Language</span><span class='right'>: ".$tutorial->language."</span>";
 						$output .="<span class='left'>Current Status</span><span class='right'>: ".$current_status[$tutorial->tutorial_status]."</span>";
 						// set status
-						if($tutorial->tutorial_status == 'pending'){
-							$status = '';
-						}else{
+						//if($tutorial->tutorial_status == 'pending'){
+						//	$status = '';
+						//}else{
 							$status = $tutorial->tutorial_status;
-						}
+						//}
 						// if need improvement, form should be hide
-						if($tutorial->tutorial_status != 'need_improvement'){
+						//if($tutorial->tutorial_status != 'need_improvement'){
 							$output .="<span class='left'></span><span class='right'>".drupal_get_form('review_tutorial_form', $trid, $status)."</span>";
-						}
+						//}
 						//Previous Remarks for the tutorial
 						$query = "select comment from comment_improvement where trid='".$tutorial->trid."' and uid='".$user->uid."'";
 						$result = db_query($query);
@@ -145,7 +145,7 @@
 	function review_tutorial_form($form_state, $trid, $status){
 		// add js file 
 		global $user;
-		if(in_array('domain_user', $user->roles)){
+		if(in_array('quality_checker', $user->roles)){
 			// check if tutorial pending or not
 			$query = "select tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_video, tcc.tutorial_slide, tcc.tutorial_code, tcc.tutorial_assignment from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id='".$trid."'";
 
@@ -153,12 +153,11 @@
 
 			$row = db_fetch_array($result);
 			$row['tutorial_script_timed'] = 'notnecessary';
-			$options = array('pending' => 'Accepted', 'need_improvement' => 'Need Improvement');
+			$options = array('pending' => 'Pending', 'under_review' => 'Under Review', 'need_improvement' => 'Need Improvement', 'reviewed' => 'Accept the tutorial');
 			if(!in_array('pending', $row)){
-				$options = array('reviewed' => 'Accept the tutorial', 'need_improvement' => 'Need improvement');
+				$options = array('pending' => 'Pending', 'under_review' => 'Under Review', 'need_improvement' => 'Need Improvement', 'reviewed' => 'Accept the tutorial', 'accepted' => 'Publish the tutorial');
 			}
-		}else{
-			$options = array('under_review' => 'Under Review', 'need_improvement' => 'Need Improvement');
+			unset($options[$status]);
 		}
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
@@ -172,7 +171,7 @@
 			'#value' => $trid
 		);
 
-		$form['status'] = array(
+		$form['qstatus'] = array(
 			'#type' => 'radios',
 			'#required' => TRUE,
 			'#default_value' => $status,
@@ -182,9 +181,9 @@
 
 		$form['comment'] = array(
 			'#type' => 'textarea',
-			'#required' => FALSE,
+			'#required' => TRUE,
 			'#title' =>t('Remarks'),
-			'#prefix' => "<div class='reviewer-comment'>",
+			'#prefix' => "<div class='qreviewer-comment'>",
 			'#suffix' => "</div>"
 		);
 
@@ -208,16 +207,16 @@
 		$tds = array_merge($td, array('tc' => 'Review'));
 
 		// send Email
-		if(in_array('domain_user', $user->roles)){
+		if(in_array('quality_checker', $user->roles)){
 			// Mail to Contibutor
-			if($form_state['values']['status'] == 'pending' || $form_state['values']['status'] == 'need_improvement'){
+			if($form_state['values']['qstatus'] == 'pending' || $form_state['values']['qstatus'] == 'need_improvement'){
 				//Mail to contributor
 			    $role = 'contributor';
 			    $mailto = get_contributor_email($td['uid']);
-			    $message = (($form_state['values']['status'] == 'need_improvement') ? $form_state['values']['comment'] : '');
+			    $message = (($form_state['values']['qstatus'] == 'need_improvement') ? $form_state['values']['comment'] : '');
 				stupload_notify($mailto, $role, $message, $tds, $user->name);
 
-			}else if($form_state['values']['status'] == 'accepted'){  // accept overall tutorial 
+			}else if($form_state['values']['qstatus'] == 'accepted'){  // accept overall tutorial 
 
 				//Mail to contributor
 			    $role = 'contributor';
@@ -233,31 +232,9 @@
 
 			}
 
-		}else if(in_array('admin_review_user', $user->roles)){
-			// Mail to Contibutor and Domain Reviewr(domain_user)
-			if($form_state['values']['status'] == 'under_review'){
-				//Mail to contributor
-			    $role = 'contributor';
-			    $mailto = get_contributor_email($td['uid']);
-			    $message = "";
-				stupload_notify($mailto, $role, $message, $tds, $user->name);
-
-				//Mail to domain_user Domail reviewer 
-				$role = 'domain_user';
-				$mailto = get_role_emails($role);
-			    $message = "";
-				stupload_notify($mailto, $role, $message, $tds, $user->name);
-			}else{  // need_improvement
-
-				//Mail to contributor
-			    $role = 'contributor';
-			    $mailto = get_contributor_email($td['uid']);
-			    $message = $form_state['values']['comment'];
-				stupload_notify($mailto, $role, $message, $tds, $user->name);
-			}
 		}
 		
-		$query = "UPDATE tutorial_resources SET reviewer='".$user->name."', tutorial_status='".$form_state['values']['status']."' WHERE id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET reviewer='".$user->name."', tutorial_status='".$form_state['values']['qstatus']."' WHERE id='".$form_state['values']['trid']."'";
 		db_query($query);
 
 		// insert into the comment improvement table
@@ -271,7 +248,7 @@
 
 		if(db_query($query)){
 			drupal_set_message('Tutorial Status Updated successfully.');
-			$redirect = 'stupload/upload/review/?tr='.$form_state['values']['trid'];
+			$redirect = 'stupload/upload/qreview/?tr='.$form_state['values']['trid'];
 			drupal_goto($path = $redirect, $query = NULL, $fragment = NULL, $http_response_code = 302);
 		}
 	}
