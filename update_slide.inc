@@ -106,8 +106,13 @@
 					stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 					//Mail to admin_review_user 
+					$role = 'quality_checker';
+					$quality_mailid = get_role_emails($role);
+
 					$role = 'admin_review_user';
-					$mailto = get_role_emails($role);
+					$admin_mailid = get_role_emails($role);
+
+					$mailto = $admin_mailid.$quality_mailid;
 				    $message = "";
 					stupload_notify($mailto, $role, $message, $tds, $user->name);
 					

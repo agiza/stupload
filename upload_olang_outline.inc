@@ -80,16 +80,25 @@
 			//Mail to contributor
 			$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
 			$result = db_query($query);
-			$td = db_fetch_array($result, MYSQL_ASSOC);
-			$tds = array_merge($td, array('tc' => 'Outline'));
+			$tutorial_detail = db_fetch_object($result);
+
+			$a = new stdClass();
+			$a->tc = 'Outline';					
+			$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+			
 		    $mailto = $user->mail;
 		    $role = 'contributor';
 		    $message = "";
 			stupload_notify($mailto, $role, $message, $tds, $user->name);
 
-			//Mail to admin_review_user 
+			//Mail to admin_review_user
+			$role = 'quality_checker';
+			$quality_mailid = get_role_emails($role);
+
 			$role = 'admin_review_user';
-			$mailto = get_role_emails($role);
+			$admin_mailid = get_role_emails($role);
+
+			$mailto = $admin_mailid.$quality_mailid;
 		    $message = "";
 			stupload_notify($mailto, $role, $message, $tds, $user->name);
 
