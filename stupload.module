@@ -913,15 +913,15 @@ function get_resource_not_available(){
 			}
 		}else if($role == 'admin_review_user'){
 			if($message != ''){
-				$body_msg = "<p>Dear Admin Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				$body_msg = "<p>Dear Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
-				$body_msg = "<p> Dear Admin Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
+				$body_msg = "<p> Dear Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}else if($role == 'domain_user'){
 			if($message != ''){
-				$body_msg = "<p> Dear Domain Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				$body_msg = "<p> Dear Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
 			}else{
-				$body_msg = "<p> Dear Domain Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
+				$body_msg = "<p> Dear Reviewer, </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
 			}
 		}else if($role == 'admin_user'){
 			if($message != ''){
@@ -951,7 +951,7 @@ function get_resource_not_available(){
 	function stupload_notify($mailto, $role, $message, $td, $user_name) {
 		// get subject
 		$subject_content = array('contributor' => 'Spoken Tutorial Upload Notification', 'admin_review_user' => 'Spoken Tutorial Upload Notification', 'admin_user' => 'Spoken Tutorial Upload Notification', 'domain_user' => 'Spoken Tutorial Upload Notification');
-		//echo $mailto."---".$subject_content[$role]."---".get_meassage($role, $message, $user_name$td)."<br>";
+		//echo $mailto."---".$subject_content[$role]."---".get_meassage($role, $message, $td, $user_name)."<br>";
 		//echo "</br>";
 		global $custom_email;
 		$mailfrom = $custom_email;
@@ -972,7 +972,7 @@ function get_resource_not_available(){
 		    'Content-Transfer-Encoding' => '8Bit',
 		    'X-Mailer' => 'Drupal'
 		  );
-		
+		//var_dump($message);
 		foreach ($headers as $key => $value) {
 		    $message['headers'][$key] = $value;
 		}
