@@ -88,19 +88,15 @@
 							$output .="<span class='left'></span><span class='right'>".drupal_get_form('review_tutorial_form', $trid, $status)."</span>";
 						}
 						//Previous Remarks for the tutorial
-						$query = "select comment from comment_improvement where trid='".$tutorial->trid."' and uid='".$user->uid."'";
+						$query = "select u.name, ci.reviewed_time, ci.comment from comment_improvement ci, users u where ci.trid='".$trid."' and u.uid=ci.uid order by ci.reviewed_time DESC";
 						$result = db_query($query);
 						$tmp_comment = " - ";
-						$flg = 0;
 						while($row = db_fetch_object($result)){
-							if($flg == 0){
-								$tmp_comment = "<ul>";
-								$flg = 1;
+							if($tmp_comment == " - "){
+								$tmp_comment = '';
 							}
-							$tmp_comment .= "<li>".$row->comment."</li>";
+							$tmp_comment .= "<p> ".$row->name."  ".$row->reviewed_time."<br /><textarea readonly='readonly' rows='2' cols='50'>".$row->comment."</textarea></p>";
 						}
-						if($tmp_comment != " - ")
-							$tmp_comment .= "</ul>";
 						$output .="<span class='left'>Remarks </span><span class='right'>".$tmp_comment."</span>";
 					$output .= "</div>";
 					$output .= "<div class='left-content'>";
@@ -204,16 +200,18 @@
 		// Get the Tutorial Details
 		$query = "select tr.language, tr.uid, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
 		$result = db_query($query);
-		$td = db_fetch_array($result, MYSQL_ASSOC);
-		$tds = array_merge($td, array('tc' => 'Review'));
+		$tutorial_detail = db_fetch_object($result);
 
+		$a = new stdClass();
+		$a->tc = 'Review';					
+		$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
 		// send Email
 		if(in_array('domain_user', $user->roles)){
 			// Mail to Contibutor
 			if($form_state['values']['status'] == 'pending' || $form_state['values']['status'] == 'need_improvement'){
 				//Mail to contributor
 			    $role = 'contributor';
-			    $mailto = get_contributor_email($td['uid']);
+			    $mailto = get_contributor_email($tds->uid);
 			    $message = (($form_state['values']['status'] == 'need_improvement') ? $form_state['values']['comment'] : '');
 				stupload_notify($mailto, $role, $message, $tds, $user->name);
 
@@ -221,7 +219,7 @@
 
 				//Mail to contributor
 			    $role = 'contributor';
-			    $mailto = get_contributor_email($td['uid']);
+			    $mailto = get_contributor_email($tds->uid);
 			    $message = $form_state['values']['comment'];
 				stupload_notify($mailto, $role, $message, $tds, $user->name);
 
