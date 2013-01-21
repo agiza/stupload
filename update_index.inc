@@ -65,11 +65,13 @@
 				$output .="<span class='left'>Tutorial Level</span><span class='right'>: ".$content->tutorial_level."</span>";
 				$output .="<span class='left'>Tutorial Language</span><span class='right'>: ".$content->language."</span>";
 				//Previous Remarks for the tutorial
-				$query = "select reviewed_time, comment from comment_improvement where trid='".$trid."' and uid='".$user->uid."' order by reviewed_time DESC";
+				$query = "select u.name, ci.reviewed_time, ci.comment from comment_improvement ci, users u where ci.trid='".$trid."' and u.uid=ci.uid order by ci.reviewed_time DESC";
 				$result = db_query($query);
-				$tmp_comment = ": - ";
-				if($row = db_fetch_object($result)){
-					$tmp_comment = ": ".$row->reviewed_time."<br /> &nbsp;<textarea readonly='readonly' rows='6' cols='50'>".$row->comment."</textarea>";
+				if(!$result){
+					$tmp_comment = ": - ";
+				}
+				while($row = db_fetch_object($result)){
+					$tmp_comment .= "<p>".$row->name."  ".$row->reviewed_time."<br /><textarea readonly='readonly' rows='2' cols='50'>".$row->comment."</textarea></p>";
 				}
 				$output .="<span class='left'>Remarks </span><span class='right'>".$tmp_comment."</span>";
 			$output .= "</div>";
