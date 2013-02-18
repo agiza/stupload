@@ -47,7 +47,19 @@
 			// video
 			if($tutorial->tutorial_video != 'pending' && file_exists($file_upload_path.$tutorial->tutorial_video)){
 				$file_ext = substr($tutorial->tutorial_video, strripos($tutorial->tutorial_video, '.'));
-				//$video = '<video id="example_video_1" class="video-js vjs-default-skin" controls width="400" height="300" src="'.$tutorial_path.$tutorial->tutorial_video.'" >';
+				$movie = new ffmpeg_movie($file_upload_path.$tutorial->tutorial_video);
+				$height = $movie->getFrameHeight();
+				$width = $movie->getFrameWidth();
+				$time = gmdate("H:i:s", $movie->getDuration());
+				$bitrate = $movie->getBitRate();
+				$fps = $movie->getFrameRate();
+				$size = filesize($file_upload_path.$tutorial->tutorial_video);
+				$video_info = '<p><table border"0" cellpadding="4" style="width: 100%; border-collapse: inherit;"><tr><td><b>File Size:</b> '._format_bytes($size).'</td>';
+				$video_info .= '<td><b>Video Timing: </b>'.$time.'</td></tr>';
+				$video_info .= '<tr><td><b>Frame Width:</b> '.$width.'</td>';
+				$video_info .= '<td><b>Frame Height:</b> '.$height.'</td></tr>';
+				$video_info .= '<tr><td><b>Frame Rate(fps):</b> '.$fps.'</td>';
+				$video_info .= '<td><b>Bit Rate:</b> '.$bitrate.'/s</td></tr></table></p>';
 				$video ='<video id="example_video_1" class="video-js vjs-default-skin" controls width="400" height="300" data-setup="{}">';
 				if($file_ext == '.mp4'){
                     	$video .='<source src="'.$tutorial_path.$tutorial->tutorial_video.'" type="video/mp4" />';
@@ -120,6 +132,7 @@
 					$output .= "<div class='right-content'>";
 						$output .= "<div class='summery-video'>";
 							$output .= "<p class='summery-title'>Video</p>";
+							$output .= $video_info;
 							$output .= "<p class='summery-content'>".$video."</p>";
 						$output .= "</div>";
 					$output .= "</div>";
@@ -136,6 +149,17 @@
 		}
 
 
+	}
+
+	function _format_bytes($a_bytes)
+	{
+	    if ($a_bytes < 1000) {
+	        return $a_bytes .' B';
+	    } elseif ($a_bytes < 1048576) {
+	        return round($a_bytes / 1000, 2) .' KB';
+	    } elseif ($a_bytes < 1073741824) {
+	        return round($a_bytes / 1000000, 2) . ' MB';
+	    }
 	}
 
 	function review_tutorial_form($form_state, $trid, $status){

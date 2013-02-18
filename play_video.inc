@@ -3,7 +3,7 @@ function play_video() {
 
 	require_once('path.config.inc');
 	if(isset($_REQUEST['tr'])){
-		$query = "select tr.id as trid, tr.language, tr.upload_time, tr.reviewer, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_video, tc.tutorial_slide, tc.id as tcid, tc.tutorial_code, tc.tutorial_assignment, ";
+		$query = "select tr.id as trid, tr.language, tr.upload_time, tr.reviewer, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_video, tc.tutorial_slide, tc.id as tcid, tc.tutorial_code, tc.tutorial_assignment, ";
 		$query .= "td.id as tdid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code";
 		$query .= " from tutorial_resources tr, tutorial_common_contents tc, tutorial_details td where tr.id=".$_REQUEST['tr']." and tc.id=tr.tutorial_content_id and td.id=tr.tutorial_detail_id";
 		$result = db_query($query);
@@ -45,6 +45,14 @@ function play_video() {
 			$output .= ' | <a href="javascript: void(0)" onclick="window.open(' . "'".$GLOBALS['base_path']."resource_not_required'" . ", 'Codefiles', 'width=600, height=400'); " . 'return false;">Code files</a>';
 		}
 		$output .= ' | <a href="' . $wiki_path.$value -> tutorial_script . '" target="_blank">Script</a>';
+		if($value->language == "English"){
+			if ($value -> tutorial_script_timed != 'pending'){
+                		$output .= ' | <a href="' . $wiki_path.$value -> tutorial_script_timed . '" target="_blank">Script-Timed</a>';
+                	}else{
+                		$output .= ' | <a href="javascript: void(0)" onclick="window.open(' . "'".$GLOBALS['base_path']."resource_not_available'" . ", 'Script', 'width=600, height=400'); " . 'return false;">Script-Timed</a>';
+                        }
+		}
+
 		if ($value -> tutorial_slide != 'pending'){
         	$output .= ' | <a href="javascript: void(0)" onclick="window.open(' . "'" . $tutorial_path.$value -> tutorial_slide . "'" . ", 'Slides', 'width=600, height=400'); " . 'return false;">Slides</a>';
         }else{
