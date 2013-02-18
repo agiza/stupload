@@ -107,7 +107,7 @@ function stupload_menu(){
 		'file' => 'add_english_index.inc',
 	);
 	$items['stupload/upload_english'] = array(
-		'title' => 'Upload English Script',
+		'title' => 'Upload English-timed Script',
 		'description' => 'Upload English',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('upload_english_prerequest_form'),
@@ -116,7 +116,7 @@ function stupload_menu(){
 		'file' => 'upload_english_prerequest.inc',
 	);
 	$items['stupload/upload_english_timed'] = array(
-		'title' => 'Upload English-timed Script',
+		'title' => 'Upload English',
 		'description' => 'Upload English',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('upload_english_timed_prerequest_form'),

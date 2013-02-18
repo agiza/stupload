@@ -1,7 +1,7 @@
 $(document).ready(function(){
-	webroot = "http://localhost/tester/stupload/";
-	loading_image = "<img src='http://localhost/tester/ajax-loader.gif' />";
-	wiki_url = "http://localhost/tester/script/index.php/";
+	webroot = "http://"+location.hostname+"/stupload/";
+	loading_image = "<img src='http://"+location.hostname+"/ajax-loader.gif' />";
+	wiki_url = "http://"+location.hostname+"/script/index.php/";
 	// for add availabel tutorial levels for add tutorial names
 	$('.add-new-tutorial-name').css({'display':'none'});
 	$('.uptn_tutorial_level').change(function(){

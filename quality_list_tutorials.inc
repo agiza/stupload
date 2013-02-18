@@ -105,7 +105,7 @@ function list_tutorials_form($form_state, $flag, $foss, $language, $status){
 		'#title' => t(''),
 		'#options' => $foss_list,
 		'#attributes' => array('class' => 'foss_category'),
-		'#prefix' => '<br /><center><b>Select FOSS Category, Select Language and Search for a list of Tutorials</b></center><div style="width: 70%; margin: auto;"><table class="foss_search" align="Center" style="border-collapse: inherit; width: 70%;" cellpadding="7"><tr><td>',
+		'#prefix' => '<br /><center><b>Select FOSS Category, Select Language and Search for a list of Tutorials</b></center><div style="width: 100%; margin: auto;"><table class="foss_search" align="Center" style="border-collapse: inherit; width: 70%;" cellpadding="7"><tr><td>',
 		'#suffix' => '</td>'
 	);
 	
@@ -132,7 +132,7 @@ function list_tutorials_form($form_state, $flag, $foss, $language, $status){
 	$form['status'] = array(
 		'#type' => 'select',
 		'#title' => t(''),
-		'#options' => array('pending' => 'Pending', 'under_review' => 'Under Review', 'reviewed' => 'Reviewed'),
+		'#options' => array('' => 'Select Status', 'pending' => 'Pending', 'need_improvement' => 'Need Improvement', 'under_review' => 'Under Review', 'reviewed' => 'Reviewed'),
 		'#attributes' => array('class' => 'rwstatus'),
 		'#prefix' => '<td>',
 		'#suffix' => '</td>'
@@ -154,6 +154,8 @@ function list_tutorials_form_validate($form, &$form_state){
 		form_set_error('foss_category', t('Please select FOSS category'));
 	if($form_state['values']['language'] == '')
 		form_set_error('language', t('Please select language'));
+	 if($form_state['values']['status'] == '')
+                form_set_error('status', t('Please select status'));
 }
 
 function list_tutorials_form_submit($form, &$form_state){

@@ -16,7 +16,7 @@
 			$foss_category[$row->name] =  $row->name;
 		}
 		// select Languages
-		$query = "select * from tutorial_languages";
+		$query = "select * from tutorial_languages order by name ASC";
 		$result = db_query($query);
 		$languages = array('' => 'Select language');
 		while($row = db_fetch_object($result)){
