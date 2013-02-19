@@ -107,7 +107,7 @@ function stupload_menu(){
 		'file' => 'add_english_index.inc',
 	);
 	$items['stupload/upload_english'] = array(
-		'title' => 'Upload English-timed Script',
+		'title' => 'Upload English Script',
 		'description' => 'Upload English',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('upload_english_prerequest_form'),
@@ -116,7 +116,7 @@ function stupload_menu(){
 		'file' => 'upload_english_prerequest.inc',
 	);
 	$items['stupload/upload_english_timed'] = array(
-		'title' => 'Upload English',
+		'title' => 'Upload English-timed Script',
 		'description' => 'Upload English',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('upload_english_timed_prerequest_form'),
@@ -939,6 +939,18 @@ function get_resource_not_available(){
 		$email_ids = '';
 		while($row = db_fetch_object($result)){
 			$email_ids .= $row->mail.',';
+		}
+		return $email_ids;
+	}
+	
+	function get_language_role_emails($lang){
+		$email_ids ='';
+		if($lang){
+			$query = "select u.mail from users u, tutorial_languages tl, tutorial_quality_roles tqr where tqr.language_id=tl.id and u.uid=tqr.uid and tl.name='Tamil'";
+			$result = db_query($query);
+			while($row = db_fetch_object($result)){
+				$email_ids .= $row->mail.',';
+			}
 		}
 		return $email_ids;
 	}
