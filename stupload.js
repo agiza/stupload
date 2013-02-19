@@ -1,6 +1,6 @@
 $(document).ready(function(){
-	webroot = "http://"+location.hostname+"/tester/stupload/";
-	loading_image = "<img src='http://"+location.hostname+"/tester/ajax-loader.gif' />";
+	webroot = "http://"+location.hostname+"/stupload/";
+	loading_image = "<img src='http://"+location.hostname+"/ajax-loader.gif' />";
 	wiki_url = "http://"+location.hostname+"/script/index.php/";
 	// for add availabel tutorial levels for add tutorial names
 	$('.add-new-tutorial-name').css({'display':'none'});
