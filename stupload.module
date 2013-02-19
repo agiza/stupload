@@ -942,6 +942,18 @@ function get_resource_not_available(){
 		}
 		return $email_ids;
 	}
+	
+	function get_language_role_emails($lang){
+		$email_ids ='';
+		if($lang){
+			$query = "select u.mail from users u, tutorial_languages tl, tutorial_quality_roles tqr where tqr.language_id=tl.id and u.uid=tqr.uid and tl.name='Tamil'";
+			$result = db_query($query);
+			while($row = db_fetch_object($result)){
+				$email_ids .= $row->mail.',';
+			}
+		}
+		return $email_ids;
+	}
 	function get_contributor_email($uid){
 		$query = "SELECT mail FROM users WHERE uid ='".$uid."'";
 		$result = db_query($query);

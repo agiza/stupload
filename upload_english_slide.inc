@@ -126,7 +126,7 @@
 
 					//Mail to admin_review_user 
 					$role = 'quality_checker';
-					$quality_mailid = get_role_emails($role);
+					$quality_mailid = get_language_role_emails($tutorial_detail->language);
 					
 					$role = 'admin_review_user';
 					$admin_mailid = get_role_emails($role);
