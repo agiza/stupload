@@ -107,7 +107,7 @@ function stupload_menu(){
 		'file' => 'add_english_index.inc',
 	);
 	$items['stupload/upload_english'] = array(
-		'title' => 'Upload English Script',
+		'title' => 'Upload English Tutorial',
 		'description' => 'Upload English',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('upload_english_prerequest_form'),
@@ -517,7 +517,7 @@ function get_tutorial_levels(){
 // getting tutorial level
 function get_category_levels(){
 	if(isset($_POST['foss'])){
-		$query = "select distinct tutorial_level from tutorial_details where foss_category='".$_POST['foss']."'";
+		$query = "select distinct tutorial_level from tutorial_details where foss_category='".$_POST['foss']."' order by tutorial_level ASC";
 		$result = db_query($query);
 		$output = array();
 		while($row = db_fetch_object($result)){

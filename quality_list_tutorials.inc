@@ -161,11 +161,6 @@ function list_tutorials_form_validate($form, &$form_state){
 function list_tutorials_form_submit($form, &$form_state){
 	global $user;
 	
-		$query = "Select language from tutorial_quality_roles where uid=".$user->uid;
-		$result = db_query($query);
-		$langs = db_fetch_object($result);
-		var_dump($langs);
-		die;
 
 	//if($form_state['values']['flag'] == 0){
 		$redirect = 'stupload/qreview_tutorial_list/?foss='.$form_state['values']['foss_category'].'&language='.$form_state['values']['language'].'&status='.$form_state['values']['status'];

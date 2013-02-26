@@ -72,9 +72,9 @@ function update_tutorial_search_form($form_state, $foss, $language){
 				else
 					$tutorial_timed_script = "<div class='code_green'>&#10004</div>";
 
-				$row[] = array($sno++, $item -> tutorial_level, $item -> tutorial_name, $tutorial_outline, $tutorial_script,  $tutorial_timed_script,  $tutorial_video, $tutorial_slide, $tutorial_assignment, $tutorial_code, "<a href='".$GLOBALS['base_path']."stupload/update_index/%3Ftr%3D".$item -> trid."'>Update</a>");
+				$row[] = array($sno++, $item -> tutorial_level, human_text($item -> tutorial_name), $tutorial_outline, $tutorial_script,  $tutorial_timed_script,  $tutorial_video, $tutorial_slide, $tutorial_assignment, $tutorial_code, "<a href='".$GLOBALS['base_path']."stupload/update_index/%3Ftr%3D".$item -> trid."'>Update</a>");
 			}else{
-				$row[] = array($sno++, $item -> tutorial_level, $item -> tutorial_name, $tutorial_outline, $tutorial_script, $tutorial_video, $tutorial_slide, $tutorial_assignment, $tutorial_code, l(t('Update'), "stupload/update_index/%3Ftr%3D".$item -> trid , array('attributes' => array('class' => 'update-record', 'title' => 'Update'))));
+				$row[] = array($sno++, $item -> tutorial_level, human_text($item -> tutorial_name), $tutorial_outline, $tutorial_script, $tutorial_video, $tutorial_slide, $tutorial_assignment, $tutorial_code, l(t('Update'), "stupload/update_index/%3Ftr%3D".$item -> trid , array('attributes' => array('class' => 'update-record', 'title' => 'Update'))));
 			}
 		}
 		if (count($row) == 0) {

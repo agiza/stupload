@@ -1,7 +1,7 @@
 $(document).ready(function(){
-	webroot = "http://"+location.hostname+"/tester/stupload/";
-	loading_image = "<img src='http://"+location.hostname+"/tester/ajax-loader.gif' />";
-	wiki_url = "http://"+location.hostname+"/script/index.php/";
+	webroot = "http://"+location.hostname+"/spoken_tutorial_org/stupload/";
+	loading_image = "<img src='http://"+location.hostname+"/spoken_tutorial_org/ajax-loader.gif' />";
+	wiki_url = "http://"+location.hostname+"/spoken_tutorial_org/script/index.php/";
 	// for add availabel tutorial levels for add tutorial names
 	$('.add-new-tutorial-name').css({'display':'none'});
 	$('.uptn_tutorial_level').change(function(){
