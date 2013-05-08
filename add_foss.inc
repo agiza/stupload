@@ -67,7 +67,7 @@
 		if(db_query($query)){
 			drupal_set_message('New FOSS Category Added Successfully');
 		}else {
-			drupal_set_message('Error while Adding Foss Category, Please try again.');
+			drupal_set_message('Error while Adding FOSS Category, Please try again.');
 		}
 		drupal_goto($path = 'stupload/addfoss', $query = NULL, $fragment = NULL, $http_response_code = 302);
 

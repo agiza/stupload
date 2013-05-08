@@ -39,7 +39,7 @@
 			// for slide
 			if($tutorial->tutorial_slide != 'pending' && file_exists($file_upload_path.$tutorial->tutorial_slide)){
 				$slide = "<ul><li><a href='".$tutorial_path.$tutorial->tutorial_slide."'>Click here to view slides</a></li></ul>";
-				$slide .= read_ziparchive($file_upload_path.$tutorial->tutorial_slide);
+				// $slide .= read_ziparchive($file_upload_path.$tutorial->tutorial_slide);
 			}else{
 				$slide = $tutorial->tutorial_slide;
 			}
@@ -107,7 +107,7 @@
 							if($tmp_comment == " - "){
 								$tmp_comment = '';
 							}
-							$tmp_comment .= "<p> ".$row->name."  ".$row->reviewed_time."<br /><textarea readonly='readonly' rows='2' cols='50'>".$row->comment."</textarea></p>";
+							$tmp_comment .= "<p> ".$row->name."  ".$row->reviewed_time."<br /><textarea readonly='readonly' rows='2' cols='48'>".$row->comment."</textarea></p>";
 						}
 						$output .="<span class='left'>Remarks </span><span class='right'>".$tmp_comment."</span>";
 					$output .= "</div>";

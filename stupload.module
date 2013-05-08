@@ -38,7 +38,8 @@ function stupload_perm() {
 		'stupload ajax-fill methods',
 		'stupload reviewed list',
 		'stupload need improvement list',
-		'stupload quality review tutorials index'
+		'stupload quality review tutorials index',
+		'stupload admin permission'
 	);
 }
 
@@ -76,8 +77,8 @@ function stupload_menu(){
 		'file' => 'uploaded_tutorials_list.inc',
 	);
 	$items['stupload/addfoss'] = array(
-		'title' => 'Add New Foss Category',
-		'description' => 'Add New Foss Category for ST Videos',
+		'title' => 'Add New FOSS Category',
+		'description' => 'Add New FOSS Category for ST Videos',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('add_foss_form'),
 		'access arguments' => array('stupload add-foss'),
@@ -86,7 +87,7 @@ function stupload_menu(){
 	);
 	$items['stupload/tutorial'] = array(
 		'title' => 'Add New Tutorial Name',
-		'description' => 'Add New Tutorial for Foss Category',
+		'description' => 'Add New Tutorial for FOSS Category',
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('add_tutorial_name_form'),
 		'access arguments' => array('stupload add-tutorial'),
@@ -190,6 +191,16 @@ function stupload_menu(){
 		'file' => 'review_tutorial.inc',
 	);
 
+	// Outline updation
+	$items['stupload/outline_change'] = array(
+		'title' => 'Change Outline',
+		'description' => 'Change Tutorial Outline',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('outline_change_form'),
+		'access arguments' => array('stupload review tutorial'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'outline_change.inc',
+	);
 	//quality review tutorial list
 	$items['stupload/upload/qreview'] = array(
 		'title' => 'Review Tutorial',
@@ -426,8 +437,72 @@ function stupload_menu(){
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'delete_tutorial.inc',
 	);
+	$items['stupload/get_tutorials_language'] = array(
+		'title' => 'Get Tutorials',
+		'page callback' => 'get_tutorials_language',
+		'access arguments' => array('stupload ajax-fill methods'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['stupload/get_tutorials_outline'] = array(
+		'title' => 'Get Tutorials',
+		'page callback' => 'get_tutorials_outline',
+		'access arguments' => array('stupload ajax-fill methods'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items['tutorials_status_report'] = array(
+		'title' => 'Tutorials status report',
+		'page callback' => 'tutorials_status_report',
+		'access arguments' => array('stupload admin permission'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'report.inc',
+	);
+	$items['list_zip'] = array(
+		'title' => 'Files inside zip',
+		'page callback' => 'list_zip_archive',
+		'access arguments' => array('stupload ajax-fill methods'),
+		'type' => MENU_NORMAL_ITEM,
+	);
 	
-  return $items;
+	return $items;
+}
+
+function list_zip_archive(){
+	
+	require_once('path.config.inc');
+	
+	if(isset($_REQUEST['file_path']) && isset($_REQUEST['title'])){
+		$output = '<h2>'.$_REQUEST['title'].'</h2>';
+		$output .= read_ziparchive($file_upload_path.$_REQUEST['file_path']);
+		$output .= '<a href="'.$tutorial_path.$_REQUEST['file_path'].'">Click here to download '.$_REQUEST['title'].'</a>';
+	}else{
+		$output = 'Something went wrong';
+	}
+
+	return $output;
+}
+
+//get tutorials for language
+function get_tutorials_language(){
+	if(isset($_POST['language']) && isset($_POST['foss'])){
+		$query = "SELECT  id, tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_details.id IN ( SELECT distinct tutorial_detail_id FROM tutorial_resources where language='".$_POST['language']."') order by foss_category, tutorial_name, tutorial_level, order_code ASC";
+		$result = db_query($query);
+		$output = array();
+		while($row = db_fetch_object($result)){
+			$output[] = $row;
+		}
+		echo json_encode($output);
+		exit;
+	}
+}
+//get tutorial outline for selected tutorial
+function get_tutorials_outline(){
+	if(isset($_POST['language']) && isset($_POST['tdid'])){
+		$query = "SELECT  id, tutorial_outline FROM tutorial_resources WHERE tutorial_detail_id =".$_POST['tdid']." and language='".$_POST['language']."'";
+		$result = db_query($query);
+		$row = db_fetch_object($result);
+		echo json_encode($row);
+		exit;
+	}
 }
 
 // English timed getting tutorial names

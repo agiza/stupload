@@ -914,8 +914,10 @@ _V_.FullscreenToggle = _V_.Button.extend({
   onClick: function(){
     if (!this.player.isFullScreen) {
       this.player.requestFullScreen();
+      document.getElementById('vjs-tt-cue').style.fontSize='30px';
     } else {
       this.player.cancelFullScreen();
+      document.getElementById('vjs-tt-cue').style.fontSize='18px';
     }
   }
 
@@ -4178,7 +4180,11 @@ _V_.Track = _V_.Component.extend({
         i=0,j=cues.length;
 
     for (;i<j;i++) {
-      html += "<span class='vjs-tt-cue'>"+cues[i].text+"</span>";
+      if (this.player.isFullScreen) {
+         html += "<span class='vjs-tt-cue' id='vjs-tt-cue' style='font-size: 30px;'>"+cues[i].text+"</span>";
+      } else {
+         html += "<span class='vjs-tt-cue' id='vjs-tt-cue' style='font-size: 18px;'>"+cues[i].text+"</span>";
+      }
     }
 
     this.el.innerHTML = html;

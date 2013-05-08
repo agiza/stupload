@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	webroot = "http://"+location.hostname+"/spoken_tutorial_org/stupload/";
 	loading_image = "<img src='http://"+location.hostname+"/spoken_tutorial_org/ajax-loader.gif' />";
-	wiki_url = "http://"+location.hostname+"/spoken_tutorial_org/script/index.php/";
+	wiki_url = "http://script.spoken-tutorial.org/index.php/";
 	// for add availabel tutorial levels for add tutorial names
 	$('.add-new-tutorial-name').css({'display':'none'});
 	$('.uptn_tutorial_level').change(function(){
@@ -422,5 +422,86 @@ $('.uolang_foss_category_name').change(function(){
 			}
 		});
 	});
-
+	$('.outline_change_foss').change(function(){
+		var foss = $(this).val();
+		if(foss != ''){
+			$('.outline_change_language').html('<option value>Select Language</option>');
+			$('.outline_change_tutorial_name').html('<option value>Select Tutorial Name</option>');
+			$.ajax({
+				type : 'POST',
+				url : "http://"+location.hostname+"/spoken_tutorial_org/workshops/get_lang",
+				data : {
+					'foss' : foss
+				},
+				beforeSend: function() {
+					field_data = $('.outline_change_language_div').html();
+					$('.outline_change_language_div').html(loading_image);
+				},
+				success : function(data){
+					output = JSON.parse(data);
+					options = "<option value>Select Language</option>";
+					console.log(output);
+					i = 0;
+					for(i=0; i < output.length; i++){
+						options += "<option value='"+ output[i].language + "'>" + output[i].language + "</option>";
+					}
+					$('.outline_change_language_div').html(field_data);
+					$('.outline_change_language').html(options);
+					$('.outline_change_language').change(function(){
+						if($('.outline_change_foss').val() != '' && $('.outline_change_language').val() != ''){
+							$('.outline_change_tutorial_name').html('<option value>Select Tutorial Name</option>');
+							$.ajax({
+								type : 'POST',
+								url : webroot + "/get_tutorials_language",
+								data : {
+									'foss' : $('.outline_change_foss').val(),
+									'language' : $('.outline_change_language').val()
+								},
+								beforeSend: function() {
+									field_data = $('.outline_change_tutorial_name_div').html();
+									$('.outline_change_tutorial_name_div').html(loading_image);
+								},
+								success : function(data){
+									output = JSON.parse(data);
+									options = "<option value>Select Tutorial Name</option>";
+									console.log(output);
+									i = 0;
+									for(i=0; i < output.length; i++){
+										options += "<option value='"+ output[i].id + "'>" + output[i].tutorial_name + "</option>";
+									}
+									$('.outline_change_tutorial_name_div').html(field_data);
+									$('.outline_change_tutorial_name').html(options);
+									$('.outline_change_tutorial_name').change(function(){
+										if($('.outline_change_language').val() != '' && $('.outline_change_tutorial_name').val() != ''){
+											$('.outline_change_tutorial_outline').val('');
+											$('.outline_change_trid').val('');
+											$.ajax({
+												type : 'POST',
+												url : webroot + "get_tutorials_outline",
+												data : {
+													'tdid' : $('.outline_change_tutorial_name').val(),
+													'language' : $('.outline_change_language').val()
+												},
+												beforeSend: function() {
+													field_data = $('.outline_change_tutorial_outline_div').html();
+													$('.outline_change_tutorial_outline_div').html(loading_image);
+												},
+												success : function(data){
+													output = JSON.parse(data);
+													console.log(output);
+													$('.outline_change_tutorial_outline_div').html(field_data);
+													$('.outline_change_tutorial_outline').val(output.tutorial_outline);
+													$('.outline_change_trid').val(output.id);
+												}
+											});
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+	});
 });

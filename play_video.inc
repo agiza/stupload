@@ -58,7 +58,7 @@ function play_video() {
         }else{
         	$output .= ' | <a href="javascript: void(0)" onclick="window.open(' . "'".$GLOBALS['base_path']."resource_not_available'" . ", 'Slides', 'width=600, height=400'); " . 'return false;">Slides</a>';
         }
-		$output .= ' | <a href="javascript: void(0)" onclick="window.open(' . "'".$tutorial_path."download_video.php?trid=" .$value->trid. "', 'Slides', 'width=600, height=400'); " . 'return false;">Video</a>';
+		$output .= ' | <a href="javascript: void(0)" onclick="window.open(' . "'".$GLOBALS['base_path']."data/download_video.php?trid=" .$value->trid. "', 'Slides', 'width=600, height=400'); " . 'return false;">Video</a>';
 		$output .= '</td></tr>';
 		if ($value -> tutorial_video != 'pending'){
 			$output .= '<tr><td>

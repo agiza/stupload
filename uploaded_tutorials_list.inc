@@ -20,11 +20,14 @@ function uploaded_tutorials_list(){
 	while ($item = db_fetch_object($result)) {
 		if($item->tutorial_status == 'need_improvement')
 			$tutorial_status = "<div class='code_red' style='text-align : left; color : red; font-size : 12px;'>Need Improvement</div>";
-		elseif($item->tutorial_status == 'accepted' || $item->tutorial_status == 'under_review')
+		elseif($item->tutorial_status == 'accepted')
 			$tutorial_status = "<div class='code_green' style='text-align : left; color : green;	font-size : 12px;'>Accepted</div>";
-		else {
+		elseif($item->tutorial_status == 'under_review')
+			$tutorial_status = "<div class='code_green' style='text-align : left; color : red;	font-size : 12px;'>Under Review</div>";
+		elseif($item->tutorial_status == 'reviewed')
+			$tutorial_status = "<div class='code_green' style='text-align : left; color : green;	font-size : 12px;'>Reviewed</div>";
+		else
 			$tutorial_status = "<div class='code_red' style='text-align : left; color : red; font-size : 12px;'>".$item->tutorial_status."</div>";
-		}
 		
 		$row[] = array($sno++, $item->foss_category, $item -> tutorial_level, $item -> tutorial_name, $item -> language, $tutorial_status, l(t('Delete'), "stupload/delete/".$item -> trid."/".$item -> tutorial_name , array('attributes' => array('class' => 'delete-record', 'title' => 'Delete'))));
 	}
