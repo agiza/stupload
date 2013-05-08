@@ -100,14 +100,14 @@ function stupload_menu(){
 		'type' => MENU_NORMAL_ITEM,
 	);
 	// upload english
-	$items['stupload/english_index'] = array(
-		'title' => 'Upload Tutorials',
+	$items['stupload/upload_english_tutorial_index'] = array(
+		'title' => 'English Tutorial Upload Page',
 		'page callback' => 'english_index',
 		'access arguments' => array('stupload english-upload index'),
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'add_english_index.inc',
 	);
-	$items['stupload/upload_english'] = array(
+	$items['stupload/upload_english_tutorial'] = array(
 		'title' => 'Upload English Tutorial',
 		'description' => 'Upload English',
 		'page callback' => 'drupal_get_form',
@@ -615,9 +615,7 @@ function get_category_levels(){
 // getting tutorial names
 function get_category_names(){
 	if(isset($_POST['level']) && isset($_POST['foss'])){
-		//$query = "select distinct tutorial_name from tutorial_details where tutorial_level='".$_POST['level']."'";
-
-		$query = "SELECT  tutorial_name FROM tutorial_details WHERE foss_category='".$_POST['foss']."' and tutorial_level =  '".$_POST['level']."' AND tutorial_details.id NOT IN ( SELECT distinct tutorial_detail_id FROM tutorial_resources where language='English') order by order_code";
+		$query = "select td.tutorial_name from tutorial_resources tr, tutorial_details td where td.foss_category='".$_POST['foss']."' and td.tutorial_level='".$_POST['level']."' and tr.tutorial_detail_id=td.id and tr.language='English' and tr.tutorial_status !='accepted'";
 		$result = db_query($query);
 		$output = array();
 		while($row = db_fetch_object($result)){
@@ -1072,5 +1070,61 @@ function get_resource_not_available(){
 		    $message['headers'][$key] = $value;
 		}
 	}
+	
+	// component status
+	function component_status($status, $uid, $path = NULL, $outline = 0 ){
+		$status_array = array(0 => 'Pending', 1 => 'Waiting for admin review', 2 => 'Waiting for Domain review', 3 => 'Waiting for quality check', 4 => 'Accepted', 5 => 'Need improvement', 6 => 'Not required');
+		$flag = 0;
+		$output = '';
+		if($outline == 1){
+			if($status == 0 && $uid == 0){
+				$output = "<span class='code_red'>";
+			}else{
+				return "<p class='outline'>".stuolpad_outline_humen_view($path)."</p>";
+			}
+		}
+		// slide
+		if($outline == 2){
+			if($status == 0 && $uid == 0){
+				$output = "<span class='code_red'>";
+			}else{
+				return "<a href='".$wiki_path.$path."'><span class='code_green'>".$status_array[$status]."</span></a>";
+			}
+		}
+		
+		if($status == 0 && $uid == 0){
+			$output = "<span class='code_red'>";
+		}elseif($status == 0 && $uid > 0){
+			$output = "<span class='code_orange'>";
+		}else{
+			if($path && file_exists($file_upload_path.$path)){
+				$flag = 1;
+				$output = "<a href='".$file_upload_path.$path."'><span class='code_green'>";
+			}elseif($path == NULL){
+				return $path;
+			}else{
+				$output = "<span class='code_orange'>";
+			}
+		}
+		$output .= $status_array[$status]."</span>";
+		if($flag){
+			$output .= "</a>";
+		}
+		return $output;
+	}
+	
+	function stuolpad_outline_humen_view($outline){
+       $temp = str_replace("\t", "  &nbsp; ", $outline);
+       $temp = str_replace("\n\n\n", "\n", $temp);
+       $outline_array = explode("\n", $temp);
+       $temp = "";
+       foreach($outline_array as $line) {
+               $line = trim($line);
+               if($line != ''){
+                       $temp .= "<li>".$line."</li>";
+               }
+       }
+       return "<ul>".$temp."</ul>";
+}
 
 ?>

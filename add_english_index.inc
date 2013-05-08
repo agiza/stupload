@@ -1,101 +1,89 @@
 <?php
 
-	function english_index($params) {
-		if($params){
+	function english_index() {
+		if($_REQUEST['trid']){
+			global $user;
 			$path = drupal_get_path('module', 'stupload');
 			drupal_add_js($path . '/stupload.js');
 			drupal_add_css($path . '/stupload.css');
-
-			$params = parse_url($params);
-			$tr_data = explode('=', $params['query']);
-			$trid = $tr_data[1];
-			
-			$query = "select td.id as tdid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_script, tr.tutorial_script_timed, tr.tutorial_video, tcc.id as tccid, tcc.tutorial_slide, tcc.tutorial_code, tcc.tutorial_assignment from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id='".$trid."'";
+			$trid = $_REQUEST['trid'];			
+			$query = "select tr.tutorial_detail_id, tr.tutorial_content_id, tr.tutorial_outline, tr.tutorial_outline_uid, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_uid, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_uid, tr.tutorial_video_status, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tcc.tutorial_slide, tcc.tutorial_slide_uid, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_uid, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_uid, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.id=".$trid." and td.id=tr.tutorial_detail_id and tcc.id=tr.tutorial_content_id";
 
 			$result = db_query($query);
-
 			$content = db_fetch_object($result);
-
-			// check if video exists ot not
 			require_once('path.config.inc');
-
-			if($content->tutorial_video != 'pending' && file_exists($file_upload_path.$content->tutorial_video)){
-				//$video_url = $content->tutorial_video;
-				$video_url = "<a href='".$tutorial_path.$content->tutorial_video."' target='_blank' >Accepted</a>";
-
-			}else{
-				$video_url = 'pending';
-			}
-
-			// check if slide exists ot not
-			if($content->tutorial_slide != 'pending' && file_exists($file_upload_path.$content->tutorial_slide)){
-				//$slide_url = $content->tutorial_slide;
-				$slide_url = "<a href='".$tutorial_path.$content->tutorial_slide."' target='_blank'>Accepted</a>";
-			}else{
-				$slide_url = 'pending';
-			}
-
-			// check if codefile exists ot not
-			if($content->tutorial_code != 'pending' && $content->tutorial_code != 'notrequired' && file_exists($file_upload_path.$content->tutorial_code)){
-				//$codefile_url = $content->tutorial_code;
-				$codefile_url = "<a href='".$tutorial_path.$content->tutorial_code."' target='_blank'>Accepted</a>";
-			}elseif($content->tutorial_code == 'notrequired'){
-				$codefile_url = 'notrequired';
-			}else{
-				$codefile_url = 'pending';
-			}
-
-			// check if assignment exists ot not
-			if($content->tutorial_assignment != 'pending' && $content->tutorial_assignment != 'notrequired' && file_exists($file_upload_path.$content->tutorial_assignment)){
-				//$codefile_url = $content->tutorial_assignment;
-				$assignment_url = "<a href='".$tutorial_path.$content->tutorial_assignment."' target='_blank'>Accepted</a>";
-			}elseif($content->tutorial_assignment == 'notrequired'){
-				$assignment_url = 'notrequired';
-			}else{
-				$assignment_url = 'pending';
-			}			
-
+			// tutirial status
+			$outline = component_status($content->tutorial_outline_status, $content->tutorial_outline_uid, $content->tutorial_outline, 1);
+			$script = component_status($content->tutorial_script_status, $content->tutorial_script_uid, $content->tutorial_script, 2);
+			$video = component_status($content->tutorial_video_status, $content->tutorial_video_uid, $content->tutorial_video);
+			$slide = component_status($content->tutorial_slide_status, $content->tutorial_slide_uid, $content->tutorial_slide);
+			$codefile = component_status($content->tutorial_code_status, $content->tutorial_code_uid, $content->tutorial_code);
+			$assignment = component_status($content->tutorial_assignment_status, $content->tutorial_assignment_uid, $content->tutorial_assignment);		
+			
+			//
 
 			$output = "<div class='stupload-form'>";
 			$output .= "<div class='summery-title-content'>";
 				$output .="<span class='left'>Foss Category</span><span class='right'>: ".$content->foss_category."</span>";
 				$output .="<span class='left'>Tutorial Name</span><span class='right'>: ".$content->tutorial_name."</span>";
-				$output .="<span class='left'>Tutorial Level</span><span class='right'>: ".$content->tutorial_level."</span>";
-				$output .="<span class='left'>Tutorial Language</span><span class='right'>: ".$content->language."</span>";
-				$output .="<span class='left'>Tutorial Study Plan</span><span class='right'>: ".$content->order_code."</span>";
+				$output .="<span class='left'>Level</span><span class='right'>: ".$content->tutorial_level."</span>";
+				$output .="<span class='left'>Study Plan Code</span><span class='right'>: ".$content->order_code."</span>";
 			$output .= "</div>";
 
 			$output .= "<table class='upload-index'>";
 			$output .= "<tr><th class='title'>Title</th><th class='content'>Status</th><th class='update'></th></tr>";
 			
-			$output .= "<tr><td class='title'>Outline</td><td class='content'><textarea readonly='readonly' rows='5' cols='30'>".$content->tutorial_outline."</textarea></td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_english/outline' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
-
-			$output .= "<tr><td class='title'>Script</td><td class='content'>".$content->tutorial_script."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_english/script' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
+			// outline
+			$output .= "<tr><td class='title'>Outline</td><td class='content'>".$outline."</td>";
+			if(($user->uid == $content->tutorial_outline_uid && ($content->tutorial_outline_status == 0 || $content->tutorial_outline_status == 5)) || $content->tutorial_outline_uid == 0 ){
+				$output .= "<td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_english/outline' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
+			}else{
+				$output .= "<td><td></tr>";
+			}
+			// script
+			$output .= "<tr><td class='title'>Script</td><td class='content'>".$script."</td>";
+			if(($user->uid == $content->tutorial_script_uid && ($content->tutorial_script_status == 0 || $content->tutorial_script_status == 5)) || $content->tutorial_script == 0 ){
+				$output .="<td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_english/script' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
+			}else{
+				$output .= "<td><td></tr>";
+			}
+			
+			// Slide 
+			
+			$output .= "<tr><td class='title'>Slide</td><td class='content'>".$slide."</td>";
+			if(($user->uid == $content->tutorial_slide_uid && ($content->tutorial_slide_status == 0 || $content->tutorial_slide_status == 5)) || $content->tutorial_slide == 0 ){
+				$output .= "<td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_english/slide' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
+			}else{
+				$output .= "<td><td></tr>";
+			}
+			
+			//Code file
+			$output .= "<tr><td class='title'>Code</td><td class='content'>".$codefile."</td>";
+			if(($user->uid == $content->tutorial_code_uid && ($content->tutorial_code_status == 0 || $content->tutorial_code_status == 5)) || $content->tutorial_code == 0 ){
+				$output .="<td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_english/codefile' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
+			}else{
+				$output .= "<td><td></tr>";
+			}
+			
+			// video
+			$output .= "<tr><td class='title'>Video</td><td class='content'>".$video."</td>";
+			if(($user->uid == $content->tutorial_video_uid && ($content->tutorial_video_status == 0 || $content->tutorial_video_status == 5)) || $content->tutorial_video == 0 ){
+				$output .= "<td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_english/video' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
+			}else{
+				$output .= "<td><td></tr>";
+			}
+			
+			// assignment
+			$output .= "<tr><td class='title'>Assignment</td><td class='content'>".$assignment."</td>";
+			if(($user->uid == $content->tutorial_assignment_uid && ($content->tutorial_assignment_status == 0 || $content->tutorial_assignment_status == 5)) || $content->tutorial_assignment_uid == 0 ){
+				$output .= "<td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_english/assignment' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
+			}else{
+				$output .= "<td><td></tr>";
+			}
+			
 			// english timed tutorial script
-			$output .= "<tr><td class='title'>Timed-script</td><td class='content'>".$content->tutorial_script_timed."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/english_timed_script' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='flag' value='1'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
+			$output .= "<tr><td class='title'>Timed-script</td><td class='content'>".$content->tutorial_script_timed."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/english_timed_script' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='flag' value='1'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Update'></form></td></tr>";
 
-			$output .= "<tr><td class='title'>Video</td><td class='content'>".$video_url."</td><td class='update'><form action='".$GLOBALS['base_url']."/stupload/upload_english/video' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
-
-			$output .= "<tr><td class='title'>Slide</td><td class='content'>".$slide_url."</td><td class='update'>";
-				if($content->language == 'English'){
-					$output .= "<form action='".$GLOBALS['base_url']."/stupload/upload_english/slide' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
-				}else{
-					$output .= "</td></tr>";
-				}
-
-			$output .= "<tr><td class='title'>Code</td><td class='content'>".$codefile_url."</td><td class='update'>";
-				if($content->language == 'English'){
-					$output .= "<form action='".$GLOBALS['base_url']."/stupload/upload_english/codefile' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
-				}else{
-					$output .= "</td></tr>";
-				}
-
-			$output .= "<tr><td class='title'>Assignment</td><td class='content'>".$assignment_url."</td><td class='update'>";
-				if($content->language == 'English'){
-					$output .= "<form action='".$GLOBALS['base_url']."/stupload/upload_english/assignment' method='post'><input type='hidden' name='tccid' value='".$content->tccid."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='submit' value='Add'></form></td></tr>";
-				}else{
-					$output .= "</td></tr>";
-				}
 			$output .= "</table>";
 			$output .= "</div>";
 
