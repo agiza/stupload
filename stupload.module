@@ -570,7 +570,8 @@ function get_tutorial_levels(){
 		
 		// get order code
 		$query = "select order_code from tutorial_details where foss_category='".$_POST['foss']."' order by order_code";
-		$result = db_query($query);		
+		$result = db_query($query);
+		$exists_order = array();		
 		while($row = db_fetch_object($result)){
 			$exists_order[] = $row->order_code;
 		}
@@ -582,6 +583,7 @@ function get_tutorial_levels(){
 	}
 	// find available order code
 	$i = 1;
+	$tutorial_order_no = array();
 	while($i < 100){
 		$tutorial_order_no[] = $i;
 		$i++;

@@ -100,22 +100,41 @@
 	}
 	
 	function add_tutorial_name_form_submit($form, &$form_state){
-	
+		
 		// create Directory
 		require_once('path.config.inc');
 		if (isset($form_state['values']['foss_category']) && isset($form_state['values']['tutorial_level']) && isset($form_state['values']['tutorial_name'])){
 			$name = $form_state['values']['foss_category'].'/'.$form_state['values']['tutorial_level'].'/'.$form_state['values']['tutorial_name'].'/'.Resource;
-		    mkdir ($file_upload_path.'st_videos/'.$name, 0777,true);
-		    drupal_set_message('Directories created Successfully');
+		    if(mkdir ($file_upload_path.'st_videos/'.$name, 0777,true)){
+		    	drupal_set_message('Directories created Successfully');
+		    	$query = "INSERT INTO `tutorial_details` (`id`, `foss_category`, `tutorial_name`, `tutorial_level`, `order_code`) VALUES (NULL, '".$form_state['values']['foss_category']."', '".$form_state['values']['tutorial_name']."', '".$form_state['values']['tutorial_level']."', '".$form_state['values']['tutorial_order_no']."')";
+				if(db_query($query)){
+					drupal_set_message('New Tutorial Name Added Successfully');
+					//insert record to tutorial resource and tutorial common content table
+					$query = "select id as tdid from tutorial_details where foss_category='".$form_state['values']['foss_category']."' and tutorial_name='".$form_state['values']['tutorial_name']."' order by tutorial_name";
+					$result = db_query($query);
+					$tdid = db_fetch_object($result);
+					
+					// insert in tutorial_commom_content table
+					$query = "insert into tutorial_common_contents (tutorial_detail_id, tutorial_slide, tutorial_code, tutorial_assignment) values(".$tdid->tdid.", 'pending', 'pending', 'pending')";
+					db_query($query); 
+					
+					// get commom content id
+					$query ="select id as tccid from tutorial_common_contents where tutorial_detail_id='".$tdid->tdid."'";
+					$result = db_query($query);
+					$tccid = db_fetch_object($result);
+					
+					// insert into tutorial resource
+					
+					$query = "insert into tutorial_resources (tutorial_detail_id, language, tutorial_content_id, tutorial_outline, tutorial_script, tutorial_script_timed, tutorial_video) values (".$tdid->tdid.", 'English', ".$tccid->tccid.", 'pending', 'pending', 'pending', 'pending')";
+					db_query($query);					
+					
+					drupal_goto($path = 'stupload/tutorial', $query = NULL, $fragment = NULL, $http_response_code = 302);
+				}else {
+					drupal_set_message('Error while Adding Tutorial Name, Please try again.');
+				}
+		    }
 		}
-
-        $query = "INSERT INTO `tutorial_details` (`id`, `foss_category`, `tutorial_name`, `tutorial_level`, `order_code`) VALUES (NULL, '".$form_state['values']['foss_category']."', '".$form_state['values']['tutorial_name']."', '".$form_state['values']['tutorial_level']."', '".$form_state['values']['tutorial_order_no']."')";
-		if(db_query($query)){
-			drupal_set_message('New Tutorial Name Added Successfully');
-		}else {
-			drupal_set_message('Error while Adding Tutorial Name, Please try again.');
-		}
-		drupal_goto($path = 'stupload/tutorial', $query = NULL, $fragment = NULL, $http_response_code = 302);
 
 }
 
