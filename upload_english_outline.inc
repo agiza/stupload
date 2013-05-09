@@ -2,9 +2,8 @@
 	function upload_english_outline() {
 
 		if($_REQUEST['trid']){	
-	
 			$output = "<h2>Upload Outline for ".$_REQUEST['tn']."</h2>";	
-			$output .= drupal_get_form('upload_english_outline_form', $_REQUEST['trid']);
+			$output .= drupal_get_form('upload_english_outline_form', $_REQUEST['trid'], $_REQUEST['outline']);
 			return $output;
 		}else{
 			$output = "<p>Somthing went wrong. Please, try again.</p>";
@@ -12,7 +11,7 @@
 		}
 		
 	}
-	function upload_english_outline_form($form_state, $trid) {
+	function upload_english_outline_form($form_state, $trid, $outline) {
 		
 		// add js file 
 		$path = drupal_get_path('module', 'stupload');
@@ -40,6 +39,7 @@
 			'#type' => 'textarea',
 			'#title' => t('Outline'),
 			'#attributes' => array('class' => 'uptn_outline'),
+			'#default_value' => $outline, 
 			'#prefix' => '<div class="stupload-outline">',
 			'#suffix' => '</div>'
 		);
@@ -70,14 +70,11 @@
 	function upload_english_outline_form_submit($form, &$form_state){
 		global $user;
 		$tutorial_outline = $form_state['values']['outline'];
+		$query = "UPDATE tutorial_resources SET tutorial_outline_status = 2, tutorial_outline_uid = $user->uid ,tutorial_outline='".db_escape_string($tutorial_outline)."' WHERE id='".$form_state['values']['trid']."'";
 		if($form_state['values']['outline_status'] == 1){
-			$tutorial_outline = 'pending';
+			$query = "UPDATE tutorial_resources SET tutorial_outline_status = 0, tutorial_outline='pending', tutorial_outline_uid = $user->uid WHERE id='".$form_state['values']['trid']."'";
 		}
-
-		$query = "UPDATE tutorial_resources SET tutorial_outline='".db_escape_string($tutorial_outline)."' WHERE id='".$form_state['values']['trid']."'";
-
 		db_query($query);
-
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'outline')";
 
 		if(db_query($query)){
@@ -95,11 +92,11 @@
 		    $message = "";
 			stupload_notify($mailto, $role, $message, $tds, $user->name);
 
-			//Mail to admin_review_user 
+			//Mail to domain and qc 
 			$role = 'quality_checker';
 			$quality_mailid = get_language_role_emails($tutorial_detail->language);
 
-			$role = 'admin_review_user';
+			$role = 'domain_user';
 			$admin_mailid = get_role_emails($role);
 
 			$mailto = $admin_mailid.$quality_mailid;
@@ -107,8 +104,8 @@
 			stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 			drupal_set_message('Tutorial Outline Updated Successfully');
-			$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
-			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+			$query = array('trid' => $form_state['values']['trid']);
+			drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
 		}else {
 			drupal_set_message('Error while Adding Tutorial Outline, Please try again.');
 		}

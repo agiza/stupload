@@ -1,36 +1,19 @@
 <?php
 	function english_timed_script() {
-		if($_REQUEST['trid']){		
-			$output = "<h2>Upload English-timed Script for ".$_REQUEST['tn']."</h2>";
-
-			$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$_REQUEST['trid']."'";
-
-			$result = db_query($query);
-
-			$tutorial_detail = db_fetch_object($result);
-
+		if($_REQUEST['trid'] && $_REQUEST['td_path']){		
+			$output = "<h2>Upload English Script for ".$_REQUEST['tn']."</h2>";
 			require_once('path.config.inc');
-			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.'English-timed';
-		
+			$wiki_url = $_REQUEST['td_path'].'English-timed';		
 			$output .= "<div class='wiki-script-file'></div>";
-			$flag = 0;
-			if(isset($_REQUEST['flag'])){
-				$flag = 1;
-			}
-			$output .= drupal_get_form('english_timed_script_form', $_REQUEST['trid'], $wiki_url, $flag);
-
+			$output .= drupal_get_form('english_timed_script_form', $_REQUEST['trid'], $wiki_url, $_REQUEST['td_path']);
 			return $output;
 		}else{
 			$output = "<p>Something went wrong. Please, try again.</p>";
 			return $output;
 		}
-
-
-
 	}
 
-
-	function english_timed_script_form($form_state, $trid, $wiki_url, $flag) {
+	function english_timed_script_form($form_state, $trid, $wiki_url, $td_path) {
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -49,9 +32,9 @@
 			'#type' => 'hidden',
 			'#value' => $trid,
 		);
-		$form['flag'] = array(
+		$form['td_path'] = array(
 			'#type' => 'hidden',
-			'#value' => $flag
+			'#value' => $td_path
 		);
 
 		$form['script_status'] = array(
@@ -84,19 +67,12 @@
 			$tutorial_script = 'pending';
 		}
 		$query = "UPDATE tutorial_resources SET tutorial_script_timed='".$tutorial_script."' where id='".$form_state['values']['trid']."'";
-
-		db_query($query);		
-
+		db_query($query);
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'script')";
-
-
 		if(db_query($query)){
 			drupal_set_message('Tutorial script Updated Successfully');
-			if($_POST['flag'] == 1)
-				$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
-			else
-				$redirect = 'stupload/update_index/?tr='.$form_state['values']['trid'];
-			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+			$query= array('trid' => $form_state['values']['trid']);
+			drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
 		}else {
 			drupal_set_message('Error while Adding Tutorial Script, Please try again.');
 		}

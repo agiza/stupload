@@ -87,15 +87,15 @@
 			$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
 			
 		    $mailto = $user->mail;
-		    $role = 'contributor';
+		    $role = variable_get('contributor', '');
 		    $message = "";
 			stupload_notify($mailto, $role, $message, $tds, $user->name);
 
-			//Mail to admin_review_user
-			$role = 'quality_checker';
+			//Mail to admin_review_user and qc
+			$role = variable_get('quality_checker', '');
 			$quality_mailid = get_language_role_emails($tutorial_detail->language);
 
-			$role = 'admin_review_user';
+			$role = variable_get('domain_user', '');
 			$admin_mailid = get_role_emails($role);
 
 			$mailto = $admin_mailid.$quality_mailid;

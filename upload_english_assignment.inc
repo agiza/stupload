@@ -1,19 +1,15 @@
 <?php
 	function upload_english_assignment() {
-		if($_REQUEST['trid'] && $_REQUEST['tccid']){		
+		if($_REQUEST['trid'] && $_REQUEST['tccid'] && $_REQUEST['td_path']){		
 			$output = "<h2>Upload English Assignment for ".$_REQUEST['tn']."</h2>";
-			$output .= drupal_get_form('upload_english_assignment_form', $_REQUEST['trid'], $_REQUEST['tccid']);
+			$output .= drupal_get_form('upload_english_assignment_form', $_REQUEST['trid'], $_REQUEST['tccid'], $_REQUEST['td_path']);
 			return $output;
 		}else{
 			$output = "<p>Something went wrong. Please, try again.</p>";
 			return $output;
 		}
-
-
 	}
-
-
-	function upload_english_assignment_form($form_state, $trid, $tccid) {
+	function upload_english_assignment_form($form_state, $trid, $tccid, $td_path) {
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -29,7 +25,10 @@
 			'#type' => 'hidden',
 			'#value' => $tccid,
 		);
-
+		$form['td_path'] = array(
+			'#type' => 'hidden',
+			'#value' => $td_path,
+		);
 		$form['asgmnt_status'] = array(
 			'#type' => 'select',
 			'#title' => t('Assignment Status'),
@@ -61,7 +60,7 @@
 			}else{
 				$file_ext = substr($_FILES['files']['name']['assignment'], strripos($_FILES['files']['name']['assignment'], '.')); // get file name
 				$filesize = $_FILES['files']['size']['assignment'];
-				$allowed_file_types = array('.txt', '.pdf');
+				$allowed_file_types = explode(',', variable_get('assignment_extensions', ''));
 				if (!in_array($file_ext,$allowed_file_types)  &&  ($filesize < 80000000)) {
 					form_set_error('assignment', t('Please select proper file. txt and pdf files only allowed.'));
 				}
@@ -73,23 +72,21 @@
 	
 	function upload_english_assignment_form_submit($form, &$form_state){
 
-		// select Tutorial categoty
-		$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
-
-		$tdresult = db_query($query);
-		$tutorial_detail = db_fetch_object($tdresult);
-
-		$codefile_path = 'st_videos/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/Resource/';
-		require_once('path.config.inc');
-		$path = $file_upload_path.$codefile_path;
+		global $user;
+		$td = explode('/', $_POST['td_path']);	
 		$file_ext = substr($_FILES['files']['name']['assignment'], strripos($_FILES['files']['name']['assignment'], '.'));
-		$file_name = $tutorial_detail->tutorial_name.'-Assignment-'.$tutorial_detail->language.$file_ext;
-		// for penging and not required
+		$file_name = $td[2].'-Assignment-'.English.$file_ext;
+		$tutorial_assignment = 'st_videos/'.$_POST['td_path'].'Resource/'.$file_name;
+		$path = variable_get('file_upload_path', '').$tutorial_assignment;
+		
+		// for upload later and not required
 		if ($form_state['values']['asgmnt_status'] == 1 || $form_state['values']['asgmnt_status'] == 2){
 			global $user;
-			$tutorial_codefile = (($form_state['values']['asgmnt_status'] == 1) ? 'pending' : 'notrequired');
+			$tutorial_assign = (($form_state['values']['asgmnt_status'] == 1) ? 'pending' : 'notrequired');
+			$tutorial_assign_status = (($form_state['values']['asgmnt_status'] == 1) ? 0 : 6);
 			// insert into common data table
-			$query = "UPDATE tutorial_common_contents SET tutorial_assignment='".$tutorial_codefile."' WHERE id='".$form_state['values']['tccid']."'";
+			$query = "UPDATE tutorial_common_contents SET tutorial_assignment_uid=".$user->uid.", tutorial_assignment_status=".$tutorial_assign_status.", tutorial_assignment='".$tutorial_assign."' WHERE id='".$form_state['values']['tccid']."'";
+
 			db_query($query);
 
 			// to track uploader 
@@ -97,20 +94,18 @@
 
 			if(db_query($query)){
 				drupal_set_message('Tutorial Codefile Adding Successfully');
-				$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
-				drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+				$query= array('trid' => $form_state['values']['trid']);
+				drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
 			}else {
 				drupal_set_message('Error while Adding Assignment, Please try again.');
 			}
 		}
 		// for upload assignment
 		if($_FILES['files']['size']['assignment'] > 0){
-			if(move_uploaded_file($_FILES['files']['tmp_name']['assignment'], $path.$file_name)){
+			if(move_uploaded_file($_FILES['files']['tmp_name']['assignment'], $path)){
 				global $user;
-
-				$tutorial_codefile = $codefile_path.$file_name;
 				// insert into common data table
-				$query = "UPDATE tutorial_common_contents SET tutorial_assignment='".$tutorial_codefile."' WHERE id='".$form_state['values']['tccid']."'";
+				$query = "UPDATE tutorial_common_contents SET tutorial_assignment_uid=".$user->uid.", tutorial_assignment_status=2, tutorial_assignment='".$tutorial_assignment."' WHERE id='".$form_state['values']['tccid']."'";
 				db_query($query);
 
 				// to track uploader 
@@ -122,15 +117,15 @@
 					$a->tc = 'Assignment';					
 					$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
 				    $mailto = $user->mail;
-				    $role = 'contributor';
+				    $role = variable_get('contributor', '');
 				    $message = "";
 					stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 					//Mail to admin_review_user 
-					$role = 'quality_checker';
+					$role = variable_get('quality_checker', '');
 					$quality_mailid = get_language_role_emails($tutorial_detail->language);
 					
-					$role = 'admin_review_user';
+					$role = variable_get('domail_user', '');
 					$admin_mailid = get_role_emails($role);
 
 					$mailto = $admin_mailid.$quality_mailid;
@@ -139,8 +134,8 @@
 					stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 					drupal_set_message('Tutorial Codefile Adding Successfully');
-					$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
-					drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+					$query= array('trid' => $form_state['values']['trid']);
+					drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
 				}else {
 					drupal_set_message('Error while Adding Assignment, Please try again.');
 				}

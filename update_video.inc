@@ -1,8 +1,8 @@
 <?php
 	function update_video() {
-		if($_POST){
+		if($_POST['trid'] && $_POST['td_path']){
 			$output = "<h2>Update Video for ".$_REQUEST['tn']."</h2>";
-			$output .= drupal_get_form('update_video_form', $_POST['trid']);
+			$output .= drupal_get_form('update_video_form', $_POST['trid'], $_POST['td_path']);
 			return $output;
 		}else{
 			$output = "<p>Something went wrong. Please, try again.</p>";
@@ -10,7 +10,7 @@
 		}
 	}
 
-	function update_video_form($form_state, $trid) {
+	function update_video_form($form_state, $trid, $td_path) {
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -21,6 +21,11 @@
 		$form['trid'] = array(
 			'#type' => 'hidden',
 			'#value' => $trid,
+		);
+		
+		$form['td_path'] = array(
+			'#type' => 'hidden',
+			'#value' => $td_path,
 		);
 
 		$form['video'] = array(
@@ -56,32 +61,28 @@
 	
 	function update_video_form_submit($form, &$form_state){
 
-		// select Tutorial categoty
-		$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
-
-		$tdresult = db_query($query);
-		$tutorial_detail = db_fetch_object($tdresult);
-
-		$video_path = 'st_videos/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/';
-		require_once('path.config.inc');
-		$path = $file_upload_path.$video_path;
+		global $user;
+		$td = explode('/', $_POST['td_path']);	
 		$file_ext = substr($_FILES['files']['name']['video'], strripos($_FILES['files']['name']['video'], '.'));
-		$file_name = $tutorial_detail->tutorial_name.'-'.$tutorial_detail->language.$file_ext;
+		$file_name = $td[2].'-Video-'.English.$file_ext;
+		$bak_file_name = $td[2].'-Video-'.English.$file_ext;
+		$tutorial_video = 'st_videos/'.$_POST['td_path'].$file_name;
+		$bak_tutorial_video = 'st_videos/'.$_POST['td_path'].$bak_file_name;
+		$path = variable_get('file_upload_path', '').$tutorial_video;
+		$backup_fpath = variable_get('file_upload_path', '').$bak_tutorial_video
 	
 		if($_FILES['files']['size']['video'] > 0){
-			$bac_file_name = 'backup_'.$tutorial_detail->tutorial_name.'-'.$tutorial_detail->language.$file_ext;
-			if(file_exists($path.$file_name) && !rename($path.$file_name, $path.$bac_file_name)){
+			$bac_file_name = 'backup_'.$td[2].'-English'.$file_ext;
+			if(file_exists($path) && !rename($path, $path.$bac_file_name)){
 				drupal_set_message('Unable to get backup file');
 			}
-			if(move_uploaded_file($_FILES['files']['tmp_name']['video'], $path.$file_name)){
+			if(move_uploaded_file($_FILES['files']['tmp_name']['video'], $backup_fpath)){
 
 				// delete backup file
-				if(file_exists($path.$bac_file_name) && !unlink($path.$bac_file_name)){
+				if(file_exists($backup_fpath) && !unlink($backup_fpath)){
 					drupal_set_message('Unable to delete backup file');
 				}
 				global $user;
-
-				$tutorial_video = $video_path.$file_name;
 				// insert into common data table
 				$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_video='".$tutorial_video."' WHERE id='".$form_state['values']['trid']."'";
 				db_query($query);

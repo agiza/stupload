@@ -1059,8 +1059,8 @@ function get_resource_not_available(){
 		global $custom_email;
 		$mailfrom = $custom_email;
 		if(isset($td->tc) && $td->tc != ''){
-			//drupal_mail('stupload', 'reply', $mailto, language_default(),
-		          //   array('body' => get_meassage($role, $message, $td, $user_name), 'subject' => $subject_content[$role]), $mailfrom, TRUE);
+			drupal_mail('stupload', 'reply', $mailto, language_default(),
+		             array('body' => get_meassage($role, $message, $td, $user_name), 'subject' => $subject_content[$role]), $mailfrom, TRUE);
 		}else{
 			return true;
 		}
@@ -1088,9 +1088,7 @@ function get_resource_not_available(){
 		$output = '';
 		if($outline == 1){
 			if($status == 0 && $uid == 0){
-				return "<span class='code_red'>".$status_array[$status]."</span>";
-			}elseif($status == 0){
-				return "<span class='code_orange'>".$status_array[$status]."</span>";
+				$output = "<span class='code_red'>";
 			}else{
 				return "<p class='outline'>".stuolpad_outline_humen_view($path)."</p>";
 			}
@@ -1100,7 +1098,7 @@ function get_resource_not_available(){
 			if($status == 0 && $uid == 0){
 				$output = "<span class='code_red'>";
 			}else{
-				return "<a target='_blank' href='".variable_get('wiki_path', '').$path."'><span class='code_green'>".$status_array[$status]."</span></a>";
+				return "<a href='".$wiki_path.$path."'><span class='code_green'>".$status_array[$status]."</span></a>";
 			}
 		}
 		
@@ -1109,9 +1107,9 @@ function get_resource_not_available(){
 		}elseif($status == 0 && $uid > 0){
 			$output = "<span class='code_orange'>";
 		}else{
-			if($path && file_exists(variable_get('file_upload_path', '').$path)){
+			if($path && file_exists($file_upload_path.$path)){
 				$flag = 1;
-				$output = "<a target='_blank' href='".variable_get('tutorial_path', '').$path."'><span class='code_green'>";
+				$output = "<a href='".$file_upload_path.$path."'><span class='code_green'>";
 			}elseif($path == NULL){
 				return $path;
 			}else{
@@ -1126,17 +1124,17 @@ function get_resource_not_available(){
 	}
 	
 	function stuolpad_outline_humen_view($outline){
-	       $temp = str_replace("\t", "  &nbsp; ", $outline);
-	       $temp = str_replace("\n\n\n", "\n", $temp);
-	       $outline_array = explode("\n", $temp);
-	       $temp = "";
-	       foreach($outline_array as $line) {
-		       $line = trim($line);
-		       if($line != ''){
-		               $temp .= "<li>".$line."</li>";
-		       }
-	       }
-	       return "<ul>".$temp."</ul>";
-	}
+       $temp = str_replace("\t", "  &nbsp; ", $outline);
+       $temp = str_replace("\n\n\n", "\n", $temp);
+       $outline_array = explode("\n", $temp);
+       $temp = "";
+       foreach($outline_array as $line) {
+               $line = trim($line);
+               if($line != ''){
+                       $temp .= "<li>".$line."</li>";
+               }
+       }
+       return "<ul>".$temp."</ul>";
+}
 
 ?>

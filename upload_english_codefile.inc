@@ -1,8 +1,8 @@
 <?php
 	function upload_english_codefile() {
-		if($_REQUEST['trid'] && $_REQUEST['tccid']){		
+		if($_REQUEST['trid'] && $_REQUEST['tccid'] && $_REQUEST['td_path']){		
 			$output = "<h2>Upload English Codefile for ".$_REQUEST['tn']."</h2>";
-			$output .= drupal_get_form('upload_english_codefile_form', $_REQUEST['trid'], $_REQUEST['tccid']);
+			$output .= drupal_get_form('upload_english_codefile_form', $_REQUEST['trid'], $_REQUEST['tccid'], $_REQUEST['td_path']);
 			return $output;
 		}else{
 			$output = "<p>Something went wrong. Please, try again.</p>";
@@ -10,7 +10,7 @@
 		}
 	}
 
-	function upload_english_codefile_form($form_state, $trid, $tccid) {
+	function upload_english_codefile_form($form_state, $trid, $tccid, $td_path) {
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -22,7 +22,10 @@
 			'#type' => 'hidden',
 			'#value' => $tccid,
 		);
-
+		$form['td_path'] = array(
+			'#type' => 'hidden',
+			'#value' => $td_path,
+		);
 		$form['trid'] = array(
 			'#type' => 'hidden',
 			'#value' => $trid,
@@ -59,7 +62,7 @@
 			}else{
 				$file_ext = substr($_FILES['files']['name']['codefile'], strripos($_FILES['files']['name']['codefile'], '.')); // get file name
 				$filesize = $_FILES['files']['size']['codefile'];
-				$allowed_file_types = array('.zip');
+				$allowed_file_types = explode(',', variable_get('codefile_extensions', ''));
 				if (!in_array($file_ext,$allowed_file_types)  &&  ($filesize < 80000000)) {
 					form_set_error('codefile', t('Please select proper file. .Zip file only allowed.'));
 				}
@@ -70,23 +73,20 @@
 	}
 	
 	function upload_english_codefile_form_submit($form, &$form_state){
-		// select Tutorial categoty
-		$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
-
-		$tdresult = db_query($query);
-		$tutorial_detail = db_fetch_object($tdresult);
-
-		$codefile_path = 'st_videos/'.$tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/Resource/';
-		require_once('path.config.inc');
-		$path = $file_upload_path.$codefile_path;
+		global $user;
+		$td = explode('/', $_POST['td_path']);	
 		$file_ext = substr($_FILES['files']['name']['codefile'], strripos($_FILES['files']['name']['codefile'], '.'));
-		$file_name = $tutorial_detail->tutorial_name.'-Codefile-'.$tutorial_detail->language.$file_ext;
+		
+		$file_name = $td[2].'-Codefile-'.English.$file_ext;
+		$tutorial_codefile = 'st_videos/'.$_POST['td_path'].'Resource/'.$file_name;
+		$path = variable_get('file_upload_path', '').$tutorial_codefile;
 		// for upload later
 		if ($form_state['values']['codefile_status'] == 1 || $form_state['values']['codefile_status'] == 2){
 			global $user;
 			$tutorial_codefile = (($form_state['values']['codefile_status'] == 1) ? 'pending' : 'notrequired');
+			$tutorial_codefile_status = (($form_state['values']['codefile_status'] == 1) ? 0 : 6);
 			// insert into common data table
-			$query = "UPDATE tutorial_common_contents SET tutorial_code='".$tutorial_codefile."' WHERE id='".$form_state['values']['tccid']."'";
+			$query = "UPDATE tutorial_common_contents SET tutorial_code_uid=".$user->uid.", tutorial_code_status=".$tutorial_codefile_status.", tutorial_code='".$tutorial_codefile."' WHERE id='".$form_state['values']['tccid']."'";
 			db_query($query);
 
 			// to track uploader 
@@ -94,19 +94,20 @@
 
 			if(db_query($query)){
 				drupal_set_message('Tutorial Codefile Added Successfully');
-				$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
-				drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+				$query= array('trid' => $form_state['values']['trid']);
+				drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
 			}else {
 				drupal_set_message('Error while Adding Codefile, Please try again.');
 			}			
 		}
 		// for upload	
 		if($_FILES['files']['size']['codefile'] > 0){
-			if(move_uploaded_file($_FILES['files']['tmp_name']['codefile'], $path.$file_name)){
+
+			if(move_uploaded_file($_FILES['files']['tmp_name']['codefile'], $path)){
 				global $user;
-				$tutorial_codefile = $codefile_path.$file_name;
 				// insert into common data table
-				$query = "UPDATE tutorial_common_contents SET tutorial_code='".$tutorial_codefile."' WHERE id='".$form_state['values']['tccid']."'";
+				
+				$query = "UPDATE tutorial_common_contents SET tutorial_code_uid=".$user->uid.", tutorial_code_status=2, tutorial_code='".$tutorial_codefile."' WHERE id='".$form_state['values']['tccid']."'";
 				db_query($query);
 
 				// to track uploader 
@@ -118,16 +119,16 @@
 					$a->tc = 'Codefile';					
 					$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
 				    $mailto = $user->mail;
-				    $role = 'contributor';
+				    $role = variable_get('contributor', '');
 				    $message = "";
 					stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 					//Mail to admin_review_user 
 
-					$role = 'quality_checker';
+					$role = variable_get('quality_checker', '');
 					$quality_mailid = get_language_role_emails($tutorial_detail->language);
 					
-					$role = 'admin_review_user';
+					$role = variable_get('domain_userr', '');
 					$admin_mailid = get_role_emails($role);
 
 					$mailto = $admin_mailid.$quality_mailid;
@@ -136,8 +137,8 @@
 					stupload_notify($mailto, $role, $message, $tds, $user->name);
 
 					drupal_set_message('Tutorial Codefile Added Successfully');
-					$redirect = 'stupload/english_index/?tr='.$form_state['values']['trid'];
-					drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
+					$query= array('trid' => $form_state['values']['trid']);
+					drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
 				}else {
 					drupal_set_message('Error while Adding Codefile, Please try again.');
 				}
@@ -145,51 +146,6 @@
 				drupal_set_message('Error while Adding Codefile, Please try again..');
 			}
 		}
-
-		// // select Tutorial categoty
-		// $query = "SELECT * FROM tutorial_details WHERE id='".$form_state['values']['tutorial_detail_id']."'";
-		// $result = db_query($query);
-
-		// $tutorial_details = db_fetch_object($result);
-
-		// $codefile_path = 'st_videos/'.$tutorial_details->foss_category.'/'.$tutorial_details->tutorial_level.'/'.$tutorial_details->tutorial_name.'/Resource/';
-		// require_once('path.config.inc');
-		// $path = $file_upload_path.$codefile_path;
-		// $file_ext = substr($_FILES['files']['name']['codefile'], strripos($_FILES['files']['name']['codefile'], '.'));
-		// $file_name = $tutorial_details->tutorial_name.'-Codefile-English'.$file_ext;
-		// if($_FILES['files']['size']['codefile'] > 0){
-
-		// 	move_uploaded_file($_FILES['files']['tmp_name']['codefile'], $path.$file_name);
-
-		// }
-
-		// global $user;
-
-		// $tutorial_code = $codefile_path.$file_name;
-		// if($form_state['values']['codefile_status'] == 1){
-		// 	$tutorial_code = 'pending';
-		// }
-		// if($form_state['values']['codefile_status'] == 2){
-		// 	$tutorial_code = 'notrequired';
-		// }
-
-		// // insert into common data table
-		// $query = "UPDATE tutorial_common_contents SET tutorial_code='".$tutorial_code."' where id='".$form_state['values']['tutorial_content_id']."'";
-
-		// db_query($query);
-
-		// // to track uploader 
-		// $query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['tutorial_resourse_id']."', CURRENT_TIMESTAMP, '".$user->name."', 'codefile')";
-
-		// if(db_query($query)){
-		// 	drupal_set_message('Tutorial Slide Updated Successfully');
-		// }else {
-		// 	drupal_set_message('Error while Adding Tutorial Slide, Please try again.');
-		// }
-		// $redirect = 'stupload/upload_english/assignment/?tutorial_content_id='.$form_state['values']['tutorial_content_id'].'&tutorial_resources='.$form_state['values']['tutorial_resourse_id'].'&tutorial_detail_id='.$form_state['values']['tutorial_detail_id'];
-
-		// drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
-
 }
 
 ?>
