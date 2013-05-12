@@ -1,12 +1,11 @@
 <?php
 	function upload_english_script() {
-		if($_REQUEST['trid'] && $_REQUEST['td_path']){
+		if($_REQUEST['trid'] && $_REQUEST['td_path'] && $_REQUEST['redirection']){
 
 			$output = "<h2>Upload English Script for ".$_REQUEST['tn']."</h2>";
-			require_once('path.config.inc');
 			$wiki_url = $_REQUEST['td_path'].'English';		
 			$output .= "<div class='wiki-script-file'></div>";
-			$output .= drupal_get_form('upload_english_script_form', $_REQUEST['trid'], $wiki_url, $_REQUEST['td_path']);
+			$output .= drupal_get_form('upload_english_script_form', $_REQUEST['trid'], $wiki_url, $_REQUEST['td_path'], $_REQUEST['redirection']);
 			return $output;
 		}else{
 			$output = "<p>Something went wrong. Please, try again.</p>";
@@ -14,7 +13,7 @@
 		}
 	}
 
-	function upload_english_script_form($form_state, $trid, $wiki_url, $td_path) {
+	function upload_english_script_form($form_state, $trid, $wiki_url, $td_path, $redirection) {
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -38,7 +37,12 @@
 			'#type' => 'hidden',
 			'#value' => $td_path,
 		);
-
+		
+		$form['redirection'] = array(
+			'#type' => 'hidden',
+			'#value' => $redirection,
+		);
+		
 		$form['script_status'] = array(
 			'#type' => 'select',
 			'#title' => t('Script'),
@@ -100,10 +104,13 @@
 
 			drupal_set_message('Tutorial script Updated Successfully');
 			$query= array('trid' => $form_state['values']['trid']);
-			drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+			if($form_state['values']['redirection'] == 1){
+				drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+			} elseif($form_state['values']['redirection'] == 2){
+				drupal_goto('stupload/update_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+			}
 		}else {
 			drupal_set_message('Error while Adding Tutorial Script, Please try again.');
 		}
-}
-
+	}
 ?>

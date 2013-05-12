@@ -1,32 +1,22 @@
 <?php
 	function upload_olang_script() {
 
-		if($_REQUEST['trid']){
-			$trid = $_REQUEST['trid'];
-			$query = "select tr.language, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$trid."'";
+		if(isset($_REQUEST['trid']) && isset($_REQUEST['td_path']) && isset($_REQUEST['language']) && isset($_REQUEST['redirection'])){
 
-			$result = db_query($query);
-
-			$tutorial_detail = db_fetch_object($result);
-
-			require_once('path.config.inc');
-			$wiki_url = $tutorial_detail->foss_category.'/'.$tutorial_detail->tutorial_level.'/'.$tutorial_detail->tutorial_name.'/'.$tutorial_detail->language;
-			$output = "<h2>Upload Script for ".$_REQUEST['tn']."</h2>";
+			$output = "<h1 class='title'>Upload Script for ".$_REQUEST['tn']."</h1>";
+			$wiki_url = $_REQUEST['td_path'].$_REQUEST['language'];		
 			$output .= "<div class='wiki-script-file'></div>";
-			$output .= drupal_get_form('upload_olang_script_form', $trid, $wiki_url);
-
+			$output .= drupal_get_form('upload_olang_script_form', $_REQUEST['trid'], $wiki_url, $_REQUEST['td_path'], $_REQUEST['language'], $_REQUEST['redirection']);
 			return $output;
 		}else{
 			$output = "<p>Something went wrong. Please, try again.</p>";
 			return $output;
 		}
-
-		
-
 	}
 
 
-	function upload_olang_script_form($form_state, $trid, $wiki_url) {
+	function upload_olang_script_form($form_state, $trid, $wiki_url, $td_path, $language, $redirection) {
+
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -44,6 +34,21 @@
 		$form['trid'] = array(
 			'#type' => 'hidden',
 			'#value' => $trid,
+		);
+		
+		$form['td_path'] = array(
+			'#type' => 'hidden',
+			'#value' => $td_path,
+		);
+		
+		$form['language'] = array(
+			'#type' => 'hidden',
+			'#value' => $language,
+		);
+		
+		$form['redirection'] = array(
+			'#type' => 'hidden',
+			'#value' => $redirection,
 		);
 		
 		$form['script_status'] = array(
@@ -71,20 +76,18 @@
 	function upload_olang_script_form_submit($form, &$form_state){
 		
 		global $user;
-		$tutorial_outline = $form_state['values']['wiki_url'];
+		
+		$tutorial_script = $form_state['values']['wiki_url'];
+
+		$query = "UPDATE tutorial_resources SET tutorial_script_status = 2, tutorial_script_uid = $user->uid ,tutorial_script='".$tutorial_script."' WHERE id='".$form_state['values']['trid']."'";
+
 		if($form_state['values']['script_status'] == 1){
-			$tutorial_outline = 'pending';
+			$query = "UPDATE tutorial_resources SET tutorial_script_status = 0, tutorial_script='pending', tutorial_script_uid = $user->uid WHERE id='".$form_state['values']['trid']."'";
 		}
 
-
-		$query = "UPDATE tutorial_resources SET tutorial_status='pending', tutorial_script='".$form_state['values']['wiki_url']."' where id='".$form_state['values']['trid']."'";
-
-
 		db_query($query);
-		
 
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'script')";
-
 
 		if(db_query($query)){
 			//Mail to contributor
@@ -97,26 +100,28 @@
 								
 			$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
 		    $mailto = $user->mail;
-		    $role = 'contributor';
+		    $role = variable_get('contributor', '');
 		    $message = "";
 			stupload_notify($mailto, $role, $message, $tds, $user->name);
 
-			//Mail to admin_review_user 
-			$role = 'quality_checker';
+			//Mail to domain & qc users 
+			$role = variable_get('quality_checker', '');
 			$quality_mailid = get_language_role_emails($tutorial_detail->language);
 
-			$role = 'admin_review_user';
+			$role = variable_get('domain_user', '');
 			$admin_mailid = get_role_emails($role);
 
 			$mailto = $admin_mailid.$quality_mailid;
 		    $message = "";
 			stupload_notify($mailto, $role, $message, $tds, $user->name);
 
-			$redirect = 'stupload/olang_index/?tr='.$form_state['values']['trid'];
-
-			drupal_goto($path = $redirect, $query=NULL, $fragment = NULL, $http_response_code = 302);
-
 			drupal_set_message('Tutorial script Updated Successfully');
+			
+			if($form_state['values']['redirection'] == 1){
+				drupal_goto('stupload/upload_regional_language_tutorial_index', array('tr' => $form_state['values']['trid']), $fragment = NULL, $http_response_code = 302);
+			} elseif($form_state['values']['redirection'] == 2){
+				drupal_goto('stupload/update_regional_language_tutorial_index', array('tr' => $form_state['values']['trid']), $fragment = NULL, $http_response_code = 302);
+			}
 		}else {
 			drupal_set_message('Error while Adding Tutorial Script, Please try again.');
 		}

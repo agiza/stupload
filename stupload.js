@@ -2,7 +2,7 @@ $(document).ready(function(){
 	webroot = "http://"+location.hostname+"/spoken_tutorial_org/stupload/";
 	loading_image = "<img src='http://"+location.hostname+"/spoken_tutorial_org/ajax-loader.gif' />";
 	wiki_url = "http://script.spoken-tutorial.org/index.php/";
-	// for add availabel tutorial levels for add tutorial names
+	// add new foss, tutorial name
 	$('.add-new-tutorial-name').css({'display':'none'});
 	$('.uptn_tutorial_level').change(function(){
 		foss = $('.uptn_foss_category_name').val();
@@ -54,6 +54,8 @@ $(document).ready(function(){
 			}
 		});
 	});
+	
+	// upload english tutorial prerequest
 	$('.upeng_foss_category_name').change(function(){
 		foss = $(this).val();
 		$.ajax({
@@ -115,55 +117,86 @@ $(document).ready(function(){
 			}
 		});
 	});
-	$('.upeng_timed_foss_category_name').change(function(){
+	
+	// upload regional language tutorials
+	$('.uolang_foss_category_name').change(function(){
+
 		foss = $(this).val();
+
 		$.ajax({
+
 			type : 'POST',
 			url : webroot + "get_category_levels",
 			data : {
 				'foss' : foss
 			},
+
 			beforeSend: function() {
-			    field_data = $('.uenglish-timed-level-name').html();
-			    $('.uenglish-timed-level-name').html(loading_image);
+				$('.uolang_tutorial_name').html("<option value=''>-- Select --</option>");
+			    field_data = $('.uolang-level-name').html();
+			    $('.uolang-level-name').html(loading_image);
 			},
+
 			success : function(data){
+
 				output = JSON.parse(data);
 				var html_data = "<option value=''>-- Select --</option>";
+
 				if(output){
-					$('.uenglish-timed-level-name').html(field_data);
-					for (var i=0; i < output.length; i++)
-					{
-						html_data += "<option value='"+ output[i].tutorial_level +"'>" + output[i].tutorial_level + "</option>";	
+
+					$('.uolang-level-name').html(field_data);
+
+					for (var i=0; i < output.length; i++) {
+						html_data += "<option value='"+ output[i].tutorial_level +"'>" + output[i].tutorial_level + "</option>";
 					}
-					console.log(html_data);
-					$('.upeng_timed_tutorial_level').html(html_data);
-					// adding the tutorial name under tutorial level
-					$('.upeng_timed_tutorial_level').change(function(){
-						level = $(this).val();
-						foss = $('.upeng_timed_foss_category_name').val();
+
+					$('.uolang_tutorial_level').html(html_data);
+
+					// get tutorial names under selected foss, level and languages
+					$('.uolang_tutorial_level').change(function(){
+						$('.uolang_tutorial_name').html("<option value=''>-- Select --</option>");
+						$('.uolang_tutorial_lang').attr("value",'');
+					});
+
+					$('.uolang_tutorial_lang').change(function(){
+
+						lang = $(this).val();;
+						foss = $('.uolang_foss_category_name').val();
+						level = $('.uolang_tutorial_level').val();
+						flag = $('.upload_flag').val();
+
 						$.ajax({
+
 							type : 'POST',
-							url : webroot + "get_timed_category_names",
+							url : webroot + "get_olang_tnames",
 							data : {
 								'level' : level,
-								'foss' : foss
+								'foss' : foss,
+								'lang' : lang,
+								'flag' : flag
 							},
+
 							beforeSend: function() {
-							    field_data = $('.uenglish-timed-name').html();
-							    $('.uenglish-timed-name').html(loading_image);
+							    field_data = $('.uolang-name').html();
+							    $('.uolang-name').html(loading_image);
 							},
+
 							success : function(data){
+
 								output = JSON.parse(data);
+								console.log(output);
+
 								var html_data = "<option value=''>-- Select --</option>";
+
 								if(output){
-									$('.uenglish-timed-name').html(field_data);
+
+									$('.uolang-name').html(field_data);
+
 									for (var i=0; i < output.length; i++)
 									{
 										html_data += "<option value='"+ output[i].tutorial_name +"'>" + output[i].tutorial_name + "</option>";	
 									}
-									console.log(html_data);
-									$('.upeng_timed_tutorial_name').html(html_data);
+									$('.uolang_tutorial_name').html(html_data);	// get tutorial names under selected foss, level and languages
 								}else{
 									alert('Somthing wrong, Please refresh page');
 								}
@@ -176,7 +209,8 @@ $(document).ready(function(){
 			}
 		});
 	});
-	// field hide and show
+	
+	// field hide and show outline box
 	if($('.uptn_outline_status').val() == 0){
 		$('div.stupload-outline').css({'display' : 'block'});
 	}
@@ -201,8 +235,7 @@ $(document).ready(function(){
 			$('div.stupload-outline').css({'display' : 'none'});
 		}
 	});
-
-
+	
 	// for script file
 	path = $('.upeng_script_wiki').val();
 	wiki_data = "<iframe width='100%' height='600px' src='"+wiki_url+path+"'></iframe>";
@@ -216,6 +249,7 @@ $(document).ready(function(){
 			$('div.wiki-script-file').html('<p></p>');
 		}
 	});
+	
 	// for slide file
 	if($('.upeng_slide_status').val() == 0){
 		$('div.stupload-form-slide').css({'display' : 'block'});
@@ -251,6 +285,7 @@ $(document).ready(function(){
 			$('div.stupload-form-codefile').css({'display' : 'none'});
 		}
 	});
+	
 	// for assignment file
 	if($('.upeng_asgmnt_status').val() == 0){
 		$('div.stupload-form-asgmnt').css({'display' : 'block'});
@@ -262,246 +297,13 @@ $(document).ready(function(){
 			$('div.stupload-form-asgmnt').css({'display' : 'none'});
 		}
 	});
-
-// Other languages 
-
-$('.uolang_foss_category_name').change(function(){
-		foss = $(this).val();
-		$.ajax({
-			type : 'POST',
-			url : webroot + "get_category_levels",
-			data : {
-				'foss' : foss
-			},
-			beforeSend: function() {
-				$('.uolang_tutorial_name').html("<option value=''>-- Select --</option>");
-			    field_data = $('.uolang-level-name').html();
-			    $('.uolang-level-name').html(loading_image);
-			},
-			success : function(data){
-				output = JSON.parse(data);
-				var html_data = "<option value=''>-- Select --</option>";
-				if(output){
-					$('.uolang-level-name').html(field_data);
-					for (var i=0; i < output.length; i++)
-					{
-						html_data += "<option value='"+ output[i].tutorial_level +"'>" + output[i].tutorial_level + "</option>";	
-					}
-					$('.uolang_tutorial_level').html(html_data);
-
-					// adding the tutorial languages under tutorial level
-					// $('.uolang_tutorial_level').change(function(){
-					// 	level = $(this).val();;
-					// 	foss = $('.uolang_foss_category_name').val();
-					// 	$.ajax({
-					// 		type : 'POST',
-					// 		url : webroot + "get_languages",
-					// 		data : {
-					// 			'level' : level,
-					// 			'foss' : foss
-					// 		},
-					// 		beforeSend: function() {
-					// 		    field_data = $('.uolang-lang').html();
-					// 		    $('.uolang-lang').html(loading_image);
-					// 		},
-					// 		success : function(data){
-					// 			output = JSON.parse(data);
-					// 			console.log(output);
-					// 			var html_data = "<option value=''>Tutorial name</option>";
-					// 			if(output){
-					// 				$('.uolang-lang').html(field_data);
-					// 				for (var i=0; i < output.length; i++)
-					// 				{
-					// 					html_data += "<option value='"+ output[i].name +"'>" + output[i].name + "</option>";	
-					// 				}
-					// 				$('.uolang_tutorial_lang').html(html_data);
-
-									// get tutorial names under selected foss, level and languages
-									$('.uolang_tutorial_level').change(function(){
-										$('.uolang_tutorial_name').html("<option value=''>-- Select --</option>");
-										$('.uolang_tutorial_lang').attr("value",'');
-									});
-									$('.uolang_tutorial_lang').change(function(){
-										lang = $(this).val();;
-										foss = $('.uolang_foss_category_name').val();
-										level = $('.uolang_tutorial_level').val();
-										flag = $('.upload_flag').val();
-										$.ajax({
-											type : 'POST',
-											url : webroot + "get_olang_tnames",
-											data : {
-												'level' : level,
-												'foss' : foss,
-												'lang' : lang,
-												'flag' : flag
-											},
-											beforeSend: function() {
-											    field_data = $('.uolang-name').html();
-											    $('.uolang-name').html(loading_image);
-											},
-											success : function(data){
-												output = JSON.parse(data);
-												console.log(output);
-												var html_data = "<option value=''>-- Select --</option>";
-												if(output){
-													$('.uolang-name').html(field_data);
-													for (var i=0; i < output.length; i++)
-													{
-														html_data += "<option value='"+ output[i].tutorial_name +"'>" + output[i].tutorial_name + "</option>";	
-													}
-													$('.uolang_tutorial_name').html(html_data);
-													// get tutorial names under selected foss, level and languages
-													
-												}else{
-													alert('Somthing wrong, Please refresh page');
-												}
-											}
-										});
-									});
-						// 		}else{
-						// 			alert('Somthing wrong, Please refresh page');
-						// 		}
-						// 	}
-						// });
-					// });
-				}else{
-					alert('Somthing wrong, Please refresh page');
-				}
-			}
-		});
-	});
-
-	// review tutorial
-	$('.reviewer-comment').css({'display': 'none'});
-	$('#edit-status-under-review, #edit-status-pending, #edit-status-need-improvement, #edit-status-accepted, #edit-status-need-improvement').click(function(){
-		if($(this).val() == 'need_improvement'){
-			$('.reviewer-comment').css({'display': 'block'});
-		}else{
-			$('.reviewer-comment').css({'display': 'none'});
-		}
-	});
+	
 	// foss category
 	$('.foss_category_add').change(function(){
 		if($(this).val() == 'addnew'){
 			$('.aable-foss-name').css({'display':'block'});
 		}else{
 			$('.aable-foss-name').css({'display':'none'});
-		}
-	});
-
-	// English Timed
-
-	$('.upeng_tutorial_level_etimed').change(function(){
-		level = $(this).val();
-		foss = $('.upeng_foss_category_name_etimed').val();
-		$.ajax({
-			type : 'POST',
-			url : webroot + "get_etimed_tnames",
-			data : {
-				'level' : level,
-				'foss' : foss
-			},
-			beforeSend: function() {
-			    field_data = $('.uenglish-name').html();
-			    $('.uenglish-name').html(loading_image);
-			},
-			success : function(data){
-				output = JSON.parse(data);
-				var html_data = "<option value=''>-- Select --</option>";
-				if(output){
-					$('.uenglish-name').html(field_data);
-					for (var i=0; i < output.length; i++)
-					{
-						html_data += "<option value='"+ output[i].tutorial_name +"'>" + output[i].tutorial_name + "</option>";	
-					}
-					console.log(html_data);
-					$('.upeng_tutorial_name_etimed').html(html_data);
-				}else{
-					alert('Somthing wrong, Please refresh page');
-				}
-			}
-		});
-	});
-	$('.outline_change_foss').change(function(){
-		var foss = $(this).val();
-		if(foss != ''){
-			$('.outline_change_language').html('<option value>Select Language</option>');
-			$('.outline_change_tutorial_name').html('<option value>Select Tutorial Name</option>');
-			$.ajax({
-				type : 'POST',
-				url : "http://"+location.hostname+"/spoken_tutorial_org/workshops/get_lang",
-				data : {
-					'foss' : foss
-				},
-				beforeSend: function() {
-					field_data = $('.outline_change_language_div').html();
-					$('.outline_change_language_div').html(loading_image);
-				},
-				success : function(data){
-					output = JSON.parse(data);
-					options = "<option value>Select Language</option>";
-					console.log(output);
-					i = 0;
-					for(i=0; i < output.length; i++){
-						options += "<option value='"+ output[i].language + "'>" + output[i].language + "</option>";
-					}
-					$('.outline_change_language_div').html(field_data);
-					$('.outline_change_language').html(options);
-					$('.outline_change_language').change(function(){
-						if($('.outline_change_foss').val() != '' && $('.outline_change_language').val() != ''){
-							$('.outline_change_tutorial_name').html('<option value>Select Tutorial Name</option>');
-							$.ajax({
-								type : 'POST',
-								url : webroot + "/get_tutorials_language",
-								data : {
-									'foss' : $('.outline_change_foss').val(),
-									'language' : $('.outline_change_language').val()
-								},
-								beforeSend: function() {
-									field_data = $('.outline_change_tutorial_name_div').html();
-									$('.outline_change_tutorial_name_div').html(loading_image);
-								},
-								success : function(data){
-									output = JSON.parse(data);
-									options = "<option value>Select Tutorial Name</option>";
-									console.log(output);
-									i = 0;
-									for(i=0; i < output.length; i++){
-										options += "<option value='"+ output[i].id + "'>" + output[i].tutorial_name + "</option>";
-									}
-									$('.outline_change_tutorial_name_div').html(field_data);
-									$('.outline_change_tutorial_name').html(options);
-									$('.outline_change_tutorial_name').change(function(){
-										if($('.outline_change_language').val() != '' && $('.outline_change_tutorial_name').val() != ''){
-											$('.outline_change_tutorial_outline').val('');
-											$('.outline_change_trid').val('');
-											$.ajax({
-												type : 'POST',
-												url : webroot + "get_tutorials_outline",
-												data : {
-													'tdid' : $('.outline_change_tutorial_name').val(),
-													'language' : $('.outline_change_language').val()
-												},
-												beforeSend: function() {
-													field_data = $('.outline_change_tutorial_outline_div').html();
-													$('.outline_change_tutorial_outline_div').html(loading_image);
-												},
-												success : function(data){
-													output = JSON.parse(data);
-													console.log(output);
-													$('.outline_change_tutorial_outline_div').html(field_data);
-													$('.outline_change_tutorial_outline').val(output.tutorial_outline);
-													$('.outline_change_trid').val(output.id);
-												}
-											});
-										}
-									});
-								}
-							});
-						}
-					});
-				}
-			});
 		}
 	});
 });

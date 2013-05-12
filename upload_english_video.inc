@@ -1,15 +1,15 @@
 <?php
 	function upload_english_video() {		
-		if($_POST['trid'] && $_POST['td_path']){		
+		if($_POST['trid'] && $_POST['td_path'] && $_REQUEST['redirection']){		
 			$output = "<h2>Upload English Video for ".$_REQUEST['tn']."</h2>";
-			$output .= drupal_get_form('upload_english_video_form', $_REQUEST['trid'], $_POST['td_path']);
+			$output .= drupal_get_form('upload_english_video_form', $_REQUEST['trid'], $_POST['td_path'], $_REQUEST['redirection']);
 			return $output;
 		}else{
 			$output = "<p>Something went wrong. Please, try again.</p>";
 			return $output;
 		}
 	}
-	function upload_english_video_form($form_state, $trid, $td_path) {
+	function upload_english_video_form($form_state, $trid, $td_path, $redirection) {
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -25,7 +25,10 @@
 			'#type' => 'hidden',
 			'#value' => $td_path,
 		);
-
+		$form['redirection'] = array(
+			'#type' => 'hidden',
+			'#value' => $redirection,
+		);
 		$form['video_status'] = array(
 			'#type' => 'select',
 			'#title' => t('Video Status'),
@@ -68,17 +71,12 @@
 	
 	function upload_english_video_form_submit($form, &$form_state){
 		global $user;
-		$td = explode('/', $_POST['td_path']);	
+		$td = explode('/', $_POST['td_path']);
 		$file_ext = substr($_FILES['files']['name']['video'], strripos($_FILES['files']['name']['video'], '.'));
 		
-		$file_name = $td[2].'-Slide-'.English.$file_ext;
+		$file_name = $td[2].'-English.'.$file_ext;
 		$tutorial_video = 'st_videos/'.$_POST['td_path'].$file_name;
 		$path = variable_get('file_upload_path', '').$tutorial_video;
-		
-		//backup file
-		$bak_file_name = $td[2].'-Slide-'.English.$file_ext;
-		$bck_tutorial_video = 'st_videos/'.$_POST['td_path'].$bck_file_name;
-		$bck_path = variable_get('file_upload_path', '').$bck_tutorial_video;
 		
 		// upload later
 		if($form_state['values']['video_status'] == 1){
@@ -90,7 +88,11 @@
 			if(db_query($query)){
 				drupal_set_message('Tutorial Video Updated Successfully');
 				$query= array('trid' => $form_state['values']['trid']);
-				drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+				if($form_state['values']['redirection'] == 1){
+					drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+				} elseif($form_state['values']['redirection'] == 2){
+					drupal_goto('stupload/update_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+				}
 			}else {
 				drupal_set_message('Error while Adding Tutorial Video, Please try again.');
 			}
@@ -113,7 +115,7 @@
 				    $message = "";
 					stupload_notify($mailto, $role, $message, $tds, $user->name);
 
-					//Mail to admin_review_user 
+					//Mail to admin_review_user
 					$role = variable_get('quality_checker', '');
 					$quality_mailid = get_language_role_emails($tutorial_detail->language);
 					$role = variable_get('admin_review_user', '');
@@ -126,17 +128,17 @@
 
 					drupal_set_message('Tutorial Video Updated Successfully');
 					$query= array('trid' => $form_state['values']['trid']);
-				drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+					if($form_state['values']['redirection'] == 1){
+						drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+					} elseif($form_state['values']['redirection'] == 2){
+						drupal_goto('stupload/update_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+					}
 				}else {
 					drupal_set_message('Error while Adding Tutorial Video, Please try again.');
 				}
 			}else{
 				drupal_set_message('Error while Uploading Video file, Please try again..');
 			}
-
 		}
-
-
-}
-
+	}
 ?>

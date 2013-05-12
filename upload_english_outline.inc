@@ -1,9 +1,10 @@
 <?php
 	function upload_english_outline() {
 
-		if($_REQUEST['trid']){	
-			$output = "<h2>Upload Outline for ".$_REQUEST['tn']."</h2>";	
-			$output .= drupal_get_form('upload_english_outline_form', $_REQUEST['trid'], $_REQUEST['outline']);
+		if(isset($_REQUEST['trid']) && isset($_REQUEST['redirection'])){	
+			$output = "<h1 class='title'>Upload Outline for ".$_REQUEST['tn']."</h1>";
+			$outline = (trim($_REQUEST['outline']) != 'pending')?$_REQUEST['outline']:'';
+			$output .= drupal_get_form('upload_english_outline_form', $_REQUEST['trid'], $outline, $_REQUEST['redirection']);
 			return $output;
 		}else{
 			$output = "<p>Somthing went wrong. Please, try again.</p>";
@@ -11,7 +12,7 @@
 		}
 		
 	}
-	function upload_english_outline_form($form_state, $trid, $outline) {
+	function upload_english_outline_form($form_state, $trid, $outline, $redirection) {
 		
 		// add js file 
 		$path = drupal_get_path('module', 'stupload');
@@ -27,7 +28,10 @@
 			'#required' => TRUE,
 			'#value' => $trid
 		);
-
+		$form['redirection'] = array(
+			'#type' => 'hidden',
+			'#value' => $redirection,
+		);
 		$form['outline_status'] = array(
 			'#type' => 'select',
 			'#title' => t('Outline Status'),
@@ -38,7 +42,7 @@
 		$form['outline'] = array(
 			'#type' => 'textarea',
 			'#title' => t('Outline'),
-			'#attributes' => array('class' => 'uptn_outline'),
+			'#attributes' => array('class' => 'uptn_outline', 'style' => 'width: 700px; float: right; margin-top: 20px;'),
 			'#default_value' => $outline, 
 			'#prefix' => '<div class="stupload-outline">',
 			'#suffix' => '</div>'
@@ -105,12 +109,13 @@
 
 			drupal_set_message('Tutorial Outline Updated Successfully');
 			$query = array('trid' => $form_state['values']['trid']);
-			drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+			if($form_state['values']['redirection'] == 1){
+				drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+			} elseif($form_state['values']['redirection'] == 2){
+				drupal_goto('stupload/update_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+			}
 		}else {
 			drupal_set_message('Error while Adding Tutorial Outline, Please try again.');
 		}
-
-}
-
-
+	}
 ?>

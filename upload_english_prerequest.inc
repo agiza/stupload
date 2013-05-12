@@ -1,6 +1,12 @@
 <?php
 
 	function upload_english_prerequest_form($form_state) {
+	
+		$flag = 1;
+		$pos = strpos($_REQUEST['q'], 'update_english_tutorial');
+		if ($pos !== false) {
+			$flag = 2;
+		}
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -16,7 +22,11 @@
 		$form['#prefix'] = '<div class="stupload-form">';
 		$form['#suffix'] = '</div>';
 		$form['#attributes'] = array('enctype' => "multipart/form-data", 'class' => 'upload-english');
-	
+		
+		$form['flag'] = array(
+			'#type' => 'hidden',
+			'#value' => $flag
+		);
 		$form['foss_category'] = array(
 			'#type' => 'select',
 			'#title' => t('FOSS Category Name'),
@@ -76,7 +86,11 @@
 		if($trid->trid){
 			drupal_set_message('New Tutorial Added Successfully');
 			$query = array('trid' => $trid->trid);
-			drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+			if($_POST['flag'] == 1){
+				drupal_goto('stupload/upload_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+			} else{
+				drupal_goto('stupload/update_english_tutorial_index', $query, $fragment = NULL, $http_response_code = 302);
+			}
 		}else {
 			drupal_set_message('Error while Adding Tutorial, Please try again.');
 		}
