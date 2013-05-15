@@ -1,6 +1,6 @@
 <?php
 
-function review_tutorials(){
+function quality_review_tutorials(){
 
 	$flag = 0;
 	$query = "";
@@ -8,18 +8,7 @@ function review_tutorials(){
 	$foss = '';
 	$lang = '';
 	$status = '';
-	if(user_access('domain review tutorialsss')){
-		if(isset($_REQUEST['foss']) && isset($_REQUEST['lang'])){
-			$foss = $_REQUEST['foss'];
-			$lang = $_REQUEST['lang'];
-			$query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.language='".$_REQUEST['lang']."' and td.foss_category='".$_REQUEST['foss']."' and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
-			$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.language='".$_REQUEST['lang']."' and td.foss_category='".$_REQUEST['foss']."' and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
-		}else{
-			$query ="select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
-			$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
-		}
-	}elseif(user_access('quality review tutorial')){
-		var_dump($_REQUEST);
+	if(user_access('quality review tutorial')){
 		$where_query ='';			
 		if(isset($_REQUEST['foss']) && isset($_REQUEST['lang']) && isset($_REQUEST['status'])){
 			$foss = $_REQUEST['foss'];
@@ -45,8 +34,7 @@ function review_tutorials(){
 			$lang = $_REQUEST['lang'];
 			$where_query = "and tr.language='".$_REQUEST['lang']."'";
 		}elseif(isset($_REQUEST['status'])){
-			$status = $_REQUEST['status'];
-			var_dump('yes');
+			$status = $_REQUEST['status'];;
 			$where_query = "and (tr.tutorial_outline_status = ".$status." or tr.tutorial_script_status=".$status." or tutorial_video_status=".$status." or tcc.tutorial_slide_status=".$status." or tcc.tutorial_code_status=".$status." or tcc.tutorial_assignment_status=".$status.")";
 		}else{
 			$where_query = '';
@@ -63,10 +51,10 @@ function review_tutorials(){
 	while ($item = db_fetch_object($result)) {
 		$link_str = "";
 		if($flag == 0)
-			if($status || $status >= 0){
-				$link_str = "<form action='".$GLOBALS['base_url']."/stupload/review_tutorial_page' method='post'><input type='hidden' name='trid' value='".$item->trid."'><input type='hidden' name='status' value=".$status."><input type='submit' value='Review'></form>";
+			if($status !=''){
+				$link_str = "<form action='".$GLOBALS['base_url']."/stupload/quality_review_tutorial_page' method='post'><input type='hidden' name='trid' value='".$item->trid."'><input type='hidden' name='status' value=".$status."><input type='submit' value='Review'></form>";
 			}else{
-				$link_str = "<form action='".$GLOBALS['base_url']."/stupload/review_tutorial_page' method='post'><input type='hidden' name='trid' value='".$item->trid."'><input type='hidden' name='status' value='all'><input type='submit' value='Review'></form>";
+				$link_str = "<form action='".$GLOBALS['base_url']."/stupload/quality_review_tutorial_page' method='post'><input type='hidden' name='trid' value='".$item->trid."'><input type='hidden' name='status' value='all'><input type='submit' value='Review'></form>";
 			}
 			//$link_str = 'stupload/review_tutorial_page?trid='.$item -> trid."'>Review</a>";
 		else{
@@ -75,10 +63,7 @@ function review_tutorials(){
 		$row[] = array($sno++, $item -> tutorial_level, $item -> tutorial_name, component_status_symbols($item->tutorial_outline_status), component_status_symbols($item->tutorial_script_status),component_status_symbols($item->tutorial_video_status), component_status_symbols($item->tutorial_slide_status), component_status_symbols($item->tutorial_code_status),component_status_symbols($item->tutorial_assignment_status), $link_str);
 		
 	}
-
-	if(user_access('domain review tutorials')){
-		$output = drupal_get_form('domain_list_tutorials_form', $flag, $foss, $lang);		
-	}elseif('quality review tutorial'){
+	if('quality review tutorial'){
 		$output = drupal_get_form('quality_list_tutorials_form', $flag, $foss, $lang, $status);
 	}
 	
@@ -92,81 +77,9 @@ function review_tutorials(){
 	return $output;
 }
 
-function domain_list_tutorials_form($form_state, $flag, $sfoss, $slang){
-	global $user;
-	$path = drupal_get_path('module', 'stupload');
-	drupal_add_css($path.'/stupload-view.css');
-	
-	//fetching list of foss category details
-	$query = "select distinct foss_category from tutorial_details ORDER BY foss_category ASC";
-	$result = db_query($query);
-	$foss_list = array();
-	$foss_list[''] = "Select FOSS Category";
-	while($row = db_fetch_object($result)){
-		$foss_list[$row->foss_category] = $row->foss_category;
-	}
-	
-	$form['#attributes'] = array('enctype' => "multipart/form-data");
-	$form['foss_category'] = array(
-		'#type' => 'select',
-		'#title' => t(''),
-		'#options' => $foss_list,
-		'#default_value' => $sfoss,
-		'#attributes' => array('class' => 'foss_category'),
-		'#prefix' => '<br /><center><b>Select FOSS Category, Select Language and Search for a list of Tutorials</b></center><div style="width: 70%; margin: auto;"><table class="foss_search" align="Center" style="border-collapse: inherit; width: 70%;" cellpadding="7"><tr><td>',
-		'#suffix' => '</td>'
-	);
-	
-	$query = "select name from tutorial_languages ORDER BY name ASC";
-	$result = db_query($query);
-	$lang = array();
-	$lang[''] = "Select Language";
-	$lang['English'] = "English";
-	while($row = db_fetch_object($result)){
-		$lang[$row->name] = $row->name;
-	}
-	$form['flag'] = array(
-		'#type' => 'hidden',
-		'#value' => $flag
-	);
-	$form['language'] = array(
-		'#type' => 'select',
-		'#title' => t(''),
-		'#options' => $lang,
-		'#default_value' => $slang,
-		'#attributes' => array('class' => 'language'),
-		'#prefix' => '<td>',
-		'#suffix' => '</td>'
-	);
-	$form['save'] = array(
-		'#type' => 'submit',
-		'#value' => 'Search',
-		'#attributes' => array('class' => 'form-select locate_tutorial'),
-		'#prefix' => '<td>',
-		'#suffix' => '</td></tr></table></div>'
-	);
-	
-	return $form;
-}
-
-function domain_list_tutorials_form_validate($form, &$form_state){
-
-	if($form_state['values']['foss_category'] == '')
-		form_set_error('foss_category', t('Please select FOSS category'));
-	if($form_state['values']['language'] == '')
-		form_set_error('language', t('Please select language'));
-}
-
-function domain_list_tutorials_form_submit($form, &$form_state){
-	$redirect = 'stupload/domain_review_tutorials';
-	$query = array('foss' => $form_state['values']['foss_category'], 'lang'=> $form_state['values']['language'] );
-	drupal_goto($redirect, $query, $fragment = NULL, $http_response_code = 302);
-}
-
 // quality review
 function quality_list_tutorials_form($form_state, $flag, $sfoss, $slang, $sstatus){
 	
-	var_dump($sstatus);
 	global $user;
 	$path = drupal_get_path('module', 'stupload');
 	drupal_add_css($path.'/stupload-view.css');
@@ -262,16 +175,14 @@ function quality_list_tutorials_form_submit($form, &$form_state){
 	drupal_goto($redirect, $query, $fragment = NULL, $http_response_code = 302);
 }
 
-
 //Review tutorial page
-function review_tutorial_page() {
+function quality_review_tutorial_page() {
 	$path = drupal_get_path('module', 'stupload');
 	drupal_add_js($path . '/stupload.js');
 	drupal_add_css($path . '/stupload.css');
 	drupal_add_js($path . '/video.js');
 	drupal_add_css($path . '/video-js.css');
 	global $user;
-	var_dump($_POST);
 	if($_POST['trid']){
 		$query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tr.tutorial_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id='".$_POST['trid']."'";
 		$result = db_query($query);
@@ -316,7 +227,6 @@ function review_tutorial_page() {
 				
 				// component shan
 				$comp = array();
-				var_dump($_POST['status']);
 				if($_POST['status'] == 'all'){
 					$comp = array(1 => 'Outline', 2 => 'Script', 3 => 'Slide', 4 => 'Video', 5 => 'Codefile', 6 => 'Assignment');
 				}else{
@@ -336,7 +246,6 @@ function review_tutorial_page() {
 						$comp [0] = 'All';
 					}
 				}
-				var_dump($comp);
 		$output = "<div class='stupload-form'>";
 			$output .= "<div class='summery'>";
 				$output .= "<div class='summery-title-content'>";				
@@ -356,8 +265,7 @@ function review_tutorial_page() {
 							$tmp_comment .= "<p> ".$row->name."  ".$row->reviewed_time."<br />".stuolpad_outline_humen_view($row->comment)."</p>";
 						}
 						$output .="<span class='left'>Remarks </span><span class='right'>".$tmp_comment."</span>";
-				// Get form
-				$output .= drupal_get_form('review_tutorial_form', $tutorial->trid, '', $comp);		
+				$output .= drupal_get_form('quality_review_tutorial_form', $tutorial->trid, '', $comp);		
 				$output .= "</div>";
 				$output .= "<div class='left-content'>";
 					$output .= "<div class='summery-outline'>";
@@ -399,8 +307,9 @@ function review_tutorial_page() {
 
 }
 
-function review_tutorial_form($form_state, $trid, $status, $comp){
+function quality_review_tutorial_form($form_state, $trid = NULL, $status = NULL, $comp = NULL){
 		// add js file 
+
 		global $user;
 		if(user_access('quality review tutorial')){			
 			$options = array(4 => 'Accepted', 5 => 'Need Improvement');
@@ -426,7 +335,7 @@ function review_tutorial_form($form_state, $trid, $status, $comp){
 			'#type' => 'select',
 			'#title' => "Component",
 			'#required' => TRUE,
-			'#default_value' => '',
+			'#validated' => TRUE,
 			'#options' => $comp,
 			'#attributes' => array('class' => 'reviewer-status')
 		);
@@ -457,14 +366,16 @@ function review_tutorial_form($form_state, $trid, $status, $comp){
 
 	}
 	
-	function review_tutorial_form_submit($form, &$form_state){
+
+	function quality_review_tutorial_form_submit($form, &$form_state){
 
 		global $user;
 		$com = '';
 		$flag = 0;
-		if($form_state['values']['status'] == 4){
-			$component = unserialize($form_state['values']['comp']);
-			if($form_state['values']['component'] == 0){
+		if($_POST['status'] == 4){
+			$component = unserialize($_POST['comp']);
+			var_dump($component);
+			if($_POST['component'] == 0){
 				unset($component[0]);
 				foreach($component as $c){
 					if($flag > 0){
@@ -474,11 +385,11 @@ function review_tutorial_form($form_state, $trid, $status, $comp){
 					$flag++;					
 				}
 			}else{
-				$com = status_update_comp_query($component[$form_state['values']['component']], 4);
+				$com = status_update_comp_query($component[$_POST['component']], 4);
 			}
 		}else{
-			$component = unserialize($form_state['values']['comp']);
-			if($form_state['values']['component'] == 0){
+			$component = unserialize($_POST['comp']);
+			if($_POST['component'] == 0){
 				unset($component[0]);
 				foreach($component as $c){
 					if($flag > 0){
@@ -488,16 +399,14 @@ function review_tutorial_form($form_state, $trid, $status, $comp){
 					$flag++;					
 				}
 			}else{
-				$com = status_update_comp_query($component[$form_state['values']['component']], 5);
+				$com = status_update_comp_query($component[$_POST['component']], 5);
 			}
 		}		
 
-		$query = "update tutorial_resources tr, tutorial_common_contents tcc set tr.reviewer='".$user->name."', ".$com." where tr.id=".$form_state['values']['trid']." and tr.tutorial_content_id = tcc.id";	
+		$query = "update tutorial_resources tr, tutorial_common_contents tcc set tr.reviewer='".$user->name."', ".$com." where tr.id=".$_POST['trid']." and tr.tutorial_content_id = tcc.id";	
 		db_query($query);
-		
-		
 		// Get the Tutorial Details
-		$query = "select tr.language, tr.uid, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$form_state['values']['trid']."'";
+		$query = "select tr.language, tr.uid, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$_POST['trid']."'";
 		$result = db_query($query);
 		$tutorial_detail = db_fetch_object($result);
 
@@ -506,19 +415,22 @@ function review_tutorial_form($form_state, $trid, $status, $comp){
 		$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
 
 		// insert into the comment improvement table
-		if($form_state['values']['comment'] != ''){
-			$query = "INSERT INTO `comment_improvement` (`id`, `uid`, `trid`, `reviewed_time`, `comment`) VALUES (NULL, '".$user->uid."', '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$form_state['values']['comment']."')";
+		if($_POST['comment'] != ''){
+			$query = "INSERT INTO `comment_improvement` (`id`, `uid`, `trid`, `reviewed_time`, `comment`) VALUES (NULL, '".$user->uid."', '".$_POST['trid']."', CURRENT_TIMESTAMP, '".$_POST['comment']."')";
 
 			db_query($query);
 		}
 
-		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'review')";
+		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$_POST['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'review')";
 
 		if(db_query($query)){
 			//Email
 		}
+		
+		drupal_goto('stupload/quality_review_tutorials', '', $fragment = NULL, $http_response_code = 302);
 	}	
 
+?>
 
 
 

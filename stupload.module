@@ -222,32 +222,39 @@
 		// domain reviewer
 		$items['stupload/domain_review_tutorials'] = array(
 			'title' => 'Tutorial Review Page',
-			'page callback' => 'review_tutorials',
+			'page callback' => 'domain_review_tutorials',
 			'access arguments' => array('domain review tutorial'),
-			'file' => 'review_tutorials.inc',
+			'file' => 'domain_review_tutorials.inc',
 			'type' => MENU_NORMAL_ITEM,
 		);
-		$items['stupload/review_tutorial_page'] = array(
+		$items['stupload/domain_review_tutorial_page'] = array(
 			'title' => 'Tutorial Review Page',
-			'page callback' => 'review_tutorial_page',
+			'page callback' => 'domain_review_tutorial_page',
 			'access arguments' => array('review tutorial'),
-			'file' => 'review_tutorials.inc',
+			'file' => 'domain_review_tutorials.inc',
 			'type' => MENU_NORMAL_ITEM,
 		);
-		// domain reviewer
+		// admin reviewer
 		$items['stupload/admin_review_tutorials'] = array(
 			'title' => 'Tutorial Review Page',
 			'page callback' => 'review_tutorials',
 			'access arguments' => array('admin review tutorial'),
-			'file' => 'review_tutorials.inc',
+			'file' => 'domain_review_tutorials.inc',
 			'type' => MENU_NORMAL_ITEM,
 		);
 		// quality reviewer
 		$items['stupload/quality_review_tutorials'] = array(
 			'title' => 'Tutorial Review Page',
-			'page callback' => 'review_tutorials',
+			'page callback' => 'quality_review_tutorials',
 			'access arguments' => array('quality review tutorial'),
-			'file' => 'review_tutorials.inc',
+			'file' => 'quality_review_tutorials.inc',
+			'type' => MENU_NORMAL_ITEM,
+		);
+		$items['stupload/quality_review_tutorial_page'] = array(
+			'title' => 'Tutorial Review Page',
+			'page callback' => 'quality_review_tutorial_page',
+			'access arguments' => array('review tutorial'),
+			'file' => 'quality_review_tutorials.inc',
 			'type' => MENU_NORMAL_ITEM,
 		);
 		return $items;
@@ -876,7 +883,7 @@
 	       return "<ul>".$temp."</ul>";
 	}
 	
-	/*function _format_bytes($a_bytes)
+	function _format_bytes($a_bytes)
 	{
 	    if ($a_bytes < 1000) {
 	        return $a_bytes .' B';
@@ -885,7 +892,28 @@
 	    } elseif ($a_bytes < 1073741824) {
 	        return round($a_bytes / 1000000, 2) . ' MB';
 	    }
-	}*/
+	}
+	
+	// reviews
+		function status_update_comp_query($c, $status){
+		
+			var_dump("!!".$c."---".$status."!!!");
+		if($c == 'Outline'){
+			$output= 'tr.tutorial_outline_status = '.$status;
+		}elseif($c == 'Script'){
+			$output= 'tr.tutorial_script_status = '.$status;
+		}elseif($c == 'Slide'){
+			$output= 'tcc.tutorial_slide_status = '.$status;
+		}elseif($c == 'Video'){
+			$output= 'tr.tutorial_video_status = '.$status;
+		}elseif($c == 'Codefile'){
+			$output= 'tcc.tutorial_code_status = '.$status;
+		}elseif($c == 'Assignment'){
+			$output= 'tcc.tutorial_assignment_status = '.$status;
+		}
+		
+		return $output;
+	}
 
 
 ?>
