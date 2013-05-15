@@ -14,6 +14,10 @@
 			'stupload quality review tutorials',
 			'resource not available',
 			'resource not required',
+			'review tutorial',
+			'domain review tutorial',
+			'admin review tutorial',
+			'quality review tutorial',
 			'stupload ajax-fill methods',
 		);
 	}
@@ -215,7 +219,37 @@
 			'access arguments' => array('stupload ajax-fill methods'),
 			'type' => MENU_NORMAL_ITEM
 		);
-		
+		// domain reviewer
+		$items['stupload/domain_review_tutorials'] = array(
+			'title' => 'Tutorial Review Page',
+			'page callback' => 'review_tutorials',
+			'access arguments' => array('domain review tutorial'),
+			'file' => 'review_tutorials.inc',
+			'type' => MENU_NORMAL_ITEM,
+		);
+		$items['stupload/review_tutorial_page'] = array(
+			'title' => 'Tutorial Review Page',
+			'page callback' => 'review_tutorial_page',
+			'access arguments' => array('review tutorial'),
+			'file' => 'review_tutorials.inc',
+			'type' => MENU_NORMAL_ITEM,
+		);
+		// domain reviewer
+		$items['stupload/admin_review_tutorials'] = array(
+			'title' => 'Tutorial Review Page',
+			'page callback' => 'review_tutorials',
+			'access arguments' => array('admin review tutorial'),
+			'file' => 'review_tutorials.inc',
+			'type' => MENU_NORMAL_ITEM,
+		);
+		// quality reviewer
+		$items['stupload/quality_review_tutorials'] = array(
+			'title' => 'Tutorial Review Page',
+			'page callback' => 'review_tutorials',
+			'access arguments' => array('quality review tutorial'),
+			'file' => 'review_tutorials.inc',
+			'type' => MENU_NORMAL_ITEM,
+		);
 		return $items;
 	}
 
@@ -813,6 +847,21 @@
 		return $output;
 	}
 	
+	function component_status_symbols($status, $flag=0){
+		$output = '';
+		if($flag){
+			$status_array = array(0 => 'Pending', 1 => 'Under admin review', 2 => 'Under Domain review', 3 => 'Under quality check', 4 => 'Accepted', 5 => 'Need improvement', 6 => 'Not required');
+			$output = $status_array[$status];
+		}else{		
+			if($status == 6)
+				$output = "<div class='code_green'>--</div>";
+			elseif($status > 0)
+				$output = "<div class='code_green'>&#10004;</div>";
+			else
+				$output = "<div class='code_red'>&#8855;</div>";
+		}
+		return $output;
+	}
 	function stuolpad_outline_humen_view($outline){
 	       $temp = str_replace("\t", "  &nbsp; ", $outline);
 	       $temp = str_replace("\n\n\n", "\n", $temp);
@@ -826,5 +875,17 @@
 	       }
 	       return "<ul>".$temp."</ul>";
 	}
+	
+	/*function _format_bytes($a_bytes)
+	{
+	    if ($a_bytes < 1000) {
+	        return $a_bytes .' B';
+	    } elseif ($a_bytes < 1048576) {
+	        return round($a_bytes / 1000, 2) .' KB';
+	    } elseif ($a_bytes < 1073741824) {
+	        return round($a_bytes / 1000000, 2) . ' MB';
+	    }
+	}*/
+
 
 ?>

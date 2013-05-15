@@ -306,4 +306,15 @@ $(document).ready(function(){
 			$('.aable-foss-name').css({'display':'none'});
 		}
 	});
+	
+	// review need improvement comments
+	$('.reviewer-comment').css({'display':'none'});
+	$('.reviewer-status').change(function(){
+		if($(this).val() == 5){
+			$('.reviewer-comment').css({'display':'block'});
+		}
+		if($(this).val() == 4){
+			$('.reviewer-comment').css({'display':'none'});
+		}
+	});
 });
