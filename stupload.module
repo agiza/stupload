@@ -237,11 +237,19 @@
 		// admin reviewer
 		$items['stupload/admin_review_tutorials'] = array(
 			'title' => 'Tutorial Review Page',
-			'page callback' => 'review_tutorials',
+			'page callback' => 'admin_review_tutorials',
 			'access arguments' => array('admin review tutorial'),
-			'file' => 'domain_review_tutorials.inc',
+			'file' => 'admin_review_tutorials.inc',
 			'type' => MENU_NORMAL_ITEM,
 		);
+		$items['stupload/admin_review_tutorial_page'] = array(
+			'title' => 'Tutorial Review Page',
+			'page callback' => 'admin_review_tutorial_page',
+			'access arguments' => array('review tutorial'),
+			'file' => 'admin_review_tutorials.inc',
+			'type' => MENU_NORMAL_ITEM,
+		);
+		
 		// quality reviewer
 		$items['stupload/quality_review_tutorials'] = array(
 			'title' => 'Tutorial Review Page',
@@ -863,16 +871,16 @@
 	
 	function component_status_symbols($status, $flag=0){
 		$output = '';
+		$status_array = array(0 => 'Pending', 1 => 'Under admin review', 2 => 'Under Domain review', 3 => 'Under quality check', 4 => 'Accepted', 5 => 'Need improvement', 6 => 'Not required');
 		if($flag){
-			$status_array = array(0 => 'Pending', 1 => 'Under admin review', 2 => 'Under Domain review', 3 => 'Under quality check', 4 => 'Accepted', 5 => 'Need improvement', 6 => 'Not required');
 			$output = $status_array[$status];
 		}else{		
 			if($status == 6)
-				$output = "<div class='code_green'>--</div>";
+				$output = "<div class='code_green' title='".$status_array[$status]."'>--</div>";
 			elseif($status > 0)
-				$output = "<div class='code_green'>&#10004;</div>";
+				$output = "<div class='code_green' title='".$status_array[$status]."'>&#10004;</div>";
 			else
-				$output = "<div class='code_red'>&#8855;</div>";
+				$output = "<div class='code_red' title='".$status_array[$status]."'>&#8855;</div>";
 		}
 		return $output;
 	}
