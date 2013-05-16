@@ -19,6 +19,7 @@
 			'admin review tutorial',
 			'quality review tutorial',
 			'stupload ajax-fill methods',
+			'contributor access'
 		);
 	}
 
@@ -265,6 +266,26 @@
 			'file' => 'quality_review_tutorials.inc',
 			'type' => MENU_NORMAL_ITEM,
 		);
+		
+		// need improvement
+		$items['stupload/need_improvement_list'] = array(
+			'title' => 'Need improvement list',
+			'description' => 'List of tutorials sent for improvement',
+			'page callback' => 'need_improvement_list',
+			'access arguments' => array('contributor access'),
+			'type' => MENU_NORMAL_ITEM,
+			'file' => 'need_improvement_list.inc',
+		);
+		// Uploded list
+		$items['stupload/uploaded_tutorials_list'] = array(
+			'title' => 'List of tutorials uploaded',
+			'description' => 'List of tutorials uploaded',
+			'page callback' => 'uploaded_tutorials_list',
+			'access arguments' => array('contributor access'),
+			'type' => MENU_NORMAL_ITEM,
+			'file' => 'uploaded_tutorials_list.inc',
+		);
+		
 		return $items;
 	}
 
