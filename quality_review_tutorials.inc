@@ -2,17 +2,31 @@
 
 function quality_review_tutorials(){
 
+	global $user;
 	$flag = 0;
+	$flag1 = 0;
 	$query = "";
 	$sql_count = "";
-	$foss = '';
-	$lang = '';
-	$status = '';
+	$sfoss = '';
+	$slang = '';
+	$lang_query = '';
+	// get language
+	$query ="select tl.name from tutorial_languages tl, tutorial_quality_roles tqr where tqr.language_id=tl.id and tqr.uid=".$user->uid." order by tl.name ASC";
+	$result = db_query($query);
+	$lang[''] = 'Select Language';
+	while($row = db_fetch_object($result)){
+		if($flag1 > 0){
+			$lang_query .= ' or ';
+		}
+		$lang_query .= "tr.language ='".$row->name."'";
+		$lang[$row->name] = $row->name;
+		$flag1++;
+	}
 	if(user_access('quality review tutorial')){
 		$where_query ='';			
 		if(isset($_REQUEST['foss']) && isset($_REQUEST['lang']) && isset($_REQUEST['status'])){
-			$foss = $_REQUEST['foss'];
-			$lang = $_REQUEST['lang'];
+			$sfoss = $_REQUEST['foss'];
+			$slang = $_REQUEST['lang'];
 			$status = $_REQUEST['status'];
 			$where_query = "and tr.language='".$_REQUEST['lang']."' and td.foss_category='".$_REQUEST['foss']."' and (tr.tutorial_outline_status = ".$status." or tr.tutorial_script_status=".$status." or tutorial_video_status=".$status." or tcc.tutorial_slide_status=".$status." or tcc.tutorial_code_status=".$status." or tcc.tutorial_assignment_status=".$status.")";
 		}elseif(isset($_REQUEST['foss']) && isset($_REQUEST['lang'])){
@@ -22,27 +36,28 @@ function quality_review_tutorials(){
 		}elseif(isset($_REQUEST['foss']) && isset($_REQUEST['status'])){
 			$foss = $_REQUEST['foss'];
 			$status = $_REQUEST['status'];
-			$where_query = "and td.foss_category='".$_REQUEST['foss']."' and (tr.tutorial_outline_status = ".$status." or tr.tutorial_script_status=".$status." or tutorial_video_status=".$status." or tcc.tutorial_slide_status=".$status." or tcc.tutorial_code_status=".$status." or tcc.tutorial_assignment_status=".$status.")";
+			$where_query = "and td.foss_category='".$_REQUEST['foss']."' and (tr.tutorial_outline_status = ".$status." or tr.tutorial_script_status=".$status." or tutorial_video_status=".$status." or tcc.tutorial_slide_status=".$status." or tcc.tutorial_code_status=".$status." or tcc.tutorial_assignment_status=".$status.") and (".$lang_query.")";
 		}elseif(isset($_REQUEST['lang']) && isset($_REQUEST['status'])){
 			$lang = $_REQUEST['lang'];
 			$status = $_REQUEST['status'];
 			$where_query = "and tr.language='".$_REQUEST['lang']."' and (tr.tutorial_outline_status = ".$status." or tr.tutorial_script_status=".$status." or tutorial_video_status=".$status." or tcc.tutorial_slide_status=".$status." or tcc.tutorial_code_status=".$status." or tcc.tutorial_assignment_status=".$status.")";
 		}elseif(isset($_REQUEST['foss'])){
 			$foss = $_REQUEST['foss'];
-			$where_query = "and td.foss_category='".$_REQUEST['foss']."'";
+			$where_query = "and td.foss_category='".$_REQUEST['foss']."' and (".$lang_query.")";
 		}elseif(isset($_REQUEST['lang'])){
 			$lang = $_REQUEST['lang'];
 			$where_query = "and tr.language='".$_REQUEST['lang']."'";
 		}elseif(isset($_REQUEST['status'])){
-			$status = $_REQUEST['status'];;
-			$where_query = "and (tr.tutorial_outline_status = ".$status." or tr.tutorial_script_status=".$status." or tutorial_video_status=".$status." or tcc.tutorial_slide_status=".$status." or tcc.tutorial_code_status=".$status." or tcc.tutorial_assignment_status=".$status.")";
+			$status = $_REQUEST['status'];
+			$where_query = "and (tr.tutorial_outline_status = ".$status." or tr.tutorial_script_status=".$status." or tutorial_video_status=".$status." or tcc.tutorial_slide_status=".$status." or tcc.tutorial_code_status=".$status." or tcc.tutorial_assignment_status=".$status.") and (".$lang_query.")";
 		}else{
-			$where_query = '';
+			$where_query = "and (".$lang_query.")";
 		}		
 	}
 	
 	$query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status !='accepted' ".$where_query."  order by td.order_code ASC";
 	$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status !='accepted' ".$where_query."  order by td.order_code ASC";
+	
 	$result = pager_query($query, 30, 0, $sql_count);
 	$row = array();
 	$sno = 1;
@@ -63,7 +78,7 @@ function quality_review_tutorials(){
 		
 	}
 	if('quality review tutorial'){
-		$output = drupal_get_form('quality_list_tutorials_form', $flag, $foss, $lang, $status);
+		$output = drupal_get_form('quality_list_tutorials_form', $flag, $sfoss, $slang, $status, $lang);
 	}
 	
 	if (count($row) == 0) {
@@ -77,7 +92,7 @@ function quality_review_tutorials(){
 }
 
 // quality review
-function quality_list_tutorials_form($form_state, $flag, $sfoss, $slang, $sstatus){
+function quality_list_tutorials_form($form_state, $flag, $sfoss, $slang, $sstatus, $lang){
 	
 	global $user;
 	$path = drupal_get_path('module', 'stupload');
@@ -103,14 +118,6 @@ function quality_list_tutorials_form($form_state, $flag, $sfoss, $slang, $sstatu
 		'#suffix' => '</td>'
 	);
 	
-	$query = "select name from tutorial_languages ORDER BY name ASC";
-	$result = db_query($query);
-	$lang = array();
-	$lang[''] = "Select Language";
-	$lang['English'] = "English";
-	while($row = db_fetch_object($result)){
-		$lang[$row->name] = $row->name;
-	}
 	$form['flag'] = array(
 		'#type' => 'hidden',
 		'#value' => $flag

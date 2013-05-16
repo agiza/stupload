@@ -1,21 +1,36 @@
 <?php
 
 function domain_review_tutorials(){
-
+	global $user;
 	$flag = 0;
+	$flag1 = 0;
 	$query = "";
 	$sql_count = "";
-	$foss = '';
-	$lang = '';
+	$sfoss = '';
+	$slang = '';
+	$lang_query = '';
+	// get language
+	$query ="select tl.name from tutorial_languages tl, tutorial_domain_reviewer_roles tdr where tdr.language_id=tl.id and tdr.uid=".$user->uid." order by tl.name ASC";
+	$result = db_query($query);
+	$lang[''] = 'Select Language';
+	while($row = db_fetch_object($result)){
+		if($flag1 > 0){
+			$lang_query .= ' or ';
+		}
+		$lang_query .= "tr.language ='".$row->name."'";
+		$lang[$row->name] = $row->name;
+		$flag1++;
+	}
+
 	if(user_access('domain review tutorial')){	
 		if(isset($_REQUEST['foss']) && isset($_REQUEST['lang'])){
-			$foss = $_REQUEST['foss'];
-			$lang = $_REQUEST['lang'];
+			$sfoss = $_REQUEST['foss'];
+			$slang = $_REQUEST['lang'];
 			$query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.language='".$_REQUEST['lang']."' and td.foss_category='".$_REQUEST['foss']."' and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
 			$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.language='".$_REQUEST['lang']."' and td.foss_category='".$_REQUEST['foss']."' and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
 		}else{
-			$query ="select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
-			$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
+			$query ="select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and (".$lang_query.") and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
+			$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and (".$lang_query.") and (tr.tutorial_outline_status = 2 or tr.tutorial_script_status=2 or tutorial_video_status=2 or tcc.tutorial_slide_status=2 or tcc.tutorial_code_status=2 or tcc.tutorial_assignment_status=2)  order by td.order_code ASC";
 		}
 	}
 	$result = pager_query($query, 30, 0, $sql_count);
@@ -34,7 +49,7 @@ function domain_review_tutorials(){
 		
 	}
 
-	$output = drupal_get_form('domain_list_tutorials_form', $flag, $foss, $lang);		
+	$output = drupal_get_form('domain_list_tutorials_form', $flag, $sfoss, $slang, $lang);		
 	if (count($row) == 0) {
 		$output .= '<div style="color:red;text-align:center;">List is empty.</div>';
 	}else{
@@ -45,7 +60,7 @@ function domain_review_tutorials(){
 	return $output;
 }
 
-function domain_list_tutorials_form($form_state, $flag, $sfoss, $slang){
+function domain_list_tutorials_form($form_state, $flag, $sfoss, $slang, $lang){
 	global $user;
 	$path = drupal_get_path('module', 'stupload');
 	drupal_add_css($path.'/stupload-view.css');
@@ -70,14 +85,6 @@ function domain_list_tutorials_form($form_state, $flag, $sfoss, $slang){
 		'#suffix' => '</td>'
 	);
 	
-	$query = "select name from tutorial_languages ORDER BY name ASC";
-	$result = db_query($query);
-	$lang = array();
-	$lang[''] = "Select Language";
-	$lang['English'] = "English";
-	while($row = db_fetch_object($result)){
-		$lang[$row->name] = $row->name;
-	}
 	$form['flag'] = array(
 		'#type' => 'hidden',
 		'#value' => $flag
