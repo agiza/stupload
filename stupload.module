@@ -276,6 +276,7 @@
 			'type' => MENU_NORMAL_ITEM,
 			'file' => 'need_improvement_list.inc',
 		);
+		
 		// Uploded list
 		$items['stupload/uploaded_tutorials_list'] = array(
 			'title' => 'List of tutorials uploaded',
@@ -286,6 +287,24 @@
 			'file' => 'uploaded_tutorials_list.inc',
 		);
 		
+		// contributor view tutorial page
+		$items['stupload/play_video'] = array(
+			'title' => 'Spoken Tutorial Learners Interface',
+			'description' => 'Play selected video',
+			'page callback' => 'play_video',
+			'access arguments' => array('stupload ajax-fill methods'),
+			'file' => 'play_video.inc',
+			'type' => MENU_NORMAL_ITEM,
+		);
+		
+		//Delete tutorial
+		$items['stupload/delete'] = array(
+			'title' => 'Delete Tutorial',
+			'page callback' => 'delete_tutorial',
+			'access arguments' => array('contributor access'),
+			'type' => MENU_NORMAL_ITEM,
+			'file' => 'delete_tutorial.inc',
+		);
 		return $items;
 	}
 
