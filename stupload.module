@@ -723,11 +723,17 @@
 
 		if($role == 'contributor'){
 			if($message != ''){
-				//var_dump($td);  // if $td->tc == 'review' na it should be review tutorial
-				$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				if($td->stage == "qreview"){
+					$body_msg = "<p> Dear ".$user_name.", </p><p>Your uploaded content reviewed by Quality checker. Details below</p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."<br> Status: ".$td->status."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				}else{
+					$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."<br>Status: ".$td->status."</h3><p><h3>Remarks : </h3>".$message.'</p>';
+				}
 			}else{
-				//var_dump($td);
-				$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."</h3>";
+				if($td->stage == "qreview"){
+					$body_msg = "<p> Dear ".$user_name.", </p><p>Your uploaded content reviewed by Quality checker. Details below</p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."<br>Status: ".$td->status."</h3>";
+				}else{
+					$body_msg = "<p> Dear ".$user_name.", </p><p>The following content is uploaded in <a href='http://www.spoken-tutorial.org'> spoken-tutorial.org</a></p><h3> FOSS : ".$td->foss_category."<br> Level : ".$td->tutorial_level."<br> Tutorial Name : ".$td->tutorial_name.'<br> Language : '.$td->language.'<br> Content : '.$td->tc."<br>Status: ".$td->status."</h3>";
+				}
 			}
 		}else if($role == 'admin_review_user'){
 			if($message != ''){
@@ -781,8 +787,9 @@
 	function stupload_notify($mailto, $role, $message, $td, $user_name) {
 		// get subject
 		$subject_content = array('contributor' => 'Spoken Tutorial Upload Notification', 'admin_review_user' => 'Spoken Tutorial Upload Notification', 'admin_user' => 'Spoken Tutorial Upload Notification', 'domain_user' => 'Spoken Tutorial Upload Notification');
-		//echo $mailto."---".$subject_content[$role]."---".get_meassage($role, $message, $td, $user_name)."<br>";
-		//echo "</br>";
+		echo $mailto."---".$subject_content[$role]."---".get_meassage($role, $message, $td, $user_name)."<br>";
+		echo "</br> ===>";
+		
 		global $custom_email;
 		$mailfrom = $custom_email;
 		if(isset($td->tc) && $td->tc != ''){
@@ -896,8 +903,6 @@
 	
 	// reviews
 		function status_update_comp_query($c, $status){
-		
-			var_dump("!!".$c."---".$status."!!!");
 		if($c == 'Outline'){
 			$output= 'tr.tutorial_outline_status = '.$status;
 		}elseif($c == 'Script'){
@@ -913,6 +918,13 @@
 		}
 		
 		return $output;
+	}
+	
+	function user_email($uid){
+		$query = "SELECT mail, name FROM users WHERE uid ='".$uid."'";
+		$result = db_query($query);
+		$row = db_fetch_object($result);
+		return $row;
 	}
 
 

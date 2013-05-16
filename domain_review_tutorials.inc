@@ -340,7 +340,7 @@ function domain_review_tutorial_form($form_state, $trid, $status, $comp){
 		}		
 
 		$query = "update tutorial_resources tr, tutorial_common_contents tcc set tr.reviewer='".$user->name."', ".$com." where tr.id=".$_POST['trid']." and tr.tutorial_content_id = tcc.id";	
-		db_query($query);
+		//db_query($query);
 		
 		
 		// Get the Tutorial Details
@@ -361,10 +361,72 @@ function domain_review_tutorial_form($form_state, $trid, $status, $comp){
 
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$_POST['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'review')";
 
-		if(db_query($query)){
-			//Email
-		}
+		db_query($query);
 		
+		//Email
+		$query = "select td.foss_category, td.tutorial_name, td.tutorial_level , tr.language, tr.tutorial_outline_uid as Outline, tr.tutorial_script_uid as Script, tr.tutorial_video_uid as Video, tcc.tutorial_slide_uid as Slide, tcc.tutorial_code_uid as Codefile, tcc.tutorial_assignment_uid as Assignment from tutorial_resources tr,  tutorial_details td, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.id=".$_POST['trid']." and tcc.id=tutorial_content_id";
+		$result = db_query($query);
+		
+		$tutorial_detail = db_fetch_object($result);
+		if($_POST['status'] == 4){
+			if($_POST['component'] == 0){
+				unset($component[0]);
+				foreach($component as $c){
+					$a = new stdClass();
+					$a->tc = $c;
+					$a->stage = "dreview";
+					$a->status = "Accepted";					
+					$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+					$ud = user_email($tutorial_detail->$c);
+					$mailto = $ud->mail;
+					$name = $ud->name;
+					$role = variable_get('contributor', '');
+					$message = "";
+					stupload_notify($mailto, $role, $message, $tds, $name);				
+				}
+			}else{
+				$a = new stdClass();
+				$a->tc = $component[$_POST['component']];
+				$a->stage = "dreview";
+				$a->status = "Accepted";			
+				$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+				$ud = user_email($tutorial_detail->$component[$_POST['component']]);
+				$mailto = $ud->mail;
+				$name = $ud->name;
+			    $role = variable_get('contributor', '');
+			    $message = "";
+				stupload_notify($mailto, $role, $message, $tds, $name);
+			}			
+		}else if($_POST['status'] == 5){
+			if($_POST['component'] == 0){
+				unset($component[0]);
+				foreach($component as $c){
+					$a = new stdClass();
+					$a->tc = $c;
+					$a->stage = "dreview";
+					$a->status = "Need Improvement";					
+					$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+					$ud = user_email($tutorial_detail->$c);
+					$mailto = $ud->mail;
+					$name = $ud->name;
+					$role = variable_get('contributor', '');
+					$message = $_POST['comment'];
+					stupload_notify($mailto, $role, $message, $tds, $name);				
+				}
+			}else{
+				$a = new stdClass();
+				$a->tc = $component[$_POST['component']];
+				$a->stage = "dreview";
+				$a->status = "Need Improvement";					
+				$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+				$ud = user_email($tutorial_detail->$component[$_POST['component']]);
+				$mailto = $ud->mail;
+				$name = $ud->name;
+			    $role = variable_get('contributor', '');
+			    $message = $_POST['comment'];
+				stupload_notify($mailto, $role, $message, $tds, $name);
+			}			
+		}
 		drupal_goto('stupload/domain_review_tutorials', '', $fragment = NULL, $http_response_code = 302);
 		
 	}	

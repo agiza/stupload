@@ -43,7 +43,6 @@ function quality_review_tutorials(){
 	
 	$query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status !='accepted' ".$where_query."  order by td.order_code ASC";
 	$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status !='accepted' ".$where_query."  order by td.order_code ASC";
-
 	$result = pager_query($query, 30, 0, $sql_count);
 	$row = array();
 	$sno = 1;
@@ -211,7 +210,7 @@ function quality_review_tutorial_page() {
 					$video_info .= '<td><b>Frame Height:</b> '.$height.'</td></tr>';
 					$video_info .= '<tr><td><b>Frame Rate(fps):</b> '.$fps.'</td>';
 					$video_info .= '<td><b>Bit Rate:</b> '.$bitrate.'/s</td></tr></table></p>';
-					$video ='<video id="example_video_1" class="video-js vjs-default-skin" controls width="400" height="300" data-setup="{}">';
+					$video ='<video id="example_video_1" class="video-js vjs-default-skin" controls width="700" height="500" data-setup="{}">';
 					if($file_ext == '.mp4'){
 	                	$video .='<source src="'.variable_get('tutorial_path', '').$tutorial->tutorial_video.'" type="video/mp4" />';
 	                }else{
@@ -228,7 +227,7 @@ function quality_review_tutorial_page() {
 				// component shan
 				$comp = array();
 				if($_POST['status'] == 'all'){
-					$comp = array(1 => 'Outline', 2 => 'Script', 3 => 'Slide', 4 => 'Video', 5 => 'Codefile', 6 => 'Assignment');
+					$comp = array(1 => 'Outline', 2 => 'Script', 3 => 'Slide', 4 => 'Video', 5 => 'Codefile', 6 => 'Assignment', 0 => 'All');
 				}else{
 					if($tutorial->tutorial_code_status == $_POST['status'])
 						$comp[5] = 'Codefile'; 
@@ -287,10 +286,13 @@ function quality_review_tutorial_page() {
 				$output .= "</div>";
 				$output .= "<div class='right-content'>";
 					$output .= "<div class='summery-video'>";
-						$output .= "<p class='summery-title'>Video</p>";
+						$output .= "<p class='summery-title'>Video: ".component_status($tutorial->tutorial_video_status, $tutorial->tutorial_video_uid, $tutorial->tutorial_video)." </p>";
 						$output .= $video_info;
-						$output .= "<p class='summery-content'>".$video."</p>";
+						//$output .= "<p class='summery-content'>".$video."</p>";
 					$output .= "</div>";
+				$output .= "</div>";
+				$output .= "<div class='summery-script'>";
+				$output .= "<p class='summery-content'>".$video."</p>";
 				$output .= "</div>";
 				$output .= "<div class='summery-script'>";
 					$output .= "<p class='summery-title'>Script";
@@ -311,9 +313,17 @@ function quality_review_tutorial_form($form_state, $trid = NULL, $status = NULL,
 		// add js file 
 
 		global $user;
-		if(user_access('quality review tutorial')){			
+		
+		$query = "select tr.id as trid from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id=".$trid." and tr.tutorial_outline_status = 4 and tr.tutorial_script_status=4 and tutorial_video_status=4 and (tcc.tutorial_slide_status=4 || tcc.tutorial_slide_status=6) and (tcc.tutorial_code_status=4 || tcc.tutorial_code_status=6) and (tcc.tutorial_assignment_status=4 || tcc.tutorial_assignment_status=6)";
+		$result = db_query($query);
+		$row = db_fetch_object($result);
+		if($row){
+			$options = array(5 => 'Need Improvement', 'accepted' => 'Publish the tutorial');
+			
+		}else{
 			$options = array(4 => 'Accepted', 5 => 'Need Improvement');
 		}
+				
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
 		drupal_add_css($path . '/stupload.css');
@@ -372,9 +382,8 @@ function quality_review_tutorial_form($form_state, $trid = NULL, $status = NULL,
 		global $user;
 		$com = '';
 		$flag = 0;
+		$component = unserialize($_POST['comp']);
 		if($_POST['status'] == 4){
-			$component = unserialize($_POST['comp']);
-			var_dump($component);
 			if($_POST['component'] == 0){
 				unset($component[0]);
 				foreach($component as $c){
@@ -387,8 +396,8 @@ function quality_review_tutorial_form($form_state, $trid = NULL, $status = NULL,
 			}else{
 				$com = status_update_comp_query($component[$_POST['component']], 4);
 			}
-		}else{
-			$component = unserialize($_POST['comp']);
+			$query = "update tutorial_resources tr, tutorial_common_contents tcc set tr.reviewer='".$user->name."', ".$com." where tr.id=".$_POST['trid']." and tr.tutorial_content_id = tcc.id";	
+		}elseif($_POST['status'] == 5){
 			if($_POST['component'] == 0){
 				unset($component[0]);
 				foreach($component as $c){
@@ -401,34 +410,91 @@ function quality_review_tutorial_form($form_state, $trid = NULL, $status = NULL,
 			}else{
 				$com = status_update_comp_query($component[$_POST['component']], 5);
 			}
-		}		
+			$query = "update tutorial_resources tr, tutorial_common_contents tcc set tr.reviewer='".$user->name."', ".$com." where tr.id=".$_POST['trid']." and tr.tutorial_content_id = tcc.id";	
+		}elseif($_POST['status'] == 'accepted'){
+			$query = "update tutorial_resources set reviewer='".$user->name."', tutorial_status='accepted' where tr.id=".$_POST['trid'];
+		}	
 
-		$query = "update tutorial_resources tr, tutorial_common_contents tcc set tr.reviewer='".$user->name."', ".$com." where tr.id=".$_POST['trid']." and tr.tutorial_content_id = tcc.id";	
-		db_query($query);
-		// Get the Tutorial Details
-		$query = "select tr.language, tr.uid, td.foss_category, td.tutorial_name, td.tutorial_level from tutorial_resources tr INNER JOIN tutorial_details td ON td.id=tr.tutorial_detail_id where tr.id='".$_POST['trid']."'";
-		$result = db_query($query);
-		$tutorial_detail = db_fetch_object($result);
-
-		$a = new stdClass();
-		$a->tc = 'Review';					
-		$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
-
+		db_query($query);		
+		
+		
 		// insert into the comment improvement table
 		if($_POST['comment'] != ''){
 			$query = "INSERT INTO `comment_improvement` (`id`, `uid`, `trid`, `reviewed_time`, `comment`) VALUES (NULL, '".$user->uid."', '".$_POST['trid']."', CURRENT_TIMESTAMP, '".$_POST['comment']."')";
-
 			db_query($query);
 		}
 
 		$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$_POST['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'review')";
 
-		if(db_query($query)){
-			//Email
-		}
+		db_query($query);		
+		// Get the Tutorial Details
+		$query = "select td.foss_category, td.tutorial_name, td.tutorial_level , tr.language, tr.tutorial_outline_uid as Outline, tr.tutorial_script_uid as Script, tr.tutorial_video_uid as Video, tcc.tutorial_slide_uid as Slide, tcc.tutorial_code_uid as Codefile, tcc.tutorial_assignment_uid as Assignment from tutorial_resources tr,  tutorial_details td, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.id=".$_POST['trid']." and tcc.id=tutorial_content_id";
+		$result = db_query($query);
 		
+		$tutorial_detail = db_fetch_object($result);
+
+		// Email
+		if($_POST['status'] == 4){
+			if($_POST['component'] == 0){
+				unset($component[0]);
+				foreach($component as $c){
+					$a = new stdClass();
+					$a->tc = $c;
+					$a->stage = "qreview";
+					$a->status = "Accepted";					
+					$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+					$ud = user_email($tutorial_detail->$c);
+					$mailto = $ud->mail;
+					$name = $ud->name;
+					$role = variable_get('contributor', '');
+					$message = "";
+					stupload_notify($mailto, $role, $message, $tds, $name);				
+				}
+			}else{
+				$a = new stdClass();
+				$a->tc = $component[$_POST['component']];
+				$a->stage = "qreview";
+				$a->status = "Accepted";			
+				$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+				$ud = user_email($tutorial_detail->$component[$_POST['component']]);
+				$mailto = $ud->mail;
+				$name = $ud->name;
+			    $role = variable_get('contributor', '');
+			    $message = "";
+				stupload_notify($mailto, $role, $message, $tds, $name);
+			}			
+		}else if($_POST['status'] == 5){
+			if($_POST['component'] == 0){
+				unset($component[0]);
+				foreach($component as $c){
+					$a = new stdClass();
+					$a->tc = $c;
+					$a->stage = "qreview";
+					$a->status = "Need Improvement";					
+					$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+					$ud = user_email($tutorial_detail->$c);
+					$mailto = $ud->mail;
+					$name = $ud->name;
+					$role = variable_get('contributor', '');
+					$message = $_POST['comment'];
+					stupload_notify($mailto, $role, $message, $tds, $name);				
+				}
+			}else{
+				$a = new stdClass();
+				$a->tc = $component[$_POST['component']];
+				$a->stage = "qreview";
+				$a->status = "Need Improvement";					
+				$tds =  (object) array_merge((array) $a, (array) $tutorial_detail);
+				$ud = user_email($tutorial_detail->$component[$_POST['component']]);
+				$mailto = $ud->mail;
+				$name = $ud->name;
+			    $role = variable_get('contributor', '');
+			    $message = $_POST['comment'];
+				stupload_notify($mailto, $role, $message, $tds, $name);
+			}			
+		}		
 		drupal_goto('stupload/quality_review_tutorials', '', $fragment = NULL, $http_response_code = 302);
-	}	
+	}
 
 ?>
 
