@@ -19,7 +19,8 @@
 			'admin review tutorial',
 			'quality review tutorial',
 			'stupload ajax-fill methods',
-			'contributor access'
+			'contributor access',
+			'reviewer role assign',
 		);
 	}
 
@@ -304,6 +305,22 @@
 			'access arguments' => array('contributor access'),
 			'type' => MENU_NORMAL_ITEM,
 			'file' => 'delete_tutorial.inc',
+		);
+		
+		// Assign Role
+		$items['stupload/domain_lang_role'] = array(
+			'title' => 'Domain user language assign page',
+			'page callback' => 'domain_lang_role',
+			'access arguments' => array('reviewer role assign'),
+			'type' => MENU_NORMAL_ITEM,
+			'file' => 'reviewer_role_assign.inc',
+		);
+		$items['stupload/quality_lang_role'] = array(
+			'title' => 'Quality user language assign page',
+			'page callback' => 'quality_lang_role',
+			'access arguments' => array('reviewer role assign'),
+			'type' => MENU_NORMAL_ITEM,
+			'file' => 'reviewer_role_assign.inc',
 		);
 		return $items;
 	}
