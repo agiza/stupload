@@ -2,7 +2,7 @@
 	function english_timed_script() {
 		if($_REQUEST['trid'] && $_REQUEST['td_path'] && $_REQUEST['flag']){		
 			$output = "<h2>Upload English Script for ".$_REQUEST['tn']."</h2>";
-			require_once('path.config.inc');
+			//require_once('path.config.inc');
 			$wiki_url = $_REQUEST['td_path'].'English-timed';		
 			$output .= "<div class='wiki-script-file'></div>";
 			$output .= drupal_get_form('english_timed_script_form', $_REQUEST['trid'], $wiki_url, $_REQUEST['td_path'], $_REQUEST['flag']);

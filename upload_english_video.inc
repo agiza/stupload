@@ -74,7 +74,7 @@
 		$td = explode('/', $_POST['td_path']);
 		$file_ext = substr($_FILES['files']['name']['video'], strripos($_FILES['files']['name']['video'], '.'));
 		
-		$file_name = $td[2].'-English.'.$file_ext;
+		$file_name = $td[2].'-English'.$file_ext;
 		$tutorial_video = 'st_videos/'.$_POST['td_path'].$file_name;
 		$path = variable_get('file_upload_path', '').$tutorial_video;
 		

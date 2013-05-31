@@ -102,7 +102,6 @@
 	function add_tutorial_name_form_submit($form, &$form_state){
 		
 		// create Directory
-		require_once('path.config.inc');
 		if (isset($form_state['values']['foss_category']) && isset($form_state['values']['tutorial_level']) && isset($form_state['values']['tutorial_name'])){
 			$name = $form_state['values']['foss_category'].'/'.$form_state['values']['tutorial_level'].'/'.$form_state['values']['tutorial_name'].'/'.Resource;
 		    if(mkdir ($file_upload_path.'st_videos/'.$name, 0777,true)){

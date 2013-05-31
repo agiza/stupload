@@ -69,7 +69,7 @@
 		}else {
 			drupal_set_message('Error while Adding FOSS Category, Please try again.');
 		}
-		drupal_goto($path = 'stupload/addfoss', $query = NULL, $fragment = NULL, $http_response_code = 302);
+		drupal_goto($path = 'stupload/add_foss', $query = NULL, $fragment = NULL, $http_response_code = 302);
 
 	}
 ?>

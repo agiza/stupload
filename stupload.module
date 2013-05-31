@@ -9,10 +9,6 @@
 			'stupload regional language tutorial update',
 			'stupload upload english-timed script',
 			'stupload add foss and tutorial',
-			'stupload admin review tutorials',
-			'stupload domain review tutorials',
-			'stupload quality review tutorials',
-			'resource not available',
 			'resource not required',
 			'review tutorial',
 			'domain review tutorial',
@@ -36,6 +32,15 @@
 			'access arguments' => array('administer stupload'),
 			'type' => MENU_NORMAL_ITEM,
 			'file' => 'settings.inc',
+		);
+		// public review tutorials
+		$items['stupload/public_review'] = array(
+			'description' => 'spoken-tutorial public rating page',
+			'page callback' => 'drupal_get_form',
+			'page arguments' => array('stupload_settings_form'),
+			'access arguments' => array('administer stupload'),
+			'type' => MENU_NORMAL_ITEM,
+			'file' => 'public_review.inc',
 		);
 		// add new foss, tutorials
 		$items['stupload/add_foss'] = array(
@@ -309,14 +314,14 @@
 		
 		// Assign Role
 		$items['stupload/domain_lang_role'] = array(
-			'title' => 'Domain user language assign page',
+			'title' => 'Domain user language assigning page',
 			'page callback' => 'domain_lang_role',
 			'access arguments' => array('reviewer role assign'),
 			'type' => MENU_NORMAL_ITEM,
 			'file' => 'reviewer_role_assign.inc',
 		);
 		$items['stupload/quality_lang_role'] = array(
-			'title' => 'Quality user language assign page',
+			'title' => 'Quality user language assigning page',
 			'page callback' => 'quality_lang_role',
 			'access arguments' => array('reviewer role assign'),
 			'type' => MENU_NORMAL_ITEM,
