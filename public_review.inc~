@@ -1,0 +1,97 @@
+<?php
+	
+	// Public review form
+	function public_review_form($form_state, $tdid, $trid, $video_time){
+		if(isset($tdid) && $tdid > 0 && isset($trid) && $trid > 0 && $video_time != '') {
+			$path = drupal_get_path('module', 'stupload');
+			drupal_add_js($path . '/problem_report.js', 'module');
+			
+			$time = pr_set_video_time($video_time);
+			$form['#attributes'] = array('name' => 'problem_report','enctype' => "multipart/form-data", 'class' => 'problem_report', 'onSubmit' => 'return validate_report();');
+		
+			$form['tdid'] = array(
+				'#type' => 'hidden',
+				'#value' => $tdid
+			);
+			$form['trid'] = array(
+				'#type' => 'hidden',
+				'#value' => $trid
+			);
+			$form['resource'] = array(
+				'#type' => 'select',
+				'#title' => t('Resource'),
+				'#options' => array('outline' => 'Outline', 'script' => 'Script', 'video' => 'Video'),
+				'#attributes' => array('class' => 'rptutorial-resource'),
+				'#prefix' => '<div class="presource-div">',
+				'#suffix' => '</div>'
+			);
+			$form['prvideo_min'] = array(
+				'#type' => 'select',
+				'#options' => $time['min'],
+				'#attributes' => array('class' => 'prvideo_min'),
+				'#prefix' => "<div class='date-and-time prvideo-time'><label for='edit-pref-wkshop-time'>Select Time: <span class='form-required' title='This field is required.'>*</span></label>",
+			);
+			$form['prvideo_sec'] = array(
+				'#type' => 'select',
+				'#options' => $time['sec'],
+				'#attributes' => array('class' => 'prvideo_sec'),
+				'#suffix' => "</div>"
+			);
+			$form['missing_comment'] = array(
+				'#type' => 'textarea',
+				'#title' => t('Enter your comment here'),
+				'#prefix' => '<div class="rpmissing_comment-div">',
+				'#suffix' => '</div>'
+			);
+			$form['save'] = array(
+				'#type' => 'submit',
+				'#value' => 'Post'
+			);
+	
+			return $form;
+		}else {
+			drupal_goto($_SERVER['HTTP_REFERER']);
+		}
+	}
+
+	function public_review_form_submit($form, &$form_state){
+		global $user;
+		$video_time = '';
+		$content = $form_state['values']['missing_comment'];
+		if($form_state['values']['resource'] == 'video'){
+			$video_time = '00:'.$form_state['values']['prvideo_min'].":".$form_state['values']['prvideo_sec'];
+		}
+		$query = "insert into tutorial_public_review (uid, date_time, component, video_time, comment) values (".$user->uid.", NOW(), '".$form_state['values']['resource']."', '".$video_time."', '".$content."')";
+		if(db_query($query)){
+			drupal_set_message('Your comment added successfully! Thank you for your valuable feedback.');
+			drupal_goto('show_video', array('tr' => $form_state['values']['trid'], 'sval' => '1'));
+			return;
+		}
+	}
+	
+	function pr_set_video_time($video_time){
+		$vta = explode(':', $video_time);
+		$min = '';
+		$sec = '';
+		$i=0;
+		while($i <= intval($vta[1])){
+			if($i < 10){
+				$min['0'.$i] = '0'.$i;
+			}else{
+				$min[$i] = $i;
+			}
+			$i++;
+		}
+		$i=0;
+		while($i <= 59){
+			if($i < 10){
+				$sec['0'.$i] = '0'.$i;
+			}else{
+				$sec[$i] = $i;
+			}
+			$i++;
+		}
+		$time['min'] = $min;
+		$time['sec'] = $sec;
+		return $time;
+	}

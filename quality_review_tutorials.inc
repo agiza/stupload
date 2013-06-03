@@ -134,7 +134,7 @@ function quality_list_tutorials_form($form_state, $flag, $sfoss, $slang, $sstatu
 	$form['status'] = array(
 		'#type' => 'select',
 		'#title' => t(''),
-		'#options' =>  array('' => 'Status', 0 => 'Pending', 1 => 'Under admin review', 2 => 'Under Domain review', 3 => 'Under quality check', 4 => 'Accepted', 5 => 'Need improvement', 6 => 'Not required'),
+		'#options' =>  array('' => 'Status', 0 => 'Pending', 1 => 'Under admin review', 2 => 'Under Domain review', 3 => 'Under quality check', 4 => 'Accepted', 5 => 'Need improvement', 6 => 'Not required', 7 => 'Public Review'),
 		'#default_value' => $sstatus,
 		'#attributes' => array('class' => 'language'),
 		'#prefix' => '<td>',
@@ -271,7 +271,18 @@ function quality_review_tutorial_page() {
 							$tmp_comment .= "<p> ".$row->name."  ".$row->reviewed_time."<br />".stuolpad_outline_humen_view($row->comment)."</p>";
 						}
 						$output .="<span class='left'>Remarks </span><span class='right'>".$tmp_comment."</span>";
-				$output .= drupal_get_form('quality_review_tutorial_form', $tutorial->trid, '', $comp);		
+				// calculate publishing option
+				$query = "select tr.id as trid from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id=".$tutorial->trid." and tr.tutorial_outline_status = 4 and tr.tutorial_script_status=4 and tutorial_video_status=4 and (tcc.tutorial_slide_status=4 || tcc.tutorial_slide_status=6) and (tcc.tutorial_code_status=4 || tcc.tutorial_code_status=6) and (tcc.tutorial_assignment_status=4 || tcc.tutorial_assignment_status=6)";
+				$result = db_query($query);
+				$row = db_fetch_object($result);
+				$options = array(4 => 'Accepted', 5 => 'Need Improvement');
+				if($row){
+					$options = array(5 => 'Need Improvement', 'accepted' => 'Publish the tutorial');
+					if($tutorial->language != 'English'){
+						$options = array(5 => 'Need Improvement', 'accepted' => 'Publish the tutorial', 'public_review' => 'Public Review');
+					}
+				}
+				$output .= drupal_get_form('quality_review_tutorial_form', $tutorial->trid, '', $comp, $options);		
 				$output .= "</div>";
 				$output .= "<div class='left-content'>";
 					$output .= "<div class='summery-outline'>";
@@ -316,20 +327,20 @@ function quality_review_tutorial_page() {
 
 }
 
-function quality_review_tutorial_form($form_state, $trid = NULL, $status = NULL, $comp = NULL){
+function quality_review_tutorial_form($form_state, $trid = NULL, $status = NULL, $comp = NULL, $options){
 		// add js file 
 
 		global $user;
 		
-		$query = "select tr.id as trid from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id=".$trid." and tr.tutorial_outline_status = 4 and tr.tutorial_script_status=4 and tutorial_video_status=4 and (tcc.tutorial_slide_status=4 || tcc.tutorial_slide_status=6) and (tcc.tutorial_code_status=4 || tcc.tutorial_code_status=6) and (tcc.tutorial_assignment_status=4 || tcc.tutorial_assignment_status=6)";
+		/*$query = "select tr.id as trid from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id=".$trid." and tr.tutorial_outline_status = 4 and tr.tutorial_script_status=4 and tutorial_video_status=4 and (tcc.tutorial_slide_status=4 || tcc.tutorial_slide_status=6) and (tcc.tutorial_code_status=4 || tcc.tutorial_code_status=6) and (tcc.tutorial_assignment_status=4 || tcc.tutorial_assignment_status=6)";
 		$result = db_query($query);
 		$row = db_fetch_object($result);
 		if($row){
-			$options = array(5 => 'Need Improvement', 'accepted' => 'Publish the tutorial');
+			$options = array(5 => 'Need Improvement', 'accepted' => 'Publish the tutorial', 'public_review' => 'Public Review');
 			
 		}else{
 			$options = array(4 => 'Accepted', 5 => 'Need Improvement');
-		}
+		} */
 				
 		$path = drupal_get_path('module', 'stupload');
 		drupal_add_js($path . '/stupload.js');
@@ -384,8 +395,9 @@ function quality_review_tutorial_form($form_state, $trid = NULL, $status = NULL,
 	}
 	
 
-	function quality_review_tutorial_form_submit($form, &$form_state){
-
+	function quality_review_tutorial_form_submit($form, &$form_state){	
+	
+		var_dump($_POST);	
 		global $user;
 		$com = '';
 		$flag = 0;
@@ -419,11 +431,13 @@ function quality_review_tutorial_form($form_state, $trid = NULL, $status = NULL,
 			}
 			$query = "update tutorial_resources tr, tutorial_common_contents tcc set tr.reviewer='".$user->name."', ".$com." where tr.id=".$_POST['trid']." and tr.tutorial_content_id = tcc.id";	
 		}elseif($_POST['status'] == 'accepted'){
-			$query = "update tutorial_resources set reviewer='".$user->name."', tutorial_status='accepted' where tr.id=".$_POST['trid'];
-		}	
-
-		db_query($query);		
+			$query = "update tutorial_resources set reviewer='".$user->name."', tutorial_status='accepted' where id=".$_POST['trid'];
+		}elseif($_POST['status'] == 'public_review'){
+			$query = "update tutorial_resources tr, tutorial_common_contents tcc set tr.reviewer='".$user->name."', tr.tutorial_outline_status = 7, tr.tutorial_script_status = 7, tcc.tutorial_slide_status = 7, tr.tutorial_video_status = 7, tcc.tutorial_code_status = 7, tcc.tutorial_assignment_status = 7, tr.tutorial_status='public_review' where tr.id=".$_POST['trid']." and tr.tutorial_content_id = tcc.id";
+		}
 		
+		var_dump($query);
+		db_query($query);		
 		
 		// insert into the comment improvement table
 		if($_POST['comment'] != ''){

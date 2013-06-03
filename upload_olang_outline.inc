@@ -75,7 +75,7 @@
 		$tuo = $form_state['values']['outline'];
 		$tutorial_outline = $form_state['values']['outline'];
 
-		$query = "UPDATE tutorial_resources SET tutorial_outline_status = 2, tutorial_outline_uid = ".$user->uid." ,tutorial_outline='".db_escape_string($tutorial_outline)."' WHERE id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_outline_status = 1, tutorial_outline_uid = ".$user->uid." ,tutorial_outline='".db_escape_string($tutorial_outline)."' WHERE id='".$form_state['values']['trid']."'";
 		
 		if($form_state['values']['outline_status'] == 1){
 			$query = "UPDATE tutorial_resources SET tutorial_outline_status = 0, tutorial_outline='pending', tutorial_outline_uid = $user->uid WHERE id='".$form_state['values']['trid']."'";

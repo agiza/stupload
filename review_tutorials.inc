@@ -215,7 +215,7 @@ function quality_list_tutorials_form($form_state, $flag, $sfoss, $slang, $sstatu
 	$form['status'] = array(
 		'#type' => 'select',
 		'#title' => t(''),
-		'#options' =>  array('' => 'Status', 0 => 'Pending', 1 => 'Under admin review', 2 => 'Under Domain review', 3 => 'Under quality check', 4 => 'Accepted', 5 => 'Need improvement', 6 => 'Not required'),
+		'#options' =>  array('' => 'Status', 0 => 'Pending', 1 => 'Under admin review', 2 => 'Under Domain review', 3 => 'Under quality check', 4 => 'Accepted', 5 => 'Need improvement', 6 => 'Not required', 7 => 'Public Review'),
 		'#default_value' => $sstatus,
 		'#attributes' => array('class' => 'language'),
 		'#prefix' => '<td>',

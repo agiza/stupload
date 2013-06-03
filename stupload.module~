@@ -43,20 +43,6 @@
 			'type' => MENU_NORMAL_ITEM,
 			'file' => 'public_review.inc',
 		);
-		$items['stupload/public_review_list'] = array(
-			'title' => 'Public review List',
-			'page callback' => 'public_review_list',
-			'access arguments' => array('quality review tutorial'),
-			'file' => 'public_review.inc',
-			'type' => MENU_NORMAL_ITEM,
-		);
-		$items['stupload/public_review_view'] = array(
-			'title' => 'View public tutorial review',
-			'page callback' => 'public_review_view',
-			'access arguments' => array('quality review tutorial'),
-			'file' => 'public_review.inc',
-			'type' => MENU_NORMAL_ITEM,
-		);
 		// add new foss, tutorials
 		$items['stupload/add_foss'] = array(
 			'title' => 'Add New FOSS Category',
@@ -342,7 +328,6 @@
 			'type' => MENU_NORMAL_ITEM,
 			'file' => 'reviewer_role_assign.inc',
 		);
-		
 		return $items;
 	}
 

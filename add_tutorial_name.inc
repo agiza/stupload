@@ -104,7 +104,7 @@
 		// create Directory
 		if (isset($form_state['values']['foss_category']) && isset($form_state['values']['tutorial_level']) && isset($form_state['values']['tutorial_name'])){
 			$name = $form_state['values']['foss_category'].'/'.$form_state['values']['tutorial_level'].'/'.$form_state['values']['tutorial_name'].'/'.Resource;
-		    if(mkdir ($file_upload_path.'st_videos/'.$name, 0777,true)){
+		    if(mkdir (variable_get('file_upload_path', '').'st_videos/'.$name, 0777,true)){
 		    	drupal_set_message('Directories created Successfully');
 		    	$query = "INSERT INTO `tutorial_details` (`id`, `foss_category`, `tutorial_name`, `tutorial_level`, `order_code`) VALUES (NULL, '".$form_state['values']['foss_category']."', '".$form_state['values']['tutorial_name']."', '".$form_state['values']['tutorial_level']."', '".$form_state['values']['tutorial_order_no']."')";
 				if(db_query($query)){
@@ -128,7 +128,7 @@
 					$query = "insert into tutorial_resources (tutorial_detail_id, language, tutorial_content_id, tutorial_outline, tutorial_script, tutorial_script_timed, tutorial_video) values (".$tdid->tdid.", 'English', ".$tccid->tccid.", 'pending', 'pending', 'pending', 'pending')";
 					db_query($query);					
 					
-					drupal_goto($path = 'stupload/tutorial', $query = NULL, $fragment = NULL, $http_response_code = 302);
+					drupal_goto($path = 'stupload/add_tutorial', $query = NULL, $fragment = NULL, $http_response_code = 302);
 				}else {
 					drupal_set_message('Error while Adding Tutorial Name, Please try again.');
 				}

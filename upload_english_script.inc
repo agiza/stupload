@@ -68,7 +68,7 @@
 		global $user;
 		
 		$tutorial_script = $form_state['values']['wiki_url'];
-		$query = "UPDATE tutorial_resources SET tutorial_script_status = 2, tutorial_script_uid = $user->uid ,tutorial_script='".$tutorial_script."' WHERE id='".$form_state['values']['trid']."'";
+		$query = "UPDATE tutorial_resources SET tutorial_script_status = 1, tutorial_script_uid = $user->uid ,tutorial_script='".$tutorial_script."' WHERE id='".$form_state['values']['trid']."'";
 		if($form_state['values']['script_status'] == 1){
 			$query = "UPDATE tutorial_resources SET tutorial_script_status = 0, tutorial_script='pending', tutorial_script_uid = $user->uid WHERE id='".$form_state['values']['trid']."'";
 		}

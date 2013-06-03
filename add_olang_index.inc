@@ -36,7 +36,7 @@
 			$output .= "<tr><th class='title'><h1 class='title'>Title</h1></th><th class='content'><h1 class='title'>Status</h1></th><th class='update'></th></tr>";
 			// outline
 			$output .= "<tr><td class='title'>Outline</td><td class='content'>".$outline."</td>";
-			if(($user->uid == $content->tutorial_outline_uid && ($content->tutorial_outline_status == 0 || $content->tutorial_outline_status == 2 || $content->tutorial_outline_status == 5)) || $content->tutorial_outline_uid == 0 ){
+			if(($user->uid == $content->tutorial_outline_uid && ($content->tutorial_outline_status != 4 && $content->tutorial_video_status != 2)) || $content->tutorial_outline_uid == 0 ){
 				$output .= "<td class='update'><form action='".$GLOBALS['base_url']."/stupload/update_regional_language_tutorial/outline' method='post'><input type='hidden' name='outline' value='".$content->tutorial_outline."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='hidden' name='redirection' value='1'><input type='submit' value='Update'></form></td></tr>";
 			}else{
 				$output .= "<td><td></tr>";
@@ -44,7 +44,7 @@
 			
 			// script
 			$output .= "<tr><td class='title'>Script</td><td class='content'>".$script."</td>";
-			if(($user->uid == $content->tutorial_script_uid && ($content->tutorial_script_status == 0 || $content->tutorial_script_status == 2)) || $content->tutorial_script_uid == 0 ){
+			if(($user->uid == $content->tutorial_script_uid && ($content->tutorial_outline_status != 4 && $content->tutorial_video_status != 2)) || $content->tutorial_script_uid == 0 ){
 				$output .="<td class='update'><form action='".$GLOBALS['base_url']."/stupload/update_regional_language_tutorial/script' method='post'><input type='hidden' name='script' value='".$content->tutorial_script."'><input type='hidden' name='td_path' value='".$td_path."'><input type='hidden' name='language' value='".$content->language."'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='hidden' name='redirection' value='1'><input type='submit' value='Update'></form></td></tr>";
 			}else{
 				$output .= "<td><td></tr>";
@@ -52,7 +52,7 @@
 			
 			// video
 			$output .= "<tr><td class='title'>Video</td><td class='content'>".$video."</td>";
-			if(($user->uid == $content->tutorial_video_uid && ($content->tutorial_video_status == 0 || $content->tutorial_video_status == 1)) || $content->tutorial_video_uid == 0 ){
+			if(($user->uid == $content->tutorial_video_uid && ($content->tutorial_outline_status != 4 && $content->tutorial_video_status != 2)) || $content->tutorial_video_uid == 0 ){
 				$output .= "<td class='update'><form action='".$GLOBALS['base_url']."/stupload/update_regional_language_tutorial/video' method='post'><input type='hidden' name='trid' value='".$trid."'><input type='hidden' name='language' value='".$content->language."'><input type='hidden' name='td_path' value='".$td_path."'><input type='hidden' name='tn' value='".$content->tutorial_name."'><input type='hidden' name='redirection' value='1'><input type='submit' value='Update'></form></td></tr>";
 			}else{
 				$output .= "<td><td></tr>";

@@ -111,7 +111,7 @@
 			if(move_uploaded_file($_FILES['files']['tmp_name']['slide'], $path)){
 				global $user;
 				// insert into common data table
-				$query = "UPDATE tutorial_common_contents SET tutorial_slide_uid=".$user->uid.", tutorial_slide_status='2', tutorial_slide='".$tutorial_slide."' WHERE id='".$form_state['values']['tccid']."'";
+				$query = "UPDATE tutorial_common_contents SET tutorial_slide_uid=".$user->uid.", tutorial_slide_status='1', tutorial_slide='".$tutorial_slide."' WHERE id='".$form_state['values']['tccid']."'";
 				db_query($query);
 				// to track uploader 
 				$query = "INSERT INTO `tutorial_update_log` (`id`, `tutorial_resources_id`, `update_time`, `updated_by`, `updated_content`) VALUES (NULL, '".$form_state['values']['trid']."', CURRENT_TIMESTAMP, '".$user->name."', 'Slide')";
