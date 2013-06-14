@@ -54,10 +54,17 @@ function quality_review_tutorials(){
 			$where_query = "and (".$lang_query.")";
 		}		
 	}
-	
-	$query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status !='accepted' ".$where_query."  order by td.order_code ASC";
-	$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status !='accepted' ".$where_query."  order by td.order_code ASC";
-	
+	//var_dump($_REQUEST['status']);
+
+	if(isset($_REQUEST['status']) && $_REQUEST['status'] == 7){
+		$query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status = 'public_review' ".$where_query."  order by td.order_code ASC";
+	$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status = 'public_review' ".$where_query."  order by td.order_code ASC";
+	}else{
+	    $query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status !='public_review' and tr.tutorial_status !='accepted' ".$where_query."  order by td.order_code ASC";
+	$sql_count = "select count(*) from tutorial_resources tr, tutorial_details td, tutorial_common_contents tcc where tr.tutorial_detail_id=td.id and tr.tutorial_content_id=tcc.id and tr.tutorial_status !='public_review' and tr.tutorial_status !='accepted' ".$where_query."  order by td.order_code ASC";
+	}
+	//var_dump($query);
+	//die;
 	$result = pager_query($query, 30, 0, $sql_count);
 	$row = array();
 	$sno = 1;
@@ -234,7 +241,22 @@ function quality_review_tutorial_page() {
 				// component shan
 				$comp = array();
 				if($_POST['status'] == 'all'){
-					$comp = array(1 => 'Outline', 2 => 'Script', 3 => 'Slide', 4 => 'Video', 5 => 'Codefile', 6 => 'Assignment', 0 => 'All');
+				    if($tutorial->tutorial_code_status !=4 )
+						$comp[5] = 'Codefile'; 
+					if($tutorial->tutorial_assignment_status !=4)
+						$comp[6] = 'Assignment';
+					if($tutorial->tutorial_outline_status !=4)
+						$comp[1] = 'Outline'; 
+					if($tutorial->tutorial_script_status !=4)
+						$comp[2] = 'Script'; 
+					if($tutorial->tutorial_slide_status !=4)
+						$comp[3] = 'Slide';
+					if($tutorial->tutorial_video_status !=4)
+						$comp[4] = 'Video'; 
+					if(count($comp) > 1){
+						$comp [0] = 'All';
+					}
+					//$comp = array(1 => 'Outline', 2 => 'Script', 3 => 'Slide', 4 => 'Video', 5 => 'Codefile', 6 => 'Assignment', 0 => 'All');
 				}else{
 					if($tutorial->tutorial_code_status == $_POST['status'])
 						$comp[5] = 'Codefile'; 
@@ -252,6 +274,9 @@ function quality_review_tutorial_page() {
 						$comp [0] = 'All';
 					}
 				}
+				//var_dump($comp);
+				//var_dump($_POST['status']);
+				//die;
 		$output = "<div class='stupload-form'>";
 			$output .= "<div class='summery'>";
 				$output .= "<div class='summery-title-content'>";				

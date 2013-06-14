@@ -168,13 +168,13 @@
 	
 	function quality_lang_role_form_submit($form, &$form_state){
 
-		$query = "insert into tutorial_domain_reviewer_roles (uid, language_id) values(".$form_state['values']['username'].", ".$form_state['values']['lang'].")";		
+		$query = "insert into tutorial_quality_roles (uid, language_id) values(".$form_state['values']['username'].", ".$form_state['values']['lang'].")";		
 		if(db_query($query)){
 			drupal_set_message('Role assigned successfully');
 		}else {
 			drupal_set_message('The Role has already assigned');
 		}
-		drupal_goto($path = 'stupload/domain_lang_role', $query = NULL, $fragment = NULL, $http_response_code = 302);
+		drupal_goto($path = 'stupload/quality_lang_role', $query = NULL, $fragment = NULL, $http_response_code = 302);
 
 	}
 ?>
