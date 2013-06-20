@@ -131,8 +131,9 @@ function domain_review_tutorial_page() {
 	drupal_add_js($path . '/video.js');
 	drupal_add_css($path . '/video-js.css');
 	global $user;
-	if($_POST['trid']){
-		$query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tr.tutorial_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id='".$_POST['trid']."'";
+	
+	if($_REQUEST['trid']){
+		$query = "select tr.id as trid, td.foss_category, td.tutorial_name, td.tutorial_level, td.order_code, tr.language, tr.tutorial_outline, tr.tutorial_outline_status, tr.tutorial_script, tr.tutorial_script_status, tr.tutorial_script_timed, tr.tutorial_video, tr.tutorial_video_status, tr.tutorial_status, tcc.tutorial_slide, tcc.tutorial_slide_status, tcc.tutorial_code, tcc.tutorial_code_status, tcc.tutorial_assignment, tcc.tutorial_assignment_status from tutorial_details td ,tutorial_resources tr, tutorial_common_contents tcc where td.id=tr.tutorial_detail_id and tr.tutorial_content_id=tcc.id and tr.id='".$_REQUEST['trid']."'";
 		$result = db_query($query);
 		$tutorial = db_fetch_object($result);
 		// show current status
@@ -216,6 +217,14 @@ function domain_review_tutorial_page() {
 					$output .= "<div class='summery-outline'>";
 						$output .= "<p class='summery-title'>Outline";
 						$output .= " : ".$outline."</p>";
+						// update outline form
+						
+						if($tutorial->language == 'English')
+						    $link_str = "<form action='".$GLOBALS['base_url']."/stupload/update_english_tutorial/outline' method='post'><input type='hidden' name='outline' value='".$tutorial->tutorial_outline."'><input type='hidden' name='trid' value='".$tutorial->trid."'><input type='hidden' name='tn' value='".$tutorial->tutorial_name."'><input type='submit' value='Update'><input type='hidden' name='redirection' value='3'></form>";
+						else
+						    $link_str = "<form action='".$GLOBALS['base_url']."/stupload/update_regional_language_tutorial/outline' method='post'><input type='hidden' name='outline' value='".$tutorial->tutorial_outline."'><input type='hidden' name='trid' value='".$tutorial->trid."'><input type='hidden' name='tn' value='".$tutorial->tutorial_name."'><input type='submit' value='Update'><input type='hidden' name='redirection' value='3'></form>";
+						    
+						$output .= "<p>".$link_str."</p>";
 					$output .= "</div>";
 					$output .= "<div class='summery-slide'>";
 						$output .= "<p class='summery-title'>Slide";

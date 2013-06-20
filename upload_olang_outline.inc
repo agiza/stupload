@@ -116,7 +116,9 @@
 				drupal_goto('stupload/upload_regional_language_tutorial_index', array('tr' => $form_state['values']['trid']), $fragment = NULL, $http_response_code = 302);
 			} elseif($form_state['values']['redirection'] == 2){
 				drupal_goto('stupload/update_regional_language_tutorial_index', array('tr' => $form_state['values']['trid']), $fragment = NULL, $http_response_code = 302);
-			}
+			}elseif($form_state['values']['redirection'] == 3){
+	            drupal_goto('stupload/domain_review_tutorial_page', array('trid' => $form_state['values']['trid']) , $fragment = NULL, $http_response_code = 302);
+            }
 		}else {
 			drupal_set_message('Error while Adding Tutorial Outline, Please try again.');
 		}
